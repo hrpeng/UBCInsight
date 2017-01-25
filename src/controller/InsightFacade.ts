@@ -25,7 +25,9 @@ export default class InsightFacade implements IInsightFacade {
                     if (k.length > 0) {
                         zip.file(key).async("string").then(function (data: any) {
                             //parse one course
-
+                            var jsonAllData: any = {};
+                            var parsedData = Helper.parseToJson(data);
+                            jsonAllData.k = parsedData;
 
                         }, function error (err:any) {
                             //handle error
