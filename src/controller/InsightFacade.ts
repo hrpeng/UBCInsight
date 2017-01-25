@@ -2,6 +2,7 @@
  * This is the main programmatic entry point for the project.
  */
 import {IInsightFacade, InsightResponse, QueryRequest} from "./IInsightFacade";
+import Helper from "./Helper";
 
 import Log from "../Util";
 
@@ -12,7 +13,30 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
-        return null;
+        return new Promise(function (fulfill, reject) {
+            "use strict";
+            var JSZip = require('jszip');
+            var keys : any[] = [];
+            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
+                var files = zip['files']
+
+                for (var key of Object.keys(files)) {
+                    var k = key.substring(5);
+                    if (k.length > 0) {
+                        zip.file(key).async("string").then(function (data: any) {
+                            //parse one course
+
+
+                        }, function error (err:any) {
+                            //handle error
+
+
+                        });
+                        keys.push(k)
+                    }
+                }
+            });
+        })
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
@@ -22,4 +46,6 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: QueryRequest): Promise <InsightResponse> {
         return null;
     }
+
+
 }
