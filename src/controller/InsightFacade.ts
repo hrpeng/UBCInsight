@@ -14,7 +14,8 @@ export default class InsightFacade implements IInsightFacade {
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
-            Helper.exist('/courses/CPSC310/D1/addData2.0/1').then(function(b:any){
+            Helper.exist('./' + id).then(function(b:any){
+                Helper.consoleLog(b)
                 if(b){
                     Helper.parseData(id, content).then(function(jsc:any){
                         var is: InsightResponse = {
