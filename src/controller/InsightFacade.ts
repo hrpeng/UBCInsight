@@ -14,30 +14,33 @@ export default class InsightFacade implements IInsightFacade {
 
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
-            "use strict";
-            var JSZip = require('jszip');
-            var keys : any[] = [];
-            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
-                var files = zip['files']
-
-                for (var key of Object.keys(files)) {
-                    var k = key.substring(5);
-                    if (k.length > 0) {
-                        zip.file(key).async("string").then(function (data: any) {
-                            //parse one course
-                            var jsonAllData: any = {};
-                            var parsedData = Helper.parseToJson(data);
-                            jsonAllData.k = parsedData;
-
-                        }, function error (err:any) {
-                            //handle error
-
-
-                        });
-                        keys.push(k)
-                    }
+            Helper.exist('/courses/CPSC310/D1/addData2.0/1').then(function(b:any){
+                if(b){
+                    Helper.parseData(id, content).then(function(jsc:any){
+                        var is: InsightResponse = {
+                            code: 201,
+                            body: {jsc}
+                        }
+                        Helper.consoleLog(is)
+                        fulfill(is);
+                    })
+                } else {
+                    Helper.parseData(id, content).then(function(jsc:any){
+                        var is : InsightResponse = {
+                            code: 204,
+                            body:{jsc}
+                        }
+                        Helper.consoleLog(is)
+                        fulfill(is);
+                    })
                 }
-            });
+            }).catch(function(e:any){
+                var is : InsightResponse = {
+                    code: 204,
+                    body:{"error": e}
+                }
+                reject(is);
+            })
         })
     }
 

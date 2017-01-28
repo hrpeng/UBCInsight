@@ -4,7 +4,6 @@
  * You should not change this interface at all or the test suite will not work.
  */
 
-
 export interface InsightResponse {
     code: number;
     body: {}; // the actual response
