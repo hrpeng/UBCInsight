@@ -120,10 +120,16 @@ export default class Helper {
             return 'query is not an object';
         }
         var where = query['WHERE'];
-        return Helper.validateWhere(where);
+
+        var options = query['OPTIONS']
+        return Helper.validateWhere(where) && Helper.validateOptions(options);
     }
 
     public static  validateWhere(where : any) {
+        if(typeof where !== 'object') {
+            return 'invalid object'
+        }
+
         var whereKey = Object.keys(where)[0] //OR AND GT IS NOT etc...
         var whereValue = where[whereKey]    // value of OR NOT etc...
         var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
@@ -171,6 +177,9 @@ export default class Helper {
             if(!(whereValue instanceof Array)){
                 return  'invalid LOGIC value'
             } else {
+                if(whereValue.length == 0){
+                    return 'empty LOGIC value'
+                }
                 for(var i = 0; i < whereValue.length; i++){
                     var validEach : string = Helper.validateWhere(whereValue[i])
                     if(validEach != 'valid'){
@@ -184,4 +193,43 @@ export default class Helper {
         return 'valid'
     }
 
+    public static  validateOptions(options : any) {
+        if(typeof options !== 'object') {
+            return 'invalid object'
+        }
+
+        var optionsKeys = Object.keys(options)//[0] //OR AND GT IS NOT etc...
+        console.log(optionsKeys)
+        if(!('COLUMNS' in options)){
+            return 'absence of COLUMNS in OPTIONS'
+        }
+        if(!('FORM' in options)){
+            return 'absence of FORM in OPTIONS'
+        }
+        for(var key of optionsKeys){
+            if(key == 'COLUMNS'){
+                if(!(options['COLUMNS'] instanceof Array)){
+                    return 'invalid COLUMNS value'
+                } else {
+                    for(var element of options['COLUMNS']){
+                        if(typeof element !== 'string' || !(element.includes('_'))){
+                            return 'invalid key'
+                        }
+                    }
+                }
+            } else if(key == 'ORDER'){
+                if(typeof options['ORDER'] !== 'string' || !(options['ORDER'].includes('_'))){
+                    return 'invalid key'
+                }
+            } else if(key == 'FORM'){
+                if(options['FORM'] != 'TABLE'){
+                    return 'invalid FORM value'
+                }
+            }
+        }
+        // var whereValue = where[whereKey]    // value of OR NOT etc...
+        // var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
+        // var value = whereValue[key]   //97 cpsc etc..
+        return 'valid'
+    }
 }
