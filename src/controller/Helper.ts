@@ -120,7 +120,7 @@ export default class Helper {
             return 'query is not an object';
         }
         var where = query['WHERE'];
-
+        console.log('Hi')
         var options = query['OPTIONS']
         return Helper.validateWhere(where) && Helper.validateOptions(options);
     }
@@ -188,8 +188,6 @@ export default class Helper {
                 }
             }
         }
-
-
         return 'valid'
     }
 
