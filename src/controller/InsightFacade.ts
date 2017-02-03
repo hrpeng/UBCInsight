@@ -47,11 +47,52 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     removeDataset(id: string): Promise<InsightResponse> {
-        return null;
+        return new Promise(function (fulfill, reject) {
+            "use strict";
+            var fs = require('fs');
+            fs.exists('./'+id, function(exists: any) {
+                if (exists) {
+                    fs.unlink('./'+id);
+                    var ir : InsightResponse = {
+                        code: 204,
+                        body: exists
+                    };
+                    fulfill(ir);
+                }else {
+                    var ir: InsightResponse = {
+                        code: 404,
+                        body: exists
+                    };
+                    reject(ir);
+                }
+            });
+        })
     }
 
     performQuery(query: QueryRequest): Promise <InsightResponse> {
-        return null;
+        return new Promise(function (fulfill, reject) {
+            var valid = Helper.validate(query);
+            if (valid == 'dataset has not been PUT'){
+                var is : InsightResponse = {
+                    code: 424,
+                    body:{'error': valid}
+                }
+                reject(is);
+            }
+            if (valid == 'valid'){
+                var is: InsightResponse = {
+                    code: 201,
+                    body: { 'render': 'TABLE', 'result': []}
+                }
+                fulfill(is)
+            } else {
+                var is : InsightResponse = {
+                    code: 400,
+                    body:{'error': valid}
+                }
+                reject(is);
+            }
+        })
     }
 
 

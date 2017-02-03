@@ -12,6 +12,7 @@ import {isArray} from "util";
 
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
+    var content = Helper.encodeZip('./courses.zip');
     var content0 = Helper.encodeZip('./cour.zip');
 
     var id = "courses";
@@ -24,38 +25,6 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-   function addData(id:any,content:any) {
-       return new Promise(function (fulfill, reject) {
-           Helper.exist('/courses/CPSC310/D1/addData2.0/1').then(function(b:any){
-               if(b){
-                   Helper.parseData(id, content).then(function(jsc:any){
-                       var is: InsightResponse = {
-                           code: 201,
-                           body: {jsc}
-                       }
-                       Helper.consoleLog(is)
-                       fulfill(is);
-                   })
-               } else {
-                   Helper.parseData(id, content).then(function(jsc:any){
-                       var is : InsightResponse = {
-                           code: 204,
-                           body:{jsc}
-                       }
-                       Helper.consoleLog(is)
-                       fulfill(is);
-                   })
-               }
-           }).catch(function(e:any){
-               var is : InsightResponse = {
-                   code: 204,
-                   body:{"error": e}
-               }
-               reject(is);
-           })
-       })
-   }
-
        /*return isf.addDataset('cour',content).then(function (parsed: InsightResponse) {
         Helper.consoleLog(parsed)
         //Log.test('Value: ' + value);
@@ -65,7 +34,11 @@ describe("AddSpec", function () {
         // expect.fail();
         })*/
     it("add", function () {
-        isf.addDataset('Courses',content0)
+        isf.addDataset('Courses',content)
         //Helper.consoleLog(addData('1',content0))
+    })
+
+    it("remove", function (){
+        isf.removeDataset('courses')
     })
 })

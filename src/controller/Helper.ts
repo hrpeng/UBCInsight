@@ -25,9 +25,20 @@ export default class Helper {
                     var jsonCourse: any = {};
                     var section = content.result[i];
                     if (typeof section === 'object' && section.Section !== "overall"){
-                        var jsonSection = {"courses_dept": section.Subject, "courses_id": section.Course, "courses_sec": section.Section, "courses_avg":section.Avg,
-                            "courses_instructor": section.Professor,"courses_title": section.Title, "courses_pass": section.Pass, "courses_fail" : section.Fail,
-                            "courses_audit": section.Audit, "courses_year": section.Year};
+                        var dept = id + "_dept"
+                        var cid = id + "_id"
+                        var sec = id + "_sec"
+                        var avg = id + "_avg"
+                        var instructor = id + "_instructor"
+                        var title = id + "_title"
+                        var pass = id + "_pass"
+                        var fail = id + "_fail"
+                        var audit = id + "_audit"
+                        var year = id + "_year"
+                        var uuid = id + "_uuid"
+                        var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
+                            [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
+                            [audit]: section.Audit, [year]: section.Year, [uuid]: section['id'].toString()};
                         var property = section.Subject + section.Course;
                         jsonCourse[property] = jsonSection;
                         array.push(jsonCourse);
@@ -96,4 +107,81 @@ export default class Helper {
             })
         })
     }
+
+    public static readJSON(path : string) {
+        var fs = require('fs');
+        var o = fs.readFileSync(path,'utf8')
+        var obj = JSON.parse(o)
+        return obj;
+    }
+
+    public static validate(query : any) {
+        if(typeof query !== 'object') {
+            return 'query is not an object';
+        }
+        var where = query['WHERE'];
+        return Helper.validateWhere(where);
+    }
+
+    public static  validateWhere(where : any) {
+        var whereKey = Object.keys(where)[0] //OR AND GT IS NOT etc...
+        var whereValue = where[whereKey]    // value of OR NOT etc...
+        var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
+        var value = whereValue[key]   //97 cpsc etc..
+
+        if( whereKey != 'GT' && whereKey != 'LT'  && whereKey != 'EQ'  && whereKey != 'AND' && whereKey != 'OR' && whereKey != 'IS' && whereKey != 'NOT'){
+            return 'invalid WHERE'
+        }else if(whereKey == 'GT' || whereKey =='LT' || whereKey == 'EQ'){
+            if (!key.includes("_")){
+                return 'invalid MCOMPARISON key'
+            } else {
+                var id = key.split("_")[0]
+                try {
+                    Helper.readJSON('./' + id)
+                } catch (err) {
+                    return 'dataset has not been PUT'
+                }
+                var keyvar = key.split("_")[1]
+                if(keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit'){
+                    return 'invalid MCOMPARISON key'
+                } else if (typeof value !== 'number') {
+                    return 'invalid MCOMPARISON value'
+                }
+            }
+        }else if(whereKey == 'IS'){
+            if (!key.includes("_")){
+                return 'invalid SCOMPARISON key'
+            } else {
+                var id = key.split("_")[0]
+                try {
+                    Helper.readJSON('./' + id)
+                } catch (err) {
+                    return 'dataset has not been PUT'
+                }
+                var keyvar = key.split("_")[1]
+                if(keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title'&& keyvar != 'uuid'){
+                    return 'invalid MCOMPARISON key'
+                } else if (typeof value !== 'string') {
+                    return 'invalid MCOMPARISON value'
+                }
+            }
+        } else if (whereKey == 'NOT'){
+            Helper.validateWhere(value)
+        } else if (whereKey == 'AND' || whereKey == 'OR'){
+            if(!(whereValue instanceof Array)){
+                return  'invalid LOGIC value'
+            } else {
+                for(var i = 0; i < whereValue.length; i++){
+                    var validEach : string = Helper.validateWhere(whereValue[i])
+                    if(validEach != 'valid'){
+                        return validEach
+                    }
+                }
+            }
+        }
+
+
+        return 'valid'
+    }
+
 }
