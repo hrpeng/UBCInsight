@@ -17,7 +17,7 @@ describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var aQuery: QueryRequest = {
         "WHERE":{
-            "LT":{
+            "GT":{
                 "Courses_avg": 97
             }
         },
@@ -40,10 +40,10 @@ describe("AddSpec", function () {
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_dept",
-                "courses_avg"
+                "Courses_dept",
+                "Courses_avg"
             ],
-            "ORDER": "courses_avg",
+            "ORDER": "Courses_avg",
             "FORM": "TABLE"
         }
     }
@@ -54,13 +54,13 @@ describe("AddSpec", function () {
                      "AND":[
                          {
                              "GT":{
-                                 "Courses_avg": 95
+                                 "Courses_avg": 90
                              }
                          },
                          {
-                             "IS":{
-                                 "Courses_dept":"adhe"
-                             }
+                              "IS":{
+                                  "Courses_dept":"adhe"
+                              }
                          }
                     ]
                 },
@@ -73,11 +73,11 @@ describe("AddSpec", function () {
         },
         "OPTIONS":{
             "COLUMNS":[
-                "courses_dept",
-                "courses_id",
-                "courses_avg"
+                "Courses_dept",
+                "Courses_id",
+                "Courses_avg"
             ],
-            "ORDER":"courses_avg",
+            "ORDER":"Courses_avg",
             "FORM":"TABLE"
         }
     }
@@ -92,19 +92,19 @@ describe("AddSpec", function () {
 
     it("XXX", function () {
         return isf.performQuery(aQuery).then(function(response : any){
-            //Helper.consoleLog(response)
+           //Helper.consoleLog(response)
         }).catch(function(err){
-           // Helper.consoleLog(err)
+            //Helper.consoleLog(err)
         })
     })
 
-    // it("YYY", function () {
-    //     return isf.performQuery(bQuery).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         Helper.consoleLog(err)
-    //     })
-    // })
+    it("YYY", function () {
+        return isf.performQuery(NOTaQuery).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
+    })
 
     it("III", function () {
         //QPHelper.QRHelper(aQuery);

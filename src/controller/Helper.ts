@@ -182,7 +182,7 @@ export default class Helper {
                     }
                     return 'valid'
                 case 'NOT':
-                    return Helper.validateWhere(value)
+                    return Helper.validateWhere(whereValue)
                 case 'AND':
                 case 'OR':
                     if (!(whereValue instanceof Array)) {
@@ -250,12 +250,13 @@ export default class Helper {
 
         for (let el of array1){
             var keys = Object.keys(el);
+            var uuid1 = el[keys[0]].Courses_uuid
 
-            //console.log(el);
+            //console.log(el[keys[0]].Courses_uuid);
             for (let el2 of array2) {
                 var keys1 = Object.keys(el2);
                 //console.log(el2);
-                if (el[keys[0]].Courses_uuid=== el2[keys1[0]].Courses_uuid){ // change this to courses_uuid when ready!!
+                if (uuid1== el2[keys1[0]].Courses_uuid){ // change this to courses_uuid when ready!!
                     //console.log("it's equal");
                     arrayret.push(el);
                     break;
@@ -269,6 +270,7 @@ export default class Helper {
     public static union(array1: any[], array2: any[]): any {
         var returnArray = array1.concat(array2);
         for(var i=0; i<returnArray.length; ++i) {
+            //console.log()
             for(var j=i+1; j<returnArray.length; ++j) {
                 if(returnArray[i] === returnArray[j])
                     returnArray.splice(j--, 1);
@@ -307,6 +309,7 @@ export default class Helper {
     }
 
     public static columnsPick(input: any[], keywords: any[]){
+        //console.log(input)
         var newArray : any[] = [];
         for(var section of input){
             var columns = section[Object.keys(section)[0]]

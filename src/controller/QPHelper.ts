@@ -17,11 +17,13 @@ export default class QPHelper{
         } else {
             // throw some type of error, query.WHERE can only consist of 1 filter
         }
-        //console.log(whereFinal)
+
         var columnKeywords = query.OPTIONS['COLUMNS']
+        //console.log(whereFinal)
+        //console.log(columnKeywords)
         var columnOutput = Helper.columnsPick(whereFinal,columnKeywords)
         var orderKeyword = query.OPTIONS['ORDER']
-        //console.log(keyword);
+        //console.log(columnOutput);
         var final = Helper.sort(columnOutput,orderKeyword)
         //console.log(final);
 
@@ -66,30 +68,71 @@ export default class QPHelper{
     public static NOTfunction(object: any): any{
         var returnArray: any = [];
         var keys = Object.keys(object);
-        var amcArray = QPHelper.whichCase(keys[0].toString(), object[keys[0].toString()]);
-        //console.log(amcArray);
-
-        var obj = Helper.readJSON("./Courses");
-        var sectionsArray = obj.Courses;           // CHANGE COURSES TO Id !!!!
+        if (keys[0].toString() === "AND"){
 
 
-        for (let section of sectionsArray){
-            var contained: boolean = false;
-            var keySection = Object.keys(section);
-            for (let sectionC of amcArray){
-                // console.log("this is sectionC");
-                // console.log(sectionC);
-                var keySection1 = Object.keys(sectionC);
-                //console.log(section[keySection[0].toString()].courses_avg);
-                //console.log(sectionC[keySection1[0].toString()].courses_avg);
-                if (section[keySection[0].toString()].Courses_uuid === sectionC[keySection1[0].toString()].Courses_uuid){ // change to Unique ID
-                    contained = true;
-                    break;
+        }
+        if (keys[0].toString() === "OR"){
+
+        }
+        if (keys[0].toString() === "GT"){
+            var amcArray1 = QPHelper.whichCase("LT", object[keys[0].toString()]);
+            var amcArray2 = QPHelper.whichCase("EQ", object[keys[0].toString()]);
+            returnArray = Helper.union(amcArray1, amcArray2);
+        }
+        if (keys[0].toString() === "LT"){
+
+            var amcArray1 = QPHelper.whichCase("GT", object[keys[0].toString()]);
+            var amcArray2 = QPHelper.whichCase("EQ", object[keys[0].toString()]);
+            returnArray = Helper.union(amcArray1, amcArray2);
+        }
+        if (keys[0].toString() === "IS"){
+            var key = Object.keys(object[keys[0].toString()]);
+            var obj = Helper.readJSON("./Courses");
+            var sectionsArray = obj.Courses;  // array of all sections /// CHANGE TO COURSES TO ID!!!!!!
+            //var check1Element = Object.keys(object);
+            //console.log(check1Element);
+            var courses_key = key[0].toString();   // key refers to something like courses_avg !!!FIGURE THIS OUT
+            //console.log(courses_key);
+            //console.log(object[keys[0].toString()]);
+            var value = object[keys[0].toString()][courses_key];  // the value at that key so for "courses_avg" : 90, value is 90.
+            //console.log(value);
+
+            for (let section of sectionsArray) {      // Iterate through all the course sections using for loop
+                var courseCode = Object.keys(section);  // course code is aanb504
+                var ccString = courseCode[0].toString()
+                if (section[ccString][courses_key] !== value) {  //and if the value in the section that corresponds to courses_key is < value
+                    returnArray.push(section);                   // add that course into the list of return courses
                 }
             }
-            //console.log(contained);
-            if (!contained){
-                returnArray.push(section);
+        }
+        if (keys[0].toString() === "EQ") {
+            var key = Object.keys(object[keys[0].toString()]);
+            //console.log(key);
+            if  (typeof key[0] === 'number'){
+                var amcArray1 = QPHelper.whichCase("LT", object[keys[0].toString()]);
+                var amcArray2 = QPHelper.whichCase("GT", object[keys[0].toString()]);
+                returnArray = Helper.union(amcArray1,amcArray2);
+            }
+            else {
+                //console.log("hit line");
+                var obj = Helper.readJSON("./Courses");
+                var sectionsArray = obj.Courses;  // array of all sections /// CHANGE TO COURSES TO ID!!!!!!
+                //var check1Element = Object.keys(object);
+                //console.log(check1Element);
+                var courses_key = key[0].toString();   // key refers to something like courses_avg !!!FIGURE THIS OUT
+                //console.log(courses_key);
+                //console.log(object[keys[0].toString()]);
+                var value = object[keys[0].toString()][courses_key];  // the value at that key so for "courses_avg" : 90, value is 90.
+                //console.log(value);
+
+                for (let section of sectionsArray) {      // Iterate through all the course sections using for loop
+                    var courseCode = Object.keys(section);  // course code is aanb504
+                    var ccString = courseCode[0].toString()
+                    if (section[ccString][courses_key] !== value) {  //and if the value in the section that corresponds to courses_key is < value
+                        returnArray.push(section);                   // add that course into the list of return courses
+                    }
+                }
             }
         }
         return returnArray;
@@ -163,21 +206,23 @@ export default class QPHelper{
         return arrayMeetsCondition;
     }
     public static ANDfunction(object: any[]): any{
+       // console.log(object)
         var arrayMeetsCondition: any[] = [];
-        if (isArray(object)) {
+        //if (isArray(object)) {
             var keyq = Object.keys(object[0]);
+           // console.log(object[0][keyq[0]])
             arrayMeetsCondition = QPHelper.whichCase(keyq[0].toString(), object[0][keyq[0].toString()]);
             for (let i = 1; i < object.length; i++) {
                 var condKey = Object.keys(object[i]);
                 arrayMeetsCondition = Helper.intersection(arrayMeetsCondition, QPHelper.whichCase(condKey[0], object[i][condKey[0]]));
             }
-        }
+        //}
         return arrayMeetsCondition;
     }
 
     public static ORfunction(object: any[]): any{
         var arrayMeetsCondition: any[] = [];
-        if (isArray(object)) {
+        //if (isArray(object)) {
             for (let i = 0; i < object.length; i++) {
                 var condKey = Object.keys(object[i]);
                 //console.log(QPHelper.whichCase(condKey[0], object[i][condKey]));
@@ -187,7 +232,7 @@ export default class QPHelper{
                 // console.log("second");
                 //console.log(arrayMeetsCondition);
             }
-        }
+       // }
         return arrayMeetsCondition;
     }
 }
