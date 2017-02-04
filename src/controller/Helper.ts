@@ -230,4 +230,38 @@ export default class Helper {
         // var value = whereValue[key]   //97 cpsc etc..
         return 'valid'
     }
+    public static intersection(array1: any[], array2: any[]): any{
+        var arrayret: any[] = [];
+        //console.log("reached intersection()");
+        //console.log(array1);
+        //console.log(array2);
+
+        for (let el of array1){
+            var keys = Object.keys(el);
+
+            //console.log(el);
+            for (let el2 of array2) {
+                var keys1 = Object.keys(el2);
+                //console.log(el2);
+                if (el[keys[0]].courses_avg === el2[keys1[0]].courses_avg){ // change this to courses_uuid when ready!!
+                    //console.log("it's equal");
+                    arrayret.push(el);
+                    break;
+                }
+            }
+        }
+        //console.log(arrayret);
+        return arrayret;
+    }
+
+    public static union(array1: any[], array2: any[]): any {
+        var returnArray = array1.concat(array2);
+        for(var i=0; i<returnArray.length; ++i) {
+            for(var j=i+1; j<returnArray.length; ++j) {
+                if(returnArray[i] === returnArray[j])
+                    returnArray.splice(j--, 1);
+            }
+        }
+        return returnArray;
+    }
 }

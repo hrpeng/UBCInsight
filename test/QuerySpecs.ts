@@ -6,18 +6,19 @@
 import Server from "../src/rest/Server";
 import {expect} from 'chai';
 import Log from "../src/Util";
-import {InsightResponse} from "../src/controller/IInsightFacade";
+import {InsightResponse, QueryRequest} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
+import QPHelper from "../src/controller/QPHelper";
 
 describe("AddSpec", function () {
 
     var isf: InsightFacade = null;
-    var aQuery = {
+    var aQuery: QueryRequest = {
         "WHERE":{
             "GT":{
-                "courses_avg": 97
+                "Courses_avg": 97
             }
         },
         "OPTIONS":{
@@ -29,7 +30,24 @@ describe("AddSpec", function () {
             "FORM":"TABLE"
         }
     }
-    var bQuery = {
+    var NOTaQuery: QueryRequest = {
+        "WHERE": {
+            "NOT" : {
+                "LT": {
+                    "Courses_avg": 95
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg",
+            "FORM": "TABLE"
+        }
+    }
+    var bQuery: QueryRequest = {
         "WHERE":{
             "OR":[
                 {
@@ -64,10 +82,6 @@ describe("AddSpec", function () {
         }
     }
 
-    var testobj : Object = {
-        "courses_avg":97
-    };
-
     beforeEach(function () {
         isf = new InsightFacade();
     });
@@ -76,20 +90,24 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-            Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+    // it("XXX", function () {
+    //     return isf.performQuery(aQuery).then(function(response : any){
+    //         Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
 
-    it("YYY", function () {
-        return isf.performQuery(bQuery).then(function(response : any){
-            Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
+    // it("YYY", function () {
+    //     return isf.performQuery(bQuery).then(function(response : any){
+    //         Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
+
+    it("III", function () {
+        QPHelper.QRHelper(NOTaQuery);
     })
 
     // it("YYY", function () {
