@@ -286,28 +286,38 @@ export default class Helper {
                 case "pass":
                 case "fail":
                 case "audit":
-                    var aobj = a[Object.keys(a)[0]]
-                    var bobj = b[Object.keys(b)[0]]
-                    //console.log(aobj[keyword])
-                    return aobj[keyword] - bobj[keyword];
+                    return a[keyword] - b[keyword];
                 case "dept":
                 case "instructor":
                 case "title":
                     var aobj = a[Object.keys(a)[0]]
                     var bobj = b[Object.keys(b)[0]]
-                    var x = aobj[keyword].toLowerCase();
-                    var y = bobj[keyword].toLowerCase();
+                    var x = a[keyword].toLowerCase();
+                    var y = b[keyword].toLowerCase();
                     return x < y ? -1 : x > y ? 1 : 0;
                 case "id":
                 case "uuid":
-                    var aobj = a[Object.keys(a)[0]]
-                    var bobj = b[Object.keys(b)[0]]
-                    var x: any = Number(aobj[keyword]);
-                    var y: any = Number(bobj[keyword]);
+                    var x: any = Number(a[keyword]);
+                    var y: any = Number(b[keyword]);
                     return x < y ? -1 : x > y ? 1 : 0;
             }
         })
-        //console.log(ps)
+       // console.log(spliced)
         return spliced;
     }
-}
+
+    public static columnsPick(input: any[], keywords: any[]){
+        var newArray : any[] = [];
+        for(var section of input){
+            var columns = section[Object.keys(section)[0]]
+            var newColumns : any = {}
+            for(var key of keywords){
+                newColumns[key] = columns[key]
+            }
+            newArray.push(newColumns)
+        }
+        return newArray
+
+    }
+
+    }

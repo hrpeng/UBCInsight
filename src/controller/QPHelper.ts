@@ -13,16 +13,16 @@ export default class QPHelper{
         var keys = Object.keys(query.WHERE);
         if (keys.length === 1){
             var filterName: string = keys[0].toString();
-            //console.log(filterName);
-            //console.log(query.WHERE[filterName]);
             var whereFinal: any = QPHelper.whichCase(filterName, query.WHERE[filterName]);
         } else {
             // throw some type of error, query.WHERE can only consist of 1 filter
         }
-
-        var keyword = query.OPTIONS['ORDER']
+        //console.log(whereFinal)
+        var columnKeywords = query.OPTIONS['COLUMNS']
+        var columnOutput = Helper.columnsPick(whereFinal,columnKeywords)
+        var orderKeyword = query.OPTIONS['ORDER']
         //console.log(keyword);
-        var final = Helper.sort(whereFinal,keyword)
+        var final = Helper.sort(columnOutput,orderKeyword)
         //console.log(final);
 
         return final;

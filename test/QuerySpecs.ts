@@ -100,75 +100,69 @@ describe("AddSpec", function () {
 
     // it("YYY", function () {
     //     return isf.performQuery(bQuery).then(function(response : any){
-    //         Helper.consoleLog(response)
+    //         //Helper.consoleLog(response)
     //     }).catch(function(err){
     //         Helper.consoleLog(err)
     //     })
     // })
 
-    // it("III", function () {
-    //     QPHelper.QRHelper(aQuery);
-    // })
+    it("III", function () {
+        //QPHelper.QRHelper(aQuery);
+    })
 
 
     it("YYY", function () {
-        var a = [ { aanb504:
-            { Courses_dept: 'aanb',
-                Courses_id: '504',
-                Courses_sec: '002',
-                Courses_avg: 94.44,
-                Courses_instructor: '',
-                Courses_title: 'rsrch methdlgy',
-                Courses_pass: 9,
-                Courses_fail: 0,
-                Courses_audit: 9,
-                Courses_year: '2015',
-                Courses_uuid: '31379' } },
-            { aanb551:
-                { Courses_dept: 'aanb',
-                    Courses_id: '551',
-                    Courses_sec: '003',
-                    Courses_avg: 87.83,
-                    Courses_instructor: '',
-                    Courses_title: 'anml welf rsrch',
-                    Courses_pass: 6,
-                    Courses_fail: 0,
-                    Courses_audit: 0,
-                    Courses_year: '2015',
-                    Courses_uuid: '31381' } },
-            { adhe327:
-                { Courses_dept: 'adhe',
-                    Courses_id: '327',
-                    Courses_sec: '63a',
-                    Courses_avg: 85.64,
-                    Courses_instructor: '',
-                    Courses_title: 'teach adult',
-                    Courses_pass: 22,
-                    Courses_fail: 0,
-                    Courses_audit: 0,
-                    Courses_year: '2008',
-                    Courses_uuid: '8672' } },
-            { adhe327:
-                { Courses_dept: 'adhe',
-                    Courses_id: '327',
-                    Courses_sec: '63c',
-                    Courses_avg: 85.6,
-                    Courses_instructor: 'smulders, dave',
-                    Courses_title: 'teach adult',
-                    Courses_pass: 20,
-                    Courses_fail: 0,
-                    Courses_audit: 0,
-                    Courses_year: '2010',
-                    Courses_uuid: '17256' } }]
-        var keyword = "Courses_avg"
-        var keyvar = keyword.split('_')[1]
-        var spliced = a.splice(0)
-        var ps = spliced.sort(function(a:any,b:any) {
-            var aobj = a[Object.keys(a)[0]]
-            var bobj = b[Object.keys(b)[0]]
-            return aobj[keyword] - bobj[keyword];
-        })
-        //console.log(ps)
+        // var a : any[] = [ { aanb504:
+        //     { Courses_dept: 'aanb',
+        //         Courses_id: '504',
+        //         Courses_sec: '002',
+        //         Courses_avg: 94.44,
+        //         Courses_instructor: '',
+        //         Courses_title: 'rsrch methdlgy',
+        //         Courses_pass: 9,
+        //         Courses_fail: 0,
+        //         Courses_audit: 9,
+        //         Courses_year: '2015',
+        //         Courses_uuid: '31379' } },
+        //     { aanb551:
+        //         { Courses_dept: 'aanb',
+        //             Courses_id: '551',
+        //             Courses_sec: '003',
+        //             Courses_avg: 87.83,
+        //             Courses_instructor: '',
+        //             Courses_title: 'anml welf rsrch',
+        //             Courses_pass: 6,
+        //             Courses_fail: 0,
+        //             Courses_audit: 0,
+        //             Courses_year: '2015',
+        //             Courses_uuid: '31381' } },
+        //     { adhe327:
+        //         { Courses_dept: 'adhe',
+        //             Courses_id: '327',
+        //             Courses_sec: '63a',
+        //             Courses_avg: 85.64,
+        //             Courses_instructor: '',
+        //             Courses_title: 'teach adult',
+        //             Courses_pass: 22,
+        //             Courses_fail: 0,
+        //             Courses_audit: 0,
+        //             Courses_year: '2008',
+        //             Courses_uuid: '8672' } },
+        //     { adhe327:
+        //         { Courses_dept: 'adhe',
+        //             Courses_id: '327',
+        //             Courses_sec: '63c',
+        //             Courses_avg: 85.6,
+        //             Courses_instructor: 'smulders, dave',
+        //             Courses_title: 'teach adult',
+        //             Courses_pass: 20,
+        //             Courses_fail: 0,
+        //             Courses_audit: 0,
+        //             Courses_year: '2010',
+        //             Courses_uuid: '17256' } }]
+        // var o = QPHelper.QRHelper(aQuery)
+        // console.log(o)
     })
+
 
 })

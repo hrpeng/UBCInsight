@@ -81,10 +81,11 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }
             if (valid == 'valid'){
-                QPHelper.QRHelper(query);
+                var final = QPHelper.QRHelper(query);
+                console.log(final)
                 var is: InsightResponse = {
                     code: 201,
-                    body: { 'render': 'TABLE', 'result': []}
+                    body: { 'render': 'TABLE', 'result': final}
                 }
                 fulfill(is)
             } else {
