@@ -51,25 +51,25 @@ describe("AddSpec", function () {
         "WHERE":{
             "OR":[
                 {
-                    "AND":[
-                        {
-                            "GT":{
-                                "Courses_avg":90
-                            }
-                        },
-                        {
-                            "IS":{
-                                "Courses_dept":"adhe"
-                            }
-                        }
-                   ]
+                     "AND":[
+                         {
+                             "GT":{
+                                 "Courses_avg":90
+                             }
+                         },
+                         {
+                             "IS":{
+                                 "Courses_dept":"adhe"
+                             }
+                         }
+                    ]
                 },
-                {
-                    "EQ":{
-                        "Courses_avg":95
-                    }
-                }
-            ]
+                 {
+                     "EQ":{
+                         "Courses_avg":95
+                     }
+                 }
+             ]
         },
         "OPTIONS":{
             "COLUMNS":[

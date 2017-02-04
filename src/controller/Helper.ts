@@ -243,7 +243,7 @@ export default class Helper {
             for (let el2 of array2) {
                 var keys1 = Object.keys(el2);
                 //console.log(el2);
-                if (el[keys[0]].courses_avg === el2[keys1[0]].courses_avg){ // change this to courses_uuid when ready!!
+                if (el[keys[0]].Courses_uuid=== el2[keys1[0]].Courses_uuid){ // change this to courses_uuid when ready!!
                     //console.log("it's equal");
                     arrayret.push(el);
                     break;
