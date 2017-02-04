@@ -280,7 +280,7 @@ export default class Helper {
     public static sort(input: any[], keyword: string){ //keyword: courses_avg, apple_uuid etc..
         var keyvar = keyword.split('_')[1]
         var spliced = input.splice(0)
-        var ps = spliced.sort(function(a,b) {
+        spliced.sort(function(a,b) {
             switch(keyvar){
                 case "avg":
                 case "pass":

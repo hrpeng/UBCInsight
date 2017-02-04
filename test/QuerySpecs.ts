@@ -92,9 +92,9 @@ describe("AddSpec", function () {
 
     it("XXX", function () {
         return isf.performQuery(aQuery).then(function(response : any){
-            Helper.consoleLog(response)
+            //Helper.consoleLog(response)
         }).catch(function(err){
-            Helper.consoleLog(err)
+           // Helper.consoleLog(err)
         })
     })
 
