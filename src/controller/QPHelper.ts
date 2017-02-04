@@ -5,6 +5,7 @@
 import {InsightResponse, QueryRequest} from "./IInsightFacade";
 import Helper from "./Helper";
 import {isArray} from "util";
+import {stringify} from "querystring";
 
 export default class QPHelper{
 
@@ -14,11 +15,16 @@ export default class QPHelper{
             var filterName: string = keys[0].toString();
             //console.log(filterName);
             //console.log(query.WHERE[filterName]);
-            var final: any = QPHelper.whichCase(filterName, query.WHERE[filterName]);
+            var whereFinal: any = QPHelper.whichCase(filterName, query.WHERE[filterName]);
         } else {
             // throw some type of error, query.WHERE can only consist of 1 filter
         }
-        console.log(final);
+
+        var keyword = query.OPTIONS['ORDER']
+        //console.log(keyword);
+        var final = Helper.sort(whereFinal,keyword)
+        //console.log(final);
+
         return final;
     }
 

@@ -81,6 +81,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }
             if (valid == 'valid'){
+                QPHelper.QRHelper(query);
                 var is: InsightResponse = {
                     code: 201,
                     body: { 'render': 'TABLE', 'result': []}
@@ -93,9 +94,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
                 reject(is);
             }
-        QPHelper.QRHelper(query);
+
         })
     }
-
-
 }

@@ -120,12 +120,19 @@ export default class Helper {
             return 'query is not an object';
         }
         var where = query['WHERE'];
-        console.log('Hi')
         var options = query['OPTIONS']
-        return Helper.validateWhere(where) && Helper.validateOptions(options);
+        var validWhere = Helper.validateWhere(where)
+        var validOptions = Helper.validateOptions(options)
+        if(validWhere != 'valid'){
+            return validWhere
+        }else if(validOptions != 'valid'){
+            return validOptions
+        }else {
+            return 'valid'
+        }
     }
-
-    public static  validateWhere(where : any) {
+// NOT value should be a filter!! remember to fix that
+    public static  validateWhere(where : any) : string {
         if(typeof where !== 'object') {
             return 'invalid object'
         }
@@ -135,69 +142,74 @@ export default class Helper {
         var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
         var value = whereValue[key]   //97 cpsc etc..
 
-        if( whereKey != 'GT' && whereKey != 'LT'  && whereKey != 'EQ'  && whereKey != 'AND' && whereKey != 'OR' && whereKey != 'IS' && whereKey != 'NOT'){
-            return 'invalid WHERE'
-        }else if(whereKey == 'GT' || whereKey =='LT' || whereKey == 'EQ'){
-            if (!key.includes("_")){
-                return 'invalid MCOMPARISON key'
-            } else {
-                var id = key.split("_")[0]
-                try {
-                    Helper.readJSON('./' + id)
-                } catch (err) {
-                    return 'dataset has not been PUT'
-                }
-                var keyvar = key.split("_")[1]
-                if(keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit'){
-                    return 'invalid MCOMPARISON key'
-                } else if (typeof value !== 'number') {
-                    return 'invalid MCOMPARISON value'
-                }
-            }
-        }else if(whereKey == 'IS'){
-            if (!key.includes("_")){
-                return 'invalid SCOMPARISON key'
-            } else {
-                var id = key.split("_")[0]
-                try {
-                    Helper.readJSON('./' + id)
-                } catch (err) {
-                    return 'dataset has not been PUT'
-                }
-                var keyvar = key.split("_")[1]
-                if(keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title'&& keyvar != 'uuid'){
-                    return 'invalid MCOMPARISON key'
-                } else if (typeof value !== 'string') {
-                    return 'invalid MCOMPARISON value'
-                }
-            }
-        } else if (whereKey == 'NOT'){
-            Helper.validateWhere(value)
-        } else if (whereKey == 'AND' || whereKey == 'OR'){
-            if(!(whereValue instanceof Array)){
-                return  'invalid LOGIC value'
-            } else {
-                if(whereValue.length == 0){
-                    return 'empty LOGIC value'
-                }
-                for(var i = 0; i < whereValue.length; i++){
-                    var validEach : string = Helper.validateWhere(whereValue[i])
-                    if(validEach != 'valid'){
-                        return validEach
+            switch (whereKey) {
+                case 'GT':
+                case 'LT':
+                case 'EQ':
+                    if (!key.includes("_")) {
+                        return 'invalid MCOMPARISON key'
+                    } else {
+                        var id = key.split("_")[0]
+                        try {
+                            Helper.readJSON('./' + id)
+                        } catch (err) {
+                            return 'dataset has not been PUT'
+                        }
+                        var keyvar = key.split("_")[1]
+                        if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
+                            return 'invalid MCOMPARISON key'
+                        } else if (typeof value !== 'number') {
+                            return 'invalid MCOMPARISON value'
+                        }
                     }
+                    return 'valid'
+                case 'IS':
+                    if (!key.includes("_")) {
+                        return 'invalid SCOMPARISON key'
+                    } else {
+                        var id = key.split("_")[0]
+                        try {
+                            Helper.readJSON('./' + id)
+                        } catch (err) {
+                            return 'dataset has not been PUT'
+                        }
+                        var keyvar = key.split("_")[1]
+                        if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
+                            return 'invalid MCOMPARISON key'
+                        } else if (typeof value !== 'string') {
+                            return 'invalid MCOMPARISON value'
+                        }
+                    }
+                    return 'valid'
+                case 'NOT':
+                    return Helper.validateWhere(value)
+                case 'AND':
+                case 'OR':
+                    if (!(whereValue instanceof Array)) {
+                        return 'invalid LOGIC value'
+                    } else {
+                        if (whereValue.length == 0) {
+                            return 'empty LOGIC value'
+                        }
+                        for (var i = 0; i < whereValue.length; i++) {
+                            var validEach: string = Helper.validateWhere(whereValue[i])
+                            if (validEach != 'valid') {
+                                return validEach
+                        }
+                    }
+                    return 'valid'
                 }
             }
-        }
-        return 'valid'
+        return 'invalid WHERE'
     }
-
+// value of ORDER should be one of element in COLOMNS!!! remember to fix that
     public static  validateOptions(options : any) {
         if(typeof options !== 'object') {
             return 'invalid object'
         }
 
         var optionsKeys = Object.keys(options)//[0] //OR AND GT IS NOT etc...
-        console.log(optionsKeys)
+        //console.log(optionsKeys)
         if(!('COLUMNS' in options)){
             return 'absence of COLUMNS in OPTIONS'
         }
@@ -263,5 +275,39 @@ export default class Helper {
             }
         }
         return returnArray;
+    }
+
+    public static sort(input: any[], keyword: string){ //keyword: courses_avg, apple_uuid etc..
+        var keyvar = keyword.split('_')[1]
+        var spliced = input.splice(0)
+        var ps = spliced.sort(function(a,b) {
+            switch(keyvar){
+                case "avg":
+                case "pass":
+                case "fail":
+                case "audit":
+                    var aobj = a[Object.keys(a)[0]]
+                    var bobj = b[Object.keys(b)[0]]
+                    //console.log(aobj[keyword])
+                    return aobj[keyword] - bobj[keyword];
+                case "dept":
+                case "instructor":
+                case "title":
+                    var aobj = a[Object.keys(a)[0]]
+                    var bobj = b[Object.keys(b)[0]]
+                    var x = aobj[keyword].toLowerCase();
+                    var y = bobj[keyword].toLowerCase();
+                    return x < y ? -1 : x > y ? 1 : 0;
+                case "id":
+                case "uuid":
+                    var aobj = a[Object.keys(a)[0]]
+                    var bobj = b[Object.keys(b)[0]]
+                    var x: any = Number(aobj[keyword]);
+                    var y: any = Number(bobj[keyword]);
+                    return x < y ? -1 : x > y ? 1 : 0;
+            }
+        })
+        //console.log(ps)
+        return spliced;
     }
 }
