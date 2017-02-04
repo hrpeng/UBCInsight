@@ -54,19 +54,19 @@ describe("AddSpec", function () {
                     "AND":[
                         {
                             "GT":{
-                                "courses_avg":90
+                                "Courses_avg":90
                             }
                         },
                         {
                             "IS":{
-                                "courses_dept":"adhe"
+                                "Courses_dept":"adhe"
                             }
                         }
                    ]
                 },
                 {
                     "EQ":{
-                        "courses_avg":95
+                        "Courses_avg":95
                     }
                 }
             ]
@@ -107,7 +107,7 @@ describe("AddSpec", function () {
     // })
 
     it("III", function () {
-        QPHelper.QRHelper(NOTaQuery);
+        QPHelper.QRHelper(bQuery);
     })
 
     // it("YYY", function () {

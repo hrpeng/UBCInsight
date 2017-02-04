@@ -163,7 +163,7 @@ export default class QPHelper{
             arrayMeetsCondition = QPHelper.whichCase(keyq[0].toString(), object[0][keyq[0].toString()]);
             for (let i = 1; i < object.length; i++) {
                 var condKey = Object.keys(object[i]);
-                arrayMeetsCondition = Helper.intersection(arrayMeetsCondition, QPHelper.whichCase(condKey[0], object[i][condKey]));
+                arrayMeetsCondition = Helper.intersection(arrayMeetsCondition, QPHelper.whichCase(condKey[0], object[i][condKey[0]]));
             }
         }
         return arrayMeetsCondition;
@@ -177,11 +177,11 @@ export default class QPHelper{
                 //console.log(QPHelper.whichCase(condKey[0], object[i][condKey]));
                 //console.log("first");
                 // console.log(arrayMeetsCondition);
-                arrayMeetsCondition = Helper.union(arrayMeetsCondition, QPHelper.whichCase(condKey[0], object[i][condKey]));
+                arrayMeetsCondition = Helper.union(arrayMeetsCondition, QPHelper.whichCase(condKey[0], object[i][condKey[0]]));
                 // console.log("second");
                 //console.log(arrayMeetsCondition);
             }
         }
         return arrayMeetsCondition;
     }
-}}
+}
