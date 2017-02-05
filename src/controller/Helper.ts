@@ -123,12 +123,12 @@ export default class Helper {
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
         var validOptions = Helper.validateOptions(options)
-        if(validWhere != 'valid'){
+        if(validWhere.includes('invalid')){
             return validWhere
         }else if(validOptions != 'valid'){
             return validOptions
         }else {
-            return 'valid'
+            return validWhere
         }
     }
 // NOT value should be a filter!! remember to fix that
@@ -149,11 +149,11 @@ export default class Helper {
                     if (!key.includes("_")) {
                         return 'invalid MCOMPARISON key'
                     } else {
-                        var id = key.split("_")[0]
+                        var idName = key.split("_")[0]  //courses
                         try {
-                            Helper.readJSON('./' + id)
+                            Helper.readJSON('./' + idName)
                         } catch (err) {
-                            return 'dataset has not been PUT'
+                            return 'invalid id, dataset has not been PUT'
                         }
                         var keyvar = key.split("_")[1]
                         if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
@@ -161,8 +161,9 @@ export default class Helper {
                         } else if (typeof value !== 'number') {
                             return 'invalid MCOMPARISON value'
                         }
+                        return idName
                     }
-                    return 'valid'
+
                 case 'IS':
                     if (!key.includes("_")) {
                         return 'invalid SCOMPARISON key'
@@ -171,7 +172,7 @@ export default class Helper {
                         try {
                             Helper.readJSON('./' + id)
                         } catch (err) {
-                            return 'dataset has not been PUT'
+                            return 'invalid id, dataset has not been PUT'
                         }
                         var keyvar = key.split("_")[1]
                         if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
@@ -179,8 +180,9 @@ export default class Helper {
                         } else if (typeof value !== 'string') {
                             return 'invalid MCOMPARISON value'
                         }
+                        return id
                     }
-                    return 'valid'
+
                 case 'NOT':
                     return Helper.validateWhere(whereValue)
                 case 'AND':
@@ -189,16 +191,19 @@ export default class Helper {
                         return 'invalid LOGIC value'
                     } else {
                         if (whereValue.length == 0) {
-                            return 'empty LOGIC value'
+                            return 'invalid LOGIC value'
                         }
+                        var idName:string = ''
                         for (var i = 0; i < whereValue.length; i++) {
                             var validEach: string = Helper.validateWhere(whereValue[i])
-                            if (validEach != 'valid') {
+                            if (validEach.includes('invalid')) {
                                 return validEach
+                            }else{
+                                idName = validEach
+                            }
                         }
+                        return idName
                     }
-                    return 'valid'
-                }
             }
         return 'invalid WHERE'
     }
@@ -250,6 +255,8 @@ export default class Helper {
 
         for (let el of array1){
             var keys = Object.keys(el);
+            //console.log(el[keys[0]])
+            //console.log(el[keys[0]])
             var uuid1 = el[keys[0]].Courses_uuid
 
             //console.log(el[keys[0]].Courses_uuid);
@@ -268,11 +275,21 @@ export default class Helper {
     }
 
     public static union(array1: any[], array2: any[]): any {
+        // var returnArray = array1
+        // for(var element of array2){
+        //     if (!array1.includes(element)){
+        //         array1.push(element)
+        //     }
+        // }
+        // return returnArray
         var returnArray = array1.concat(array2);
         for(var i=0; i<returnArray.length; ++i) {
-            //console.log()
+            var key = Object.keys(returnArray[i])[0]
+            var obj = returnArray[i][key]
+            var uuid = obj.Courses_uuid
             for(var j=i+1; j<returnArray.length; ++j) {
-                if(returnArray[i] === returnArray[j])
+
+                if(uuid == returnArray[j][Object.keys(returnArray[j])[0]].Courses_uuid)
                     returnArray.splice(j--, 1);
             }
         }
@@ -309,13 +326,12 @@ export default class Helper {
     }
 
     public static columnsPick(input: any[], keywords: any[]){
-        //console.log(input)
+
         var newArray : any[] = [];
         for(var section of input){
-            var columns = section[Object.keys(section)[0]]
             var newColumns : any = {}
             for(var key of keywords){
-                newColumns[key] = columns[key]
+                newColumns[key] = section[key]
             }
             newArray.push(newColumns)
         }

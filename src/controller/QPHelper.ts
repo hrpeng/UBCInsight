@@ -6,26 +6,23 @@ import {InsightResponse, QueryRequest} from "./IInsightFacade";
 import Helper from "./Helper";
 import {isArray} from "util";
 import {stringify} from "querystring";
+import {type} from "os";
 
 export default class QPHelper{
 
     public static QRHelper(query: QueryRequest){
-        var keys = Object.keys(query.WHERE);
-        if (keys.length === 1){
-            var filterName: string = keys[0].toString();
-            var whereFinal: any = QPHelper.whichCase(filterName, query.WHERE[filterName]);
-        } else {
-            // throw some type of error, query.WHERE can only consist of 1 filter
-        }
+
+        var key = Object.keys(query['WHERE'])[0];
+        var whereFinal: any = QPHelper.whichCase(key, query['WHERE'][key]);
 
         var columnKeywords = query.OPTIONS['COLUMNS']
-        //console.log(whereFinal)
+        console.log(typeof key)
         //console.log(columnKeywords)
         var columnOutput = Helper.columnsPick(whereFinal,columnKeywords)
         var orderKeyword = query.OPTIONS['ORDER']
         //console.log(columnOutput);
         var final = Helper.sort(columnOutput,orderKeyword)
-        //console.log(final);
+        console.log(final);
 
         return final;
     }
@@ -88,6 +85,7 @@ export default class QPHelper{
         }
         if (keys[0].toString() === "IS"){
             var key = Object.keys(object[keys[0].toString()]);
+            console.log(key)
             var obj = Helper.readJSON("./Courses");
             var sectionsArray = obj.Courses;  // array of all sections /// CHANGE TO COURSES TO ID!!!!!!
             //var check1Element = Object.keys(object);

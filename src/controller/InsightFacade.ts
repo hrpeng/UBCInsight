@@ -6,6 +6,7 @@ import Helper from "./Helper";
 
 import Log from "../Util";
 import QPHelper from "./QPHelper";
+import Query from "./Query";
 
 export default class InsightFacade implements IInsightFacade {
 
@@ -24,7 +25,7 @@ export default class InsightFacade implements IInsightFacade {
                             code: 201,
                             body: {jsc}
                         }
-                        Helper.consoleLog(is)
+                        //Helper.consoleLog(is)
                         fulfill(is);
                     })
                 } else {
@@ -73,27 +74,28 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: QueryRequest): Promise <InsightResponse> {
         return new Promise(function (fulfill, reject) {
             var valid = Helper.validate(query);
-            if (valid == 'dataset has not been PUT'){
+            //console.log(valid)
+            if (valid == 'invalid id, dataset has not been PUT'){
                 var is : InsightResponse = {
                     code: 424,
                     body:{'error': valid}
                 }
                 reject(is);
             }
-            if (valid == 'valid'){
-                var final = QPHelper.QRHelper(query);
+            if(valid.includes('invalid')){
+                var is : InsightResponse = {
+                    code: 400,
+                    body:{'error': valid}
+                }
+                reject(is);
+            }else {
+                var final = Query.primer(query, valid)
                 //console.log(final)
                 var is: InsightResponse = {
                     code: 200,
                     body: { 'render': 'TABLE', 'result': final}
                 }
                 fulfill(is)
-            } else {
-                var is : InsightResponse = {
-                    code: 400,
-                    body:{'error': valid}
-                }
-                reject(is);
             }
         })
     }

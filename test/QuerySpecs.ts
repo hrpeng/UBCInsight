@@ -18,15 +18,15 @@ describe("AddSpec", function () {
     var aQuery: QueryRequest = {
         "WHERE":{
             "GT":{
-                "Courses_avg": 97
+                "apple_avg": 97
             }
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_dept",
-                "Courses_avg"
+                "apple_dept",
+                "apple_avg"
             ],
-            "ORDER":"Courses_avg",
+            "ORDER":"apple_avg",
             "FORM":"TABLE"
         }
     }
@@ -61,9 +61,9 @@ describe("AddSpec", function () {
                               "IS":{
                                   "Courses_dept":"adhe"
                               }
-                         }
+                         },
                     ]
-                },
+               },
                  {
                      "EQ":{
                          "Courses_avg":95
@@ -91,10 +91,10 @@ describe("AddSpec", function () {
     });
 
     it("XXX", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-           //Helper.consoleLog(response)
+        return isf.performQuery(bQuery).then(function(response : any){
+          //Helper.consoleLog(response)
         }).catch(function(err){
-            //Helper.consoleLog(err)
+           // Helper.consoleLog(err)
         })
     })
 
@@ -107,61 +107,16 @@ describe("AddSpec", function () {
     })
 
     it("III", function () {
-        //QPHelper.QRHelper(aQuery);
+        return isf.performQuery(aQuery).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
     })
 
 
     it("YYY", function () {
-        // var a : any[] = [ { aanb504:
-        //     { Courses_dept: 'aanb',
-        //         Courses_id: '504',
-        //         Courses_sec: '002',
-        //         Courses_avg: 94.44,
-        //         Courses_instructor: '',
-        //         Courses_title: 'rsrch methdlgy',
-        //         Courses_pass: 9,
-        //         Courses_fail: 0,
-        //         Courses_audit: 9,
-        //         Courses_year: '2015',
-        //         Courses_uuid: '31379' } },
-        //     { aanb551:
-        //         { Courses_dept: 'aanb',
-        //             Courses_id: '551',
-        //             Courses_sec: '003',
-        //             Courses_avg: 87.83,
-        //             Courses_instructor: '',
-        //             Courses_title: 'anml welf rsrch',
-        //             Courses_pass: 6,
-        //             Courses_fail: 0,
-        //             Courses_audit: 0,
-        //             Courses_year: '2015',
-        //             Courses_uuid: '31381' } },
-        //     { adhe327:
-        //         { Courses_dept: 'adhe',
-        //             Courses_id: '327',
-        //             Courses_sec: '63a',
-        //             Courses_avg: 85.64,
-        //             Courses_instructor: '',
-        //             Courses_title: 'teach adult',
-        //             Courses_pass: 22,
-        //             Courses_fail: 0,
-        //             Courses_audit: 0,
-        //             Courses_year: '2008',
-        //             Courses_uuid: '8672' } },
-        //     { adhe327:
-        //         { Courses_dept: 'adhe',
-        //             Courses_id: '327',
-        //             Courses_sec: '63c',
-        //             Courses_avg: 85.6,
-        //             Courses_instructor: 'smulders, dave',
-        //             Courses_title: 'teach adult',
-        //             Courses_pass: 20,
-        //             Courses_fail: 0,
-        //             Courses_audit: 0,
-        //             Courses_year: '2010',
-        //             Courses_uuid: '17256' } }]
-        // var o = QPHelper.QRHelper(aQuery)
-        // console.log(o)
+
     })
 
 
