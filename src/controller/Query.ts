@@ -90,12 +90,21 @@ export default class Query{
 
     public static isFunction(section:any, whereValue:any): boolean{
         var keyword = Object.keys(whereValue)[0]  //id_dept, id_instructor etc...
-        var keyValue = whereValue[keyword]         //'cpsc', 'Reid Holmes' etc...
+        var keyValue : string = whereValue[keyword]         //'cpsc', 'Reid Holmes' etc...
         var myValue = section[keyword]
         if(typeof myValue === 'undefined'){
             return false
+        }else if(keyValue.substring(0,1) == '*' && keyValue.slice(-1) == '*') {
+            return myValue.includes(keyValue.substring(1,(keyValue.length-1)))
         }
-        return myValue.includes(keyValue)
+        else if(keyValue.substring(0,1) == '*'){
+            //console.log(myValue.slice(-(keyValue.length-1)))
+            return myValue.slice(-(keyValue.length-1)) == keyValue.substring(1)
+        }else if(keyValue.slice(-1) == '*'){
+            return myValue.substring(0,(keyValue.length-1)) == keyValue.substring(0,(keyValue.length-1))
+        }else {
+            return myValue == keyValue
+        }
     }
     public static ANDfunction(section: any, whereValue:any): boolean{
         for (var arg of whereValue){

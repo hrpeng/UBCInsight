@@ -89,7 +89,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
-                //console.log(final)
+                console.log(final)
                 var is: InsightResponse = {
                     code: 200,
                     body: { 'render': 'TABLE', 'result': final}

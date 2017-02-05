@@ -51,19 +51,19 @@ describe("AddSpec", function () {
                      "AND":[
                          {
                              "GT":{
-                                 "Courses_avg": 90
+                                 "Courses_avg": 85
                              }
                          },
                          {
                              "NOT": {
                                  "IS": {
-                                     "Courses_instructor": "e"
+                                     "Courses_instructor": "*e*"
                                  }
                              }
                          },
                          {
                              "LT": {
-                                 'Courses_avg': 97
+                                 'Courses_avg': 90
                              }
                          }
                     ]
@@ -74,7 +74,7 @@ describe("AddSpec", function () {
                 "Courses_id",
                 "Courses_instructor"
             ],
-            "ORDER":"Courses_id",
+            "ORDER":"Courses_dept",
             "FORM":"TABLE"
         }
     }
@@ -94,22 +94,22 @@ describe("AddSpec", function () {
            Helper.consoleLog(err)
         })
     })
-
-    it("YYY", function () {
-        return isf.performQuery(NOTaQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-
-    it("III", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+    //
+    // it("YYY", function () {
+    //     return isf.performQuery(NOTaQuery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
+    //
+    // it("III", function () {
+    //     return isf.performQuery(aQuery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
 
 
     it("YYY", function () {
