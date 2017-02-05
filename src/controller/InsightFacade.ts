@@ -5,7 +5,6 @@ import {IInsightFacade, InsightResponse, QueryRequest} from "./IInsightFacade";
 import Helper from "./Helper";
 
 import Log from "../Util";
-import QPHelper from "./QPHelper";
 import Query from "./Query";
 
 export default class InsightFacade implements IInsightFacade {
@@ -19,7 +18,7 @@ export default class InsightFacade implements IInsightFacade {
             Helper.exist('./' + id).then(function(b:any){
                 Helper.consoleLog(b)
                 if(b){
-                    console.log(b)
+                    //console.log(b)
                     Helper.parseData(id, content).then(function(jsc:any){
                         var is: InsightResponse = {
                             code: 201,

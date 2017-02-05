@@ -142,6 +142,7 @@ export default class Helper {
         var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
         var value = whereValue[key]   //97 cpsc etc..
 
+        var fs = require('fs');
             switch (whereKey) {
                 case 'GT':
                 case 'LT':
@@ -151,17 +152,23 @@ export default class Helper {
                     } else {
                         var idName = key.split("_")[0]  //courses
                         try {
-                            Helper.readJSON('./' + idName)
-                        } catch (err) {
+                            fs.accessSync('./' + idName);
+                        } catch (e) {
                             return 'invalid id, dataset has not been PUT'
                         }
-                        var keyvar = key.split("_")[1]
-                        if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
-                            return 'invalid MCOMPARISON key'
-                        } else if (typeof value !== 'number') {
-                            return 'invalid MCOMPARISON value'
-                        }
-                        return idName
+                            // try {
+                            //     Helper.readJSON('./' + idName)
+                            // } catch (err) {
+                            //     return 'invalid id, dataset has not been PUT'
+                            // }
+                            var keyvar = key.split("_")[1]
+                            if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
+                                return 'invalid MCOMPARISON key'
+                            } else if (typeof value !== 'number') {
+                                return 'invalid MCOMPARISON value'
+                            }
+                            return idName
+
                     }
 
                 case 'IS':
@@ -170,10 +177,16 @@ export default class Helper {
                     } else {
                         var id = key.split("_")[0]
                         try {
-                            Helper.readJSON('./' + id)
-                        } catch (err) {
+                            fs.accessSync('./' + id);
+                        } catch (e) {
                             return 'invalid id, dataset has not been PUT'
                         }
+                        // try {
+                        //     Helper.readJSON('./' + id)
+                        // } catch (err) {
+                        //     return 'invalid id, dataset has not been PUT'
+                        // }
+
                         var keyvar = key.split("_")[1]
                         if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
                             return 'invalid MCOMPARISON key'
@@ -207,7 +220,7 @@ export default class Helper {
             }
         return 'invalid WHERE'
     }
-// value of ORDER should be one of element in COLOMNS!!! remember to fix that
+
     public static  validateOptions(options : any) {
         if(typeof options !== 'object') {
             return 'invalid object'
@@ -246,54 +259,6 @@ export default class Helper {
         // var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
         // var value = whereValue[key]   //97 cpsc etc..
         return 'valid'
-    }
-    public static intersection(array1: any[], array2: any[]): any{
-        var arrayret: any[] = [];
-        //console.log("reached intersection()");
-        //console.log(array1);
-        //console.log(array2);
-
-        for (let el of array1){
-            var keys = Object.keys(el);
-            //console.log(el[keys[0]])
-            //console.log(el[keys[0]])
-            var uuid1 = el[keys[0]].Courses_uuid
-
-            //console.log(el[keys[0]].Courses_uuid);
-            for (let el2 of array2) {
-                var keys1 = Object.keys(el2);
-                //console.log(el2);
-                if (uuid1== el2[keys1[0]].Courses_uuid){ // change this to courses_uuid when ready!!
-                    //console.log("it's equal");
-                    arrayret.push(el);
-                    break;
-                }
-            }
-        }
-        //console.log(arrayret);
-        return arrayret;
-    }
-
-    public static union(array1: any[], array2: any[]): any {
-        // var returnArray = array1
-        // for(var element of array2){
-        //     if (!array1.includes(element)){
-        //         array1.push(element)
-        //     }
-        // }
-        // return returnArray
-        var returnArray = array1.concat(array2);
-        for(var i=0; i<returnArray.length; ++i) {
-            var key = Object.keys(returnArray[i])[0]
-            var obj = returnArray[i][key]
-            var uuid = obj.Courses_uuid
-            for(var j=i+1; j<returnArray.length; ++j) {
-
-                if(uuid == returnArray[j][Object.keys(returnArray[j])[0]].Courses_uuid)
-                    returnArray.splice(j--, 1);
-            }
-        }
-        return returnArray;
     }
 
     public static sort(input: any[], keyword: string){ //keyword: courses_avg, apple_uuid etc..

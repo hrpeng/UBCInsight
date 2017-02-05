@@ -10,7 +10,6 @@ import {InsightResponse, QueryRequest} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
-import QPHelper from "../src/controller/QPHelper";
 
 describe("AddSpec", function () {
 
@@ -92,9 +91,9 @@ describe("AddSpec", function () {
 
     it("XXX", function () {
         return isf.performQuery(bQuery).then(function(response : any){
-          //Helper.consoleLog(response)
+          Helper.consoleLog(response)
         }).catch(function(err){
-           // Helper.consoleLog(err)
+           Helper.consoleLog(err)
         })
     })
 
