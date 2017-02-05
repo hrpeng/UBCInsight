@@ -47,6 +47,6 @@ describe("AddSpec", function () {
     })
 
     it("remove", function (){
-        isf.removeDataset('courses')
+        isf.removeDataset('Cour')
     })
 })
