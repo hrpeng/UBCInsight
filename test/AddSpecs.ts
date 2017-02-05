@@ -13,7 +13,7 @@ import {isArray} from "util";
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var content = Helper.encodeZip('./courses.zip');
-    var content0 = Helper.encodeZip('./cour.zip');
+    var content0 = Helper.encodeZip('./cons.zip');
 
     var id = "courses";
 
@@ -42,7 +42,7 @@ describe("AddSpec", function () {
     //     //Helper.consoleLog(addData('1',content0))
     // })
     // it("add", function () {
-    //     isf.addDataset('Cour',content0)
+    //     isf.addDataset('cons',content0)
     //     //Helper.consoleLog(addData('1',content0))
     // })
     //

@@ -24,7 +24,8 @@ export default class Helper {
                 for (let i= 0; i < content.result.length; i++){
                     var jsonCourse: any = {};
                     var section = content.result[i];
-                    if (typeof section === 'object' && section.Section !== "overall"){
+                    //Helper.consoleLog(section)
+                    if (typeof section === 'object'){
                         var dept = id + "_dept"
                         var cid = id + "_id"
                         var sec = id + "_sec"
@@ -77,10 +78,12 @@ export default class Helper {
             for (var i = 1; i < keys.length; i++) {
                 (function (i: any) {
                     zip.file(keys[i]).async("string").then(function (data: any) {
+
                         var json = JSON.parse(data);
                         //parse one course
                         Helper.parseToJson(json, id, jsonCoursesArray); //[{section},{section},{section}]
                         if (i == keys.length - 1) {
+
                             jsonCourses[id] = jsonCoursesArray
                             Helper.onComplete(jsonCourses, id);
                             fulfill(jsonCourses);
@@ -117,7 +120,7 @@ export default class Helper {
 
     public static validate(query : any) {
         if(typeof query !== 'object') {
-            return 'query is not an object';
+            return 'invalid query';
         }
         var where = query['WHERE'];
         var options = query['OPTIONS']
@@ -228,6 +231,7 @@ export default class Helper {
 
         var optionsKeys = Object.keys(options)//[0] //OR AND GT IS NOT etc...
         //console.log(optionsKeys)
+        var fs = require('fs');
         if(!('COLUMNS' in options)){
             return 'absence of COLUMNS in OPTIONS'
         }
@@ -240,14 +244,29 @@ export default class Helper {
                     return 'invalid COLUMNS value'
                 } else {
                     for(var element of options['COLUMNS']){
+                        //console.log(element)
                         if(typeof element !== 'string' || !(element.includes('_'))){
-                            return 'invalid key'
+                            return 'invalid COLUMNS key'
+                        }else{
+                            var id = element.split("_")[0]
+                            try {
+                                fs.accessSync('./' + id);
+                            } catch (e) {
+                                return 'invalid COLUMNS key'
+                            }
                         }
                     }
                 }
-            } else if(key == 'ORDER'){
-                if(typeof options['ORDER'] !== 'string' || !(options['ORDER'].includes('_'))){
-                    return 'invalid key'
+            } else if(key == 'ORDER') {
+                if (typeof options['ORDER'] !== 'string' || !(options['ORDER'].includes('_'))) {
+                    return 'invalid ORDER key'
+                } else {
+                    var orderId = options['ORDER'].split("_")[0]
+                    try {
+                        fs.accessSync('./' + orderId);
+                    } catch (e) {
+                        return 'invalid ORDER key'
+                    }
                 }
             } else if(key == 'FORM'){
                 if(options['FORM'] != 'TABLE'){

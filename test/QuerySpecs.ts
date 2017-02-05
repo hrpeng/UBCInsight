@@ -88,7 +88,7 @@ describe("AddSpec", function () {
     });
 
     it("XXX", function () {
-        return isf.performQuery(bQuery).then(function(response : any){
+        return isf.performQuery(aQuery).then(function(response : any){
           //Helper.consoleLog(response)
         }).catch(function(err){
            Helper.consoleLog(err)

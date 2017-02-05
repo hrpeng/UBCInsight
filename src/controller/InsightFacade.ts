@@ -16,7 +16,7 @@ export default class InsightFacade implements IInsightFacade {
     addDataset(id: string, content: string): Promise<InsightResponse> {
         return new Promise(function (fulfill, reject) {
             Helper.exist('./' + id).then(function(b:any){
-                Helper.consoleLog(b)
+                //Helper.consoleLog(b)
                 if(b){
                     //console.log(b)
                     Helper.parseData(id, content).then(function(jsc:any){
@@ -89,7 +89,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
-                console.log(final)
+                console.log(final.length)
                 var is: InsightResponse = {
                     code: 200,
                     body: { 'render': 'TABLE', 'result': final}
