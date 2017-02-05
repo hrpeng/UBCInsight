@@ -32,7 +32,7 @@ describe("AddSpec", function () {
         }).catch(function (err) {
         // Log.test('Error: ' + err);
         // expect.fail();
-        })*/
+    //     })*/
     it("add", function () {
         isf.addDataset('apple',content)
         //Helper.consoleLog(addData('1',content0))
@@ -41,8 +41,12 @@ describe("AddSpec", function () {
         isf.addDataset('Courses',content)
         //Helper.consoleLog(addData('1',content0))
     })
+    it("add", function () {
+        isf.addDataset('Cour',content0)
+        //Helper.consoleLog(addData('1',content0))
+    })
 
-    // it("remove", function (){
-    //     isf.removeDataset('courses')
-    // })
+    it("remove", function (){
+        isf.removeDataset('courses')
+    })
 })

@@ -17,15 +17,15 @@ describe("AddSpec", function () {
     var aQuery: QueryRequest = {
         "WHERE":{
             "GT":{
-                "apple_avg": 97
+                "apple_audit": 10
             }
         },
         "OPTIONS":{
             "COLUMNS":[
                 "apple_dept",
-                "apple_avg"
+                "apple_audit"
             ],
-            "ORDER":"apple_avg",
+            "ORDER":"apple_audit",
             "FORM":"TABLE"
         }
     }
@@ -48,8 +48,6 @@ describe("AddSpec", function () {
     }
     var bQuery: QueryRequest = {
         "WHERE":{
-            "OR":[
-                {
                      "AND":[
                          {
                              "GT":{
@@ -57,26 +55,26 @@ describe("AddSpec", function () {
                              }
                          },
                          {
-                              "IS":{
-                                  "Courses_dept":"adhe"
-                              }
+                             "NOT": {
+                                 "IS": {
+                                     "Courses_instructor": "e"
+                                 }
+                             }
                          },
+                         {
+                             "LT": {
+                                 'Courses_avg': 97
+                             }
+                         }
                     ]
-               },
-                 {
-                     "EQ":{
-                         "Courses_avg":95
-                     }
-                 }
-             ]
         },
         "OPTIONS":{
             "COLUMNS":[
                 "Courses_dept",
                 "Courses_id",
-                "Courses_avg"
+                "Courses_instructor"
             ],
-            "ORDER":"Courses_avg",
+            "ORDER":"Courses_id",
             "FORM":"TABLE"
         }
     }
@@ -91,7 +89,7 @@ describe("AddSpec", function () {
 
     it("XXX", function () {
         return isf.performQuery(bQuery).then(function(response : any){
-          Helper.consoleLog(response)
+          //Helper.consoleLog(response)
         }).catch(function(err){
            Helper.consoleLog(err)
         })

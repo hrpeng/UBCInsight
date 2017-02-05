@@ -16,6 +16,7 @@ export default class Query{
         for(var section of array_o){
             var key = Object.keys(section)[0]
             var obj = section[key]
+            //console.log(obj)
             //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
             var whereKey :any = Object.keys(query['WHERE'])[0];
             var whereValue = query['WHERE'][whereKey]
@@ -67,7 +68,9 @@ export default class Query{
     }
 
     public static NOTfunction(section: any, whereValue:any): boolean{
-        var meetCon = Query.isFunction(section,whereValue)
+        var keyword = Object.keys(whereValue)[0]
+        var keyValue = whereValue[keyword]
+        var meetCon = Query.meetCondition(keyword,keyValue,section)
         return !meetCon
     }
 
@@ -89,7 +92,10 @@ export default class Query{
         var keyword = Object.keys(whereValue)[0]  //id_dept, id_instructor etc...
         var keyValue = whereValue[keyword]         //'cpsc', 'Reid Holmes' etc...
         var myValue = section[keyword]
-        return myValue == keyValue
+        if(typeof myValue === 'undefined'){
+            return false
+        }
+        return myValue.includes(keyValue)
     }
     public static ANDfunction(section: any, whereValue:any): boolean{
         for (var arg of whereValue){

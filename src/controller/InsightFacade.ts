@@ -39,7 +39,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             }).catch(function(e:any){
                 var is : InsightResponse = {
-                    code: 204,
+                    code: 400,
                     body:{"error": e}
                 }
                 reject(is);
