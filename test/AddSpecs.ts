@@ -13,7 +13,7 @@ import {isArray} from "util";
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var content = Helper.encodeZip('./courses.zip');
-    var content0 = Helper.encodeZip('./engl.zip');
+    var content0 = Helper.encodeZip('./cour.zip');
 
     var id = "courses";
 
@@ -25,33 +25,40 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-       /*return isf.addDataset('cour',content).then(function (parsed: InsightResponse) {
-        Helper.consoleLog(parsed)
-        //Log.test('Value: ' + value);
-        // expect(value).to.equal(6);
-        }).catch(function (err) {
-        // Log.test('Error: ' + err);
-        // expect.fail();
-    //     })*/
-    // it("add", function () {
-    //     isf.addDataset('apple',content).then(function(result:any){
-    //         Helper.consoleLog(result)
-    //     }).catch(function (err) {
-    //         Helper.consoleLog(err)
-    //         // expect.fail();
-    //     })
+    /*return isf.addDataset('cour',content).then(function (parsed: InsightResponse) {
+     Helper.consoleLog(parsed)
+     //Log.test('Value: ' + value);
+     // expect(value).to.equal(6);
+     }).catch(function (err) {
+     // Log.test('Error: ' + err);
+     // expect.fail();
+     //     })*/
+    it("add", function () {
+        isf.addDataset('apple',content)
         //Helper.consoleLog(addData('1',content0))
-   // })
+    })
+    it("add", function () {
+        isf.addDataset('apple',content)
+        //Helper.consoleLog(addData('1',content0))
+    })
+    it("add", function () {
+        isf.addDataset('null', null);
+        //Helper.consoleLog(addData('1',content0))
+    })
     it("add", function () {
         isf.addDataset('Courses',content)
         //Helper.consoleLog(addData('1',content0))
     })
-    // it("add", function () {
-    //     isf.addDataset('engl',content0)
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
-    //
-    // it("remove", function (){
-    //     isf.removeDataset('Cour')
-    // })
+    it("add", function () {
+        isf.addDataset('cons',content0)
+        //Helper.consoleLog(addData('1',content0))
+    })
+    it("remove", function () {
+        return isf.removeDataset('shit').then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
+    })
+
 })

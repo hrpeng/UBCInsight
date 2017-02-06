@@ -62,9 +62,9 @@ export default class Helper {
         return array;
     }
 
-    public static onComplete(jsonCourses : any, id:string){
-
-    }
+    // public static onComplete(jsonCourses : any, id:string){
+    //
+    // }
 
     public static exist(path:string) : Promise<boolean>{
         return new Promise(function(resolve, reject) {
@@ -135,9 +135,9 @@ export default class Helper {
     }
 
     public static validate(query : any) {
-        if(typeof query !== 'object') {
-            return 'invalid query';
-        }
+        // if(typeof query !== 'object') {
+        //     return 'invalid query';
+        // }
         var where = query['WHERE'];
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
