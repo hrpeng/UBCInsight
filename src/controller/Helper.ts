@@ -119,9 +119,9 @@ export default class Helper {
     }
 
     public static validate(query : any) {
-        if(typeof query !== 'object') {
-            return 'invalid query';
-        }
+        // if(typeof query !== 'object') {
+        //     return 'invalid query';
+        // }
         var where = query['WHERE'];
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
