@@ -18,14 +18,18 @@ export default class Helper {
         return text;
     };
 
-    public static parseToJson(content: any, id: string, array : Object[]): any {
+    public static parseToJson(content: any, id: string): any {
+        var array : any[] = []
         if (typeof content === 'object'){
             if (isArray(content.result)){
+                //Helper.consoleLog(content)
+                //has 112
                 for (let i= 0; i < content.result.length; i++){
-                    var jsonCourse: any = {};
+                    //var jsonCourse: any = {};
                     var section = content.result[i];
-                    //Helper.consoleLog(section)
+                    //has 112 so far
                     if (typeof section === 'object'){
+                        //Helper.consoleLog(content.result.length)
                         var dept = id + "_dept"
                         var cid = id + "_id"
                         var sec = id + "_sec"
@@ -40,25 +44,26 @@ export default class Helper {
                         var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
                             [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
                             [audit]: section.Audit, [year]: section.Year, [uuid]: section['id'].toString()};
-                        var property = section.Subject + section.Course;
-                        jsonCourse[property] = jsonSection;
-                        array.push(jsonCourse);
+                        //Helper.consoleLog(jsonSection)
+                        //has 112 but printed after everything else
+                        //var property = section.Subject + section.Course;
+                        //Helper.consoleLog(property)
+                        //has 112
+                        //jsonCourse[property] = jsonSection;
+                        array.push(jsonSection);
+                        //Helper.consoleLog(array)
                     }
                 }
-            } else {
-                // throw some kind of error specifying invalid course?
+                //Helper.consoleLog(array)
+                //has 112 here
             }
-        } else {
-            //throw some error Invalid JSON Object
         }
+        //Helper.consoleLog(array)
         return array;
     }
 
     public static onComplete(jsonCourses : any, id:string){
-        const fs = require('fs');
-        fs.writeFile(id, JSON.stringify(jsonCourses), (err : any) => {
-            if (err) throw err;
-        });
+
     }
 
     public static exist(path:string) : Promise<boolean>{
@@ -74,35 +79,46 @@ export default class Helper {
     public static forLoop(keys: any, id: any, zip:any){
         return new Promise(function(fulfill,reject) {
             var jsonCoursesArray: any[] = [];
-            var jsonCourses: any = {};
-            for (var i = 1; i < keys.length; i++) {
-                (function (i: any) {
-                    zip.file(keys[i]).async("string").then(function (data: any) {
-
-                        var json = JSON.parse(data);
-                        //parse one course
-                        Helper.parseToJson(json, id, jsonCoursesArray); //[{section},{section},{section}]
-                        if (i == keys.length - 1) {
-
-                            jsonCourses[id] = jsonCoursesArray
-                            Helper.onComplete(jsonCourses, id);
-                            fulfill(jsonCourses);
-                        }
-                    })
-                })(i)
+            var promiseList: any[] = [];
+            for (var i = 1; i < keys.length; i++) { //length = 5945
+                var aPromise = zip.file(keys[i]).async("string")
+                promiseList.push(aPromise)
+                //Helper.consoleLog(promiseList)
             }
+
+            Promise.all(promiseList).then(function (data: any) {
+                //Helper.consoleLog(data)
+                for(var d of data) {
+                    var json = JSON.parse(d);//has 112
+                    //Helper.consoleLog(json)
+                    //parse one course
+                    jsonCoursesArray = jsonCoursesArray.concat(Helper.parseToJson(json, id)); //[{section},{section},{section}]
+                }
+                //jsonCourses[id] = jsonCoursesArray
+
+                fulfill(jsonCoursesArray);
+            }).catch(function(err:any){
+                reject(err)
+            })
         })
     }
+
 
     public static parseData(id:any,content:any){
         "use strict";
         var JSZip = require('jszip');
         var keys: any[] = [];
         return new Promise(function (fulfill, reject) {
-            var promise = JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
+            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                 var files = zip['files'];
                 keys = Object.keys(files)
-                Helper.forLoop(keys,id,zip).then(function(jsonCourses:any){
+                var jsonCourses: any = {};
+                Helper.forLoop(keys,id,zip).then(function(jsonArray:any){
+                    jsonCourses[id] = jsonArray
+                    const fs = require('fs');
+                    fs.writeFile(id, JSON.stringify(jsonCourses), (err : any) => {
+                        if (err) throw err;
+                    });
                     fulfill(jsonCourses)
                 }).catch(function(e:any) {
                     reject(e)

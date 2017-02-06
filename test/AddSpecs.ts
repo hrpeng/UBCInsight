@@ -13,7 +13,7 @@ import {isArray} from "util";
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var content = Helper.encodeZip('./courses.zip');
-    var content0 = Helper.encodeZip('./cons.zip');
+    var content0 = Helper.encodeZip('./engl.zip');
 
     var id = "courses";
 
@@ -34,15 +34,20 @@ describe("AddSpec", function () {
         // expect.fail();
     //     })*/
     // it("add", function () {
-    //     isf.addDataset('apple',content)
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
+    //     isf.addDataset('apple',content).then(function(result:any){
+    //         Helper.consoleLog(result)
+    //     }).catch(function (err) {
+    //         Helper.consoleLog(err)
+    //         // expect.fail();
+    //     })
+        //Helper.consoleLog(addData('1',content0))
+   // })
+    it("add", function () {
+        isf.addDataset('Courses',content)
+        //Helper.consoleLog(addData('1',content0))
+    })
     // it("add", function () {
-    //     isf.addDataset('Courses',content)
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
-    // it("add", function () {
-    //     isf.addDataset('cons',content0)
+    //     isf.addDataset('engl',content0)
     //     //Helper.consoleLog(addData('1',content0))
     // })
     //

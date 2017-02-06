@@ -16,16 +16,17 @@ describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var aQuery: QueryRequest = {
         "WHERE":{
-            "GT":{
-                "apple_audit": 10
+            "IS":{
+                "apple_instructor": "mahon, peter"
             }
         },
         "OPTIONS":{
             "COLUMNS":[
                 "apple_dept",
-                "apple_audit"
+                "apple_instructor",
+                "apple_avg"
             ],
-            "ORDER":"apple_audit",
+            "ORDER":"apple_avg",
             "FORM":"TABLE"
         }
     }
@@ -79,6 +80,7 @@ describe("AddSpec", function () {
         }
     }
 
+
     beforeEach(function () {
         isf = new InsightFacade();
     });
@@ -87,29 +89,29 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-          //Helper.consoleLog(response)
+    // it("XXX", function () {
+    //     return isf.performQuery(aQuery).then(function(response : any){
+    //       //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //        Helper.consoleLog(err)
+    //     })
+    // })
+    //
+    it("YYY", function () {
+        return isf.performQuery(NOTaQuery).then(function(response : any){
+            //Helper.consoleLog(response)
         }).catch(function(err){
-           Helper.consoleLog(err)
+            Helper.consoleLog(err)
         })
     })
-    //
-    // it("YYY", function () {
-    //     return isf.performQuery(NOTaQuery).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         Helper.consoleLog(err)
-    //     })
-    // })
-    //
-    // it("III", function () {
-    //     return isf.performQuery(aQuery).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         Helper.consoleLog(err)
-    //     })
-    // })
+
+    it("III", function () {
+        return isf.performQuery(bQuery).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
+    })
 
 
     it("YYY", function () {

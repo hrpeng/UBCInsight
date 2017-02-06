@@ -28,12 +28,13 @@ export default class InsightFacade implements IInsightFacade {
                         fulfill(is);
                     })
                 } else {
+                    //Helper.consoleLog('Hi')
                     Helper.parseData(id, content).then(function(jsc:any){
                         var is : InsightResponse = {
                             code: 204,
                             body:{jsc}
                         }
-                        Helper.consoleLog(is)
+                        //Helper.consoleLog(is)
                         fulfill(is);
                     })
                 }
@@ -89,6 +90,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
+                console.log(final)
                 console.log(final.length)
                 var is: InsightResponse = {
                     code: 200,
