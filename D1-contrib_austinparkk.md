@@ -1,4 +1,4 @@
-Final Test Pass Rate: 71%
+Final Test Pass Rate: 64%
 ======
 Final Coverage Rate: 94%
 ======
