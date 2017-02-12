@@ -26,6 +26,12 @@ export default class InsightFacade implements IInsightFacade {
                         }
                         //Helper.consoleLog(is)
                         fulfill(is);
+                    }).catch(function(e:any){
+                        var is : InsightResponse = {
+                            code: 400,
+                            body:{"error": e}
+                        }
+                        reject(is);
                     })
                 } else {
                     Helper.parseData(id, content).then(function(jsc:any){
@@ -33,11 +39,18 @@ export default class InsightFacade implements IInsightFacade {
                             code: 204,
                             body:{jsc}
                         }
-                        Helper.consoleLog(is)
+                        //Helper.consoleLog(is)
                         fulfill(is);
+                    }).catch(function(e:any){
+                        var is : InsightResponse = {
+                            code: 400,
+                            body:{"error": e}
+                        }
+                        reject(is);
                     })
                 }
             }).catch(function(e:any){
+                console.log("hi")
                 var is : InsightResponse = {
                     code: 400,
                     body:{"error": e}
@@ -89,7 +102,8 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
-                console.log(final.length)
+                //console.log(final)
+                //console.log(final.length)
                 var is: InsightResponse = {
                     code: 200,
                     body: { 'render': 'TABLE', 'result': final}

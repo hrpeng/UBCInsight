@@ -183,8 +183,8 @@ describe("AddSpec", function () {
             "AND": [
                 {
                     "IS":{
-                        "Courses_dept": "*ps*"
-                    }
+                    "Courses_dept": "*ps*"
+                     }
                 },
                 {
                     "GT":{
@@ -438,30 +438,41 @@ describe("AddSpec", function () {
 
     var aQuery: QueryRequest = {
         "WHERE":{
-            "GT":{
-                "apple_audit": 10
+            "IS":{
+                "Courses_dept": "frst"
             }
         },
         "OPTIONS":{
             "COLUMNS":[
-                "apple_dept",
-                "apple_audit"
+                "Courses_dept",
+                "Courses_instructor",
+                "Courses_id",
+                "Courses_uuid"
             ],
-            "ORDER":"apple_audit",
+            // "ORDER":"Courses_uuid",
             "FORM":"TABLE"
         }
     }
     var NOTaQuery: QueryRequest = {
         "WHERE": {
-            "NOT" : {
-                "LT": {
-                    "Courses_avg": 95
+            "AND": [
+                {
+                    "IS": {
+                        "Courses_dept": "frst"
+                    }
+                },
+                {
+                    "NOT": {
+                        "IS": {
+                            "Courses_instructor": "*john*"
+                        }
+                    }
                 }
-            }
+            ]
         },
         "OPTIONS": {
             "COLUMNS": [
-                "Courses_dept",
+                "Courses_instructor",
                 "Courses_avg"
             ],
             "ORDER": "Courses_avg",
@@ -554,13 +565,37 @@ describe("AddSpec", function () {
         })
     })
     it("Coverage EQ", function () {
-        isf.performQuery(badQuery);
-        isf.performQuery(badQuery1);
-        isf.performQuery(badQuery2);
+        isf.performQuery(badQuery).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
+        isf.performQuery(badQuery1).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
+        isf.performQuery(badQuery2).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
         //isf.performQuery(badQuery3);
-        isf.performQuery(badQuery4);
-        isf.performQuery(badQuery5);
-        isf.performQuery(badQuery6);
+        isf.performQuery(badQuery4).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
+        isf.performQuery(badQuery5).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
+        isf.performQuery(badQuery6).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            //Helper.consoleLog(err)
+        });
 
     })
     it("Coverage OP", function () {
@@ -576,19 +611,38 @@ describe("AddSpec", function () {
 
     })
 
-    it("Coverage IS & or", function () {
+    it("Coverage IS", function () {
         isf.performQuery(badQueryIS);
         isf.performQuery(badQueryIS1);
         isf.performQuery(badQueryIS2);
         isf.performQuery(badQueryIS3);
         isf.performQuery(badQueryIS4);
-        //isf.performQuery(badQueryIS5);
-        //isf.performQuery(badQueryIS6);
+        // isf.performQuery(badQueryIS5);
+        // isf.performQuery(badQueryIS6)
         // isf.performQuery(badQueryIS7);
-        isf.performQuery(badQueryor);
-        isf.performQuery(badQueryor1);
-        isf.performQuery(badQueryor3);
-        isf.performQuery(finalquery);
+    })
+
+    it("Coverage OR", function () {
+        isf.performQuery(badQueryor).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
+        isf.performQuery(badQueryor1).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
+        isf.performQuery(badQueryor3).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
+        isf.performQuery(finalquery).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
     })
 
     it("NON-SENSE Coverage", function () {
@@ -600,11 +654,11 @@ describe("AddSpec", function () {
         //Server.echo();
         server.stop();
 
-        Helper.consoleLog("asdf");
+        //Helper.consoleLog("asdf");
     })
 
     it("remove", function (){
         isf.removeDataset('apple')
-        isf.removeDataset('cons')
+        isf.removeDataset('noData')
     })
 })

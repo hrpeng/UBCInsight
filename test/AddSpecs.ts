@@ -14,6 +14,8 @@ describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var content = Helper.encodeZip('./courses.zip');
     var content0 = Helper.encodeZip('./cour.zip');
+    var contentND = Helper.encodeZip('./noData.zip');
+    var contentFND = Helper.encodeZip('./fileNoData.zip');
 
     var id = "courses";
 
@@ -33,31 +35,47 @@ describe("AddSpec", function () {
      // Log.test('Error: ' + err);
      // expect.fail();
      //     })*/
-    it("add", function () {
+
+    it("add1", function () {
         isf.addDataset('apple',content)
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
-        isf.addDataset('apple',content)
+    it("add2", function () {
+        isf.addDataset('null', null).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
-        isf.addDataset('null', null);
+    it("add3", function () {
+        isf.addDataset('Courses',content).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
-        isf.addDataset('Courses',content)
-        //Helper.consoleLog(addData('1',content0))
+    it("add4", function () {
+        isf.addDataset('fileNoData',contentFND).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
     })
-    it("add", function () {
-        isf.addDataset('cons',content0)
-        //Helper.consoleLog(addData('1',content0))
+
+    it("add5", function () {
+        isf.addDataset('noData',contentND).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
     })
     it("remove", function () {
         return isf.removeDataset('shit').then(function(response : any){
             //Helper.consoleLog(response)
         }).catch(function(err){
-            Helper.consoleLog(err)
+           // Helper.consoleLog(err)
         })
     })
 
