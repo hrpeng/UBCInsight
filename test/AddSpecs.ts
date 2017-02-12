@@ -14,6 +14,8 @@ describe("AddSpec", function () {
     var isf: InsightFacade = null;
     var content = Helper.encodeZip('./courses.zip');
     var content0 = Helper.encodeZip('./cour.zip');
+    var contentND = Helper.encodeZip('./noData.zip');
+    var contentFND = Helper.encodeZip('./fileNoData.zip');
 
     var id = "courses";
 
@@ -33,10 +35,7 @@ describe("AddSpec", function () {
      // Log.test('Error: ' + err);
      // expect.fail();
      //     })*/
-    it("add", function () {
-        isf.addDataset('apple',content)
-        //Helper.consoleLog(addData('1',content0))
-    })
+
     it("add", function () {
         isf.addDataset('apple',content)
         //Helper.consoleLog(addData('1',content0))
@@ -46,18 +45,25 @@ describe("AddSpec", function () {
         //Helper.consoleLog(addData('1',content0))
     })
     it("add", function () {
-        isf.addDataset('Courses',content)
+        isf.addDataset('Courses',content).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
         //Helper.consoleLog(addData('1',content0))
     })
     it("add", function () {
-        isf.addDataset('cons',content0)
-        //Helper.consoleLog(addData('1',content0))
+        isf.addDataset('fileNoData',contentFND)
+    })
+
+    it("add", function () {
+        isf.addDataset('noData',contentND)
     })
     it("remove", function () {
         return isf.removeDataset('shit').then(function(response : any){
             //Helper.consoleLog(response)
         }).catch(function(err){
-            Helper.consoleLog(err)
+           // Helper.consoleLog(err)
         })
     })
 

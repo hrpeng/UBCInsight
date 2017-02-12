@@ -44,21 +44,11 @@ export default class Helper {
                         var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
                             [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
                             [audit]: section.Audit, [year]: section.Year, [uuid]: section['id'].toString()};
-                        //Helper.consoleLog(jsonSection)
-                        //has 112 but printed after everything else
-                        //var property = section.Subject + section.Course;
-                        //Helper.consoleLog(property)
-                        //has 112
-                        //jsonCourse[property] = jsonSection;
                         array.push(jsonSection);
-                        //Helper.consoleLog(array)
                     }
                 }
-                //Helper.consoleLog(array)
-                //has 112 here
             }
         }
-        //Helper.consoleLog(array)
         return array;
     }
 
@@ -89,13 +79,12 @@ export default class Helper {
             Promise.all(promiseList).then(function (data: any) {
                 //Helper.consoleLog(data)
                 for(var d of data) {
-                    var json = JSON.parse(d);//has 112
-                    //Helper.consoleLog(json)
-                    //parse one course
+                    var json = JSON.parse(d);
                     jsonCoursesArray = jsonCoursesArray.concat(Helper.parseToJson(json, id)); //[{section},{section},{section}]
                 }
-                //jsonCourses[id] = jsonCoursesArray
-
+                if(jsonCoursesArray.length == 0){
+                    reject('zip file with no real data')
+                }
                 fulfill(jsonCoursesArray);
             }).catch(function(err:any){
                 reject(err)
@@ -108,11 +97,15 @@ export default class Helper {
         "use strict";
         var JSZip = require('jszip');
         var keys: any[] = [];
+
         return new Promise(function (fulfill, reject) {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                 var files = zip['files'];
                 keys = Object.keys(files)
                 var jsonCourses: any = {};
+                if(keys.length == 1){
+                    reject('empty zip')
+                }
                 Helper.forLoop(keys,id,zip).then(function(jsonArray:any){
                     jsonCourses[id] = jsonArray
                     const fs = require('fs');
@@ -175,11 +168,6 @@ export default class Helper {
                         } catch (e) {
                             return 'invalid id, dataset has not been PUT'
                         }
-                            // try {
-                            //     Helper.readJSON('./' + idName)
-                            // } catch (err) {
-                            //     return 'invalid id, dataset has not been PUT'
-                            // }
                             var keyvar = key.split("_")[1]
                             if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
                                 return 'invalid MCOMPARISON key'
@@ -187,7 +175,6 @@ export default class Helper {
                                 return 'invalid MCOMPARISON value'
                             }
                             return idName
-
                     }
 
                 case 'IS':
@@ -200,12 +187,6 @@ export default class Helper {
                         } catch (e) {
                             return 'invalid id, dataset has not been PUT'
                         }
-                        // try {
-                        //     Helper.readJSON('./' + id)
-                        // } catch (err) {
-                        //     return 'invalid id, dataset has not been PUT'
-                        // }
-
                         var keyvar = key.split("_")[1]
                         if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
                             return 'invalid MCOMPARISON key'
@@ -278,9 +259,13 @@ export default class Helper {
                     return 'invalid ORDER key'
                 } else {
                     var orderId = options['ORDER'].split("_")[0]
+                    var orderVar = options['ORDER'].split("_")[1] //uuid
                     try {
                         fs.accessSync('./' + orderId);
                     } catch (e) {
+                        return 'invalid ORDER key'
+                    }
+                    if(!(options['COLUMNS'].includes(options['ORDER']))){
                         return 'invalid ORDER key'
                     }
                 }

@@ -26,9 +26,14 @@ export default class InsightFacade implements IInsightFacade {
                         }
                         //Helper.consoleLog(is)
                         fulfill(is);
+                    }).catch(function(e:any){
+                        var is : InsightResponse = {
+                            code: 400,
+                            body:{"error": e}
+                        }
+                        reject(is);
                     })
                 } else {
-                    //Helper.consoleLog('Hi')
                     Helper.parseData(id, content).then(function(jsc:any){
                         var is : InsightResponse = {
                             code: 204,
@@ -36,9 +41,16 @@ export default class InsightFacade implements IInsightFacade {
                         }
                         //Helper.consoleLog(is)
                         fulfill(is);
+                    }).catch(function(e:any){
+                        var is : InsightResponse = {
+                            code: 400,
+                            body:{"error": e}
+                        }
+                        reject(is);
                     })
                 }
             }).catch(function(e:any){
+                console.log("hi")
                 var is : InsightResponse = {
                     code: 400,
                     body:{"error": e}
