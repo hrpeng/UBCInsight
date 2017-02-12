@@ -232,10 +232,10 @@ export default class Helper {
         //console.log(optionsKeys)
         var fs = require('fs');
         if(!('COLUMNS' in options)){
-            return 'absence of COLUMNS in OPTIONS'
+            return 'invalid OPTIONS: absence of COLUMNS in OPTIONS'
         }
         if(!('FORM' in options)){
-            return 'absence of FORM in OPTIONS'
+            return 'invalid OPTIONS: absence of FORM in OPTIONS'
         }
         for(var key of optionsKeys){
             if(key == 'COLUMNS'){
@@ -261,14 +261,13 @@ export default class Helper {
                     return 'invalid ORDER key'
                 } else {
                     var orderId = options['ORDER'].split("_")[0]
-                    var orderVar = options['ORDER'].split("_")[1] //uuid
                     try {
                         fs.accessSync('./' + orderId);
                     } catch (e) {
-                        return 'invalid ORDER key'
+                        return 'invalid id, dataset has not been PUT'
                     }
                     if(!(options['COLUMNS'].includes(options['ORDER']))){
-                        return 'invalid ORDER key'
+                        return 'invalid ORDER key: not included in COLUMNS'
                     }
                 }
             } else if(key == 'FORM'){

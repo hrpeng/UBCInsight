@@ -9,27 +9,30 @@ import {type} from "os";
 
 export default class Query{
 
-    public static primer(query:QueryRequest, id:string){
+    public static primer(query:QueryRequest, id:string) {
         var json = Helper.readJSON('./' + id)
         var array_o = json[id]
-        var whereFinal:any[] = []
-        for(var section of array_o){
+        var whereFinal: any[] = []
+        for (var section of array_o) {
             //var key = Object.keys(section)[0]
             //var obj = section[key]
             //console.log(obj)
             //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
-            var whereKey :any = Object.keys(query['WHERE'])[0];
+            var whereKey: any = Object.keys(query['WHERE'])[0];
             var whereValue = query['WHERE'][whereKey]
-            if(Query.meetCondition(whereKey, whereValue, section)){ //meet condition?
+            if (Query.meetCondition(whereKey, whereValue, section)) { //meet condition?
                 whereFinal.push(section)
             }
         }
         var columnKeywords = query.OPTIONS['COLUMNS']
-        var columnOutput = Helper.columnsPick(whereFinal,columnKeywords)
-        var orderKeyword = query.OPTIONS['ORDER']
-        var final = Helper.sort(columnOutput,orderKeyword)
-        //console.log(final);
-        return final
+        var columnOutput = Helper.columnsPick(whereFinal, columnKeywords)
+        if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
+            return columnOutput;
+        } else {
+            var orderKeyword = query.OPTIONS['ORDER']
+            var final = Helper.sort(columnOutput, orderKeyword)
+            return final
+        }
     }
 
     public static meetCondition(whereKey: String, whereValue: any, section: any): boolean{
