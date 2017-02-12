@@ -36,15 +36,19 @@ describe("AddSpec", function () {
      // expect.fail();
      //     })*/
 
-    it("add", function () {
+    it("add1", function () {
         isf.addDataset('apple',content)
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
-        isf.addDataset('null', null);
+    it("add2", function () {
+        isf.addDataset('null', null).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        });
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
+    it("add3", function () {
         isf.addDataset('Courses',content).then(function(response : any){
             //Helper.consoleLog(response)
         }).catch(function(err){
@@ -52,12 +56,20 @@ describe("AddSpec", function () {
         })
         //Helper.consoleLog(addData('1',content0))
     })
-    it("add", function () {
-        isf.addDataset('fileNoData',contentFND)
+    it("add4", function () {
+        isf.addDataset('fileNoData',contentFND).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
     })
 
-    it("add", function () {
-        isf.addDataset('noData',contentND)
+    it("add5", function () {
+        isf.addDataset('noData',contentND).then(function(response : any){
+            //Helper.consoleLog(response)
+        }).catch(function(err){
+            // Helper.consoleLog(err)
+        })
     })
     it("remove", function () {
         return isf.removeDataset('shit').then(function(response : any){

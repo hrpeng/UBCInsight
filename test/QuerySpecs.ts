@@ -541,121 +541,121 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(bQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-
-    it("YYY", function () {
-        return isf.performQuery(NOTaQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-
-    it("III", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-            Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-    it("Coverage EQ", function () {
-        isf.performQuery(badQuery);
-        isf.performQuery(badQuery1);
-        isf.performQuery(badQuery2);
-        //isf.performQuery(badQuery3);
-        isf.performQuery(badQuery4);
-        isf.performQuery(badQuery5);
-        isf.performQuery(badQuery6);
-
-    })
-    it("Coverage OP", function () {
-        isf.performQuery(badQueryOP);
-        isf.performQuery(badQueryOP1);
-        isf.performQuery(badQueryOP2);
-        isf.performQuery(badQueryOP3);
-        isf.performQuery(badQueryOP4);
-        isf.performQuery(badQueryOP5);
-        isf.performQuery(badQueryOP6);
-        isf.performQuery(badQueryOP7);
-        isf.performQuery(badQueryOP8);
-
-    })
-
-    it("Coverage IS & or", function () {
-        isf.performQuery(badQueryIS).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryIS1).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryIS2).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryIS3).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryIS4).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryIS5).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        //isf.performQuery(badQueryIS6)
-       // isf.performQuery(badQueryIS7);
-        isf.performQuery(badQueryor).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryor1).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(badQueryor3).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-        isf.performQuery(finalquery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            // Helper.consoleLog(err)
-        });
-    })
-
-    it("NON-SENSE Coverage", function () {
-        Log.info("asdf");
-        Log.warn("asdf");
-        Log.error("cool");
-        var server = new Server(300);
-        server.start();
-        //Server.echo();
-        server.stop();
-
-        //Helper.consoleLog("asdf");
-    })
-
-    it("remove", function (){
-        isf.removeDataset('apple')
-        isf.removeDataset('noData')
-    })
+    // it("XXX", function () {
+    //     return isf.performQuery(bQuery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
+    //
+    // it("YYY", function () {
+    //     return isf.performQuery(NOTaQuery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
+    //
+    // it("III", function () {
+    //     return isf.performQuery(aQuery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         //Helper.consoleLog(err)
+    //     })
+    // })
+    // it("Coverage EQ", function () {
+    //     isf.performQuery(badQuery);
+    //     isf.performQuery(badQuery1);
+    //     isf.performQuery(badQuery2);
+    //     //isf.performQuery(badQuery3);
+    //     isf.performQuery(badQuery4);
+    //     isf.performQuery(badQuery5);
+    //     isf.performQuery(badQuery6);
+    //
+    // })
+    // it("Coverage OP", function () {
+    //     isf.performQuery(badQueryOP);
+    //     isf.performQuery(badQueryOP1);
+    //     isf.performQuery(badQueryOP2);
+    //     isf.performQuery(badQueryOP3);
+    //     isf.performQuery(badQueryOP4);
+    //     isf.performQuery(badQueryOP5);
+    //     isf.performQuery(badQueryOP6);
+    //     isf.performQuery(badQueryOP7);
+    //     isf.performQuery(badQueryOP8);
+    //
+    // })
+    //
+    // it("Coverage IS & or", function () {
+    //     isf.performQuery(badQueryIS).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS1).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS2).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS3).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS4).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS5).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryIS6)
+    //    // isf.performQuery(badQueryIS7);
+    //     isf.performQuery(badQueryor).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryor1).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(badQueryor3).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    //     isf.performQuery(finalquery).then(function(response : any){
+    //         //Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         // Helper.consoleLog(err)
+    //     });
+    // })
+    //
+    // it("NON-SENSE Coverage", function () {
+    //     Log.info("asdf");
+    //     Log.warn("asdf");
+    //     Log.error("cool");
+    //     var server = new Server(300);
+    //     server.start();
+    //     //Server.echo();
+    //     server.stop();
+    //
+    //     //Helper.consoleLog("asdf");
+    // })
+    //
+    // it("remove", function (){
+    //     isf.removeDataset('apple')
+    //     isf.removeDataset('noData')
+    // })
 })

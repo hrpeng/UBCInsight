@@ -93,7 +93,7 @@ export default class Helper {
     }
 
 
-    public static parseData(id:any,content:any){
+    public static parseData(id:any,content:any) : Promise<Object>{
         "use strict";
         var JSZip = require('jszip');
         var keys: any[] = [];
@@ -116,6 +116,8 @@ export default class Helper {
                 }).catch(function(e:any) {
                     reject(e)
                 })
+            }).catch(function(e:any){
+                reject('invalid zip file')
             })
         })
     }
