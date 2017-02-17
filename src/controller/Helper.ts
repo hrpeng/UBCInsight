@@ -276,9 +276,6 @@ export default class Helper {
                 }
             }
         }
-        // var whereValue = where[whereKey]    // value of OR NOT etc...
-        // var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
-        // var value = whereValue[key]   //97 cpsc etc..
         return 'valid'
     }
 
@@ -312,7 +309,6 @@ export default class Helper {
     }
 
     public static columnsPick(input: any[], keywords: any[]){
-
         var newArray : any[] = [];
         for(var section of input){
             var newColumns : any = {}
@@ -322,7 +318,5 @@ export default class Helper {
             newArray.push(newColumns)
         }
         return newArray
-
     }
-
-    }
+}

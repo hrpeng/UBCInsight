@@ -14,9 +14,6 @@ export default class Query{
         var array_o = json[id]
         var whereFinal: any[] = []
         for (var section of array_o) {
-            //var key = Object.keys(section)[0]
-            //var obj = section[key]
-            //console.log(obj)
             //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
             var whereKey: any = Object.keys(query['WHERE'])[0];
             var whereValue = query['WHERE'][whereKey]
