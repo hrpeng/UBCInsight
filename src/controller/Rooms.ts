@@ -48,11 +48,15 @@ export default class Rooms {
                     var trees: any[] = [];
                     for (var node of tbody['childNodes']) {
                         if (node['nodeName'] == 'tr') {
-                            trees.push(node)
+                            // var path = Rooms.getPath(node)
+                            // trees.push(path)
+                            var building = Rooms.parseBuilding(node)
+
                         }
                     }
                     //console.log(trees)
                     fulfill (trees);
+                    //fulfill(path)
                 }).catch(function (err: any) {
                     //error handling
                 })
@@ -108,9 +112,10 @@ export default class Rooms {
         return bsm
     }
 
-    public static getPaths(trees: any){
-        var array :any[] = [];
-        for(var tree of trees) {
+    // not used anymore
+    public static getPath(tree: any){
+        //var array :any[] = [];
+        //for(var tree of trees) {
             var child = tree['childNodes']  // childNodes of ALRD
             for (var node of child) {
                 var attrs = node['attrs']
@@ -130,8 +135,62 @@ export default class Rooms {
                     var path = attr['value']
                 }
             }
-            array.push(path)
+            //array.push(path)
+        //}
+        //return array
+        return path
+    }
+
+    public static parseBuilding(tree: any){
+        var room:any = {}
+        for (var node of tree['childNodes']) {
+            var attrs = node['attrs']
+            if (typeof attrs === 'object' && attrs.length != 0) {
+
+                if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-code') {
+                    var rooms_shortname = node['childNodes'][0]['value']
+                    room['room_shortname'] = rooms_shortname.trim()
+                }else if(attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title'){
+                    for(var cNode of node['childNodes']){
+                        if (cNode['nodeName'] == 'a'){
+                            for (var attr of cNode['attrs']) {
+                                if (attr['name'] == 'href') {
+                                    var path = attr['value'] //  path is here <-----------------
+                                }
+                            }
+                            var rooms_fullname = cNode['childNodes'][0]['value']
+                            room['room_fullname'] = rooms_fullname
+                        }
+                    }
+                }else if(attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-address'){
+                    var rooms_address = node['childNodes'][0]['value']
+                    room['room_address'] = rooms_address.trim()
+                    var encodedAds = encodeURI(rooms_address)
+                    var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'//'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds
+                    var http = require('http')
+                    // geocoding that does not work
+                    // return new Promise(function (fulfill, reject) {
+                    //
+                    //     var aPromise = new Promise(function (resolve, reject) {
+                    //         http.get(request, function (res: any) {
+                    //             Helper.consoleLog('Hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                    //             resolve(res)
+                    //         })
+                    //     })
+                    //     var a = aPromise.then(function (r: any) {
+                    //         Helper.consoleLog('Hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                    //
+                    //         return r
+                    //     })
+                    //     //Helper.consoleLog(a)
+                    //     fulfill(a)
+                    //
+                    // })
+
+                }
+            }
         }
-        return array
+        //Helper.consoleLog(room)
+        //console.log(bCode)
     }
 }

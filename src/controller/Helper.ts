@@ -22,14 +22,10 @@ export default class Helper {
         var array : any[] = []
         if (typeof content === 'object'){
             if (isArray(content.result)){
-                //Helper.consoleLog(content)
-                //has 112
                 for (let i= 0; i < content.result.length; i++){
-                    //var jsonCourse: any = {};
                     var section = content.result[i];
                     //has 112 so far
                     if (typeof section === 'object'){
-                        //Helper.consoleLog(content.result.length)
                         var dept = id + "_dept"
                         var cid = id + "_id"
                         var sec = id + "_sec"
@@ -51,10 +47,6 @@ export default class Helper {
         }
         return array;
     }
-
-    // public static onComplete(jsonCourses : any, id:string){
-    //
-    // }
 
     public static exist(path:string) : Promise<boolean>{
         return new Promise(function(resolve, reject) {

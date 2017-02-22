@@ -557,13 +557,13 @@ describe("AddSpec", function () {
     //     })
     // })
     //
-    it("III", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-            Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+    // it("III", function () {
+    //     return isf.performQuery(aQuery).then(function(response : any){
+    //         Helper.consoleLog(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
     // it("Coverage EQ", function () {
     //     isf.performQuery(badQuery).then(function(response : any){
     //         //Helper.consoleLog(response)
