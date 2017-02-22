@@ -10,6 +10,7 @@ import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
 import Rooms from "../src/controller/Rooms";
+import roomObject from "../src/controller/Rooms";
 
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
@@ -83,6 +84,7 @@ describe("AddSpec", function () {
 
     it("rooms", function () {
         Rooms.readIndex(room).then(function(trees:any){
+            var roomsArray:roomObject[];
             var paths = Rooms.getPaths(trees)
             "use strict";
             var JSZip = require('jszip');
@@ -91,7 +93,8 @@ describe("AddSpec", function () {
                 //Helper.consoleLog(zip.file(paths[1].substring(2)))
                 var aPromise = zip.file(paths[1].substring(2)).async("string").then(function(building:any){
                     //parse a building
-                    var section = Rooms.getPageSection(building)
+                    var section = Rooms.getPageSection(building);
+                    //console.log(section);
                     for(var node of section['childNodes']){
                         if(node['nodeName'] == 'div'){
                             var view = node;
@@ -105,6 +108,7 @@ describe("AddSpec", function () {
                             }
                             if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-footer') {
                                 var roomsInfo = node
+                                Rooms.footer(roomsInfo);
                             }
                         }
                     }

@@ -7,6 +7,15 @@ import {isArray} from "util";
 import {stringify} from "querystring";
 import {type} from "os";
 
+export interface roomObject {
+    rooms_name: any;
+    rooms_number: any;
+    rooms_seats: any;
+    rooms_furniture: any;
+    rooms_type: any;
+    rooms_href: any;
+};
+
 export default class Rooms {
 
     public static readIndex(content: string){
@@ -48,9 +57,10 @@ export default class Rooms {
                     var trees: any[] = [];
                     for (var node of tbody['childNodes']) {
                         if (node['nodeName'] == 'tr') {
-                            trees.push(node)
+                            trees.push(node);
                         }
                     }
+                    //console.log("trees");
                     //console.log(trees)
                     fulfill (trees);
                 }).catch(function (err: any) {
@@ -116,13 +126,13 @@ export default class Rooms {
                 var attrs = node['attrs']
                 if (typeof attrs === 'object' && attrs.length != 0) {
                     if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title') {
-                        var td = node
+                        var td = node;
                     }
                 }
             }
             for (var node of td['childNodes']) {
                 if (node['nodeName'] == 'a') {
-                    var a = node
+                    var a = node;
                 }
             }
             for (var attr of a['attrs']) {
@@ -133,5 +143,85 @@ export default class Rooms {
             array.push(path)
         }
         return array
+    }
+    public static footer(footer: any) : roomObject[]{
+        var rooms: roomObject[] = [];
+
+        for (var node of footer['childNodes']) {
+            if(node['nodeName'] == 'div'){
+                var row = node;
+            }
+        }
+        for (var node of row['childNodes']){
+            var attrs = node['attrs'];
+            if (typeof attrs === 'object' && attrs.length != 0) {
+                if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-content') {
+                    var content = node;
+                }
+            }
+        }
+        for (var node of content['childNodes']) {
+            if (node['nodeName'] == 'table') {
+                var table = node
+            }
+        }
+        for (var node of table['childNodes']){
+            if (node['nodeName'] == 'tbody'){
+                var tbody = node;
+            }
+        }
+        for (var node of tbody['childNodes']){
+            if (node['nodeName'] == 'tr'){
+                var room: roomObject = {
+                    rooms_name: null,
+                    rooms_number: null,
+                    rooms_seats: null,
+                    rooms_furniture: null,
+                    rooms_type: null,
+                    rooms_href: null
+                };
+                for (var td of node['childNodes']){
+                    var attrs = td['attrs'];
+                    if (typeof attrs === 'object' && attrs.length != 0) {
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-number') {
+                            var tagA = td['childNodes'][1];
+                            if (tagA['nodeName'] === "a"){
+                                room.rooms_number = tagA['childNodes'][0]['value'];
+                            }
+                        }
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-capacity') {
+                            if (td['childNodes'][0]['nodeName'] === "#text"){
+                                var capacity = td['childNodes'][0]['value'];
+                                var res = capacity.split(" ");
+                                room.rooms_seats = res[12];
+                            }
+                        }
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-furniture') {
+                            if (td['childNodes'][0]['nodeName'] === "#text"){
+                                var str = td['childNodes'][0]['value'];
+                                room.rooms_furniture = str.slice(13, str.length - 10);
+                            }
+                        }
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-type') {
+                            if (td['childNodes'][0]['nodeName'] === "#text"){
+                                var str = td['childNodes'][0]['value'];
+                                room.rooms_type = str.slice(13, str.length - 10);
+                            }
+                        }
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-nothing') {
+                            if (td['childNodes'][1]['nodeName'] === "a"){
+                                var str = td['childNodes'][1]['attrs'][0]['value'];
+                                room.rooms_href = str;
+                                var res = str.slice(69).replace("-", "_");
+                                room.rooms_name = res;
+                            }
+                        }
+                    }
+                }
+                console.log(room);
+                rooms.push(room);
+            }
+        }
+        return rooms;
     }
 }
