@@ -27,8 +27,10 @@ export default class Rooms {
     public static readIndex(content: string){
         return new Promise(function (fulfill, reject) {
             "use strict";
-            var JSZip = require('jszip');
+            const JSZip = require('jszip');
             var keys: any[] = [];
+            var buildings : any[] = [];
+            var allBuildings: any[] = []
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                 var files = zip['files'];
                 keys = Object.keys(files)
@@ -59,36 +61,29 @@ export default class Rooms {
                         if (node['nodeName'] == 'tbody') {
                             var tbody = node
                             //console.log(tbody)
-                            var buildings : any[] = [];
-                            var allBuildings: any[] = []
 
                             for (var node of tbody['childNodes']) {
                                 if (node['nodeName'] == 'tr') {
-                                    buildings.push(node)
+                                    buildings.push(Rooms.parseBuilding(node,zip))
                                 }
                             }
-                             for (var i = 0; i < buildings.length; i++ ){
-                                 //console.log(i)
-                                Rooms.parseBuilding(buildings[i], zip).then(function(z:any){
-                                    //console.log(i)
-                                     allBuildings = allBuildings.concat(z)
-                                    if(i = buildings.length - 1){
-                                        //console.log(allBuildings)
-                                        fulfill(allBuildings)
-                                    }
-
-                                })
-                             }
                             //console.log(buildings)
-
+                            Promise.all(buildings).then(function(result:any){
+                                console.log(result)
+                                fulfill(result)
+                            }).catch(function(e:any){
+                                reject(e)
+                            })
                         }
                     }
 
 
                 }).catch(function (err: any) {
+                    reject(err)
                     //error handling
                 })
             }).catch(function (e: any) {
+                reject(e)
                 //not a zip file
             })
         })
@@ -182,6 +177,8 @@ export default class Rooms {
                                             }
                                             //console.log(rooms)
                                             fulfill(rooms)
+                                        }).catch(function(e:any){
+                                            reject(e)
                                         })
                                     }
                                 }
@@ -303,6 +300,8 @@ export default class Rooms {
                     //console.log(rooms)
                     fulfill(rooms)
                 }
+            }).catch(function(e:any) {
+                reject(e)
             })
         })
     }
