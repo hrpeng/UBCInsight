@@ -7,6 +7,21 @@ import {isArray} from "util";
 import {stringify} from "querystring";
 import {type} from "os";
 
+export interface roomObject {
+    rooms_name: any;
+    rooms_number: any;
+    rooms_seats: any;
+    rooms_furniture: any;
+    rooms_type: any;
+    rooms_href: any;
+    rooms_shortname: any
+    rooms_fullname: any
+    rooms_address :any
+    rooms_lat :any
+    rooms_lon:any
+
+};
+
 export default class Rooms {
 
     public static readIndex(content: string){
@@ -43,20 +58,33 @@ export default class Rooms {
                     for (var node of table['childNodes']) {
                         if (node['nodeName'] == 'tbody') {
                             var tbody = node
-                        }
-                    }
-                    var trees: any[] = [];
-                    for (var node of tbody['childNodes']) {
-                        if (node['nodeName'] == 'tr') {
-                            // var path = Rooms.getPath(node)
-                            // trees.push(path)
-                            var building = Rooms.parseBuilding(node)
+                            //console.log(tbody)
+                            var buildings : any[] = [];
+                            var allBuildings: any[] = []
+
+                            for (var node of tbody['childNodes']) {
+                                if (node['nodeName'] == 'tr') {
+                                    buildings.push(node)
+                                }
+                            }
+                             for (var i = 0; i < buildings.length; i++ ){
+                                 //console.log(i)
+                                Rooms.parseBuilding(buildings[i], zip).then(function(z:any){
+                                    //console.log(i)
+                                     allBuildings = allBuildings.concat(z)
+                                    if(i = buildings.length - 1){
+                                        //console.log(allBuildings)
+                                        fulfill(allBuildings)
+                                    }
+
+                                })
+                             }
+                            //console.log(buildings)
 
                         }
                     }
-                    //console.log(trees)
-                    fulfill (trees);
-                    //fulfill(path)
+
+
                 }).catch(function (err: any) {
                     //error handling
                 })
@@ -112,85 +140,170 @@ export default class Rooms {
         return bsm
     }
 
-    // not used anymore
-    public static getPath(tree: any){
-        //var array :any[] = [];
-        //for(var tree of trees) {
-            var child = tree['childNodes']  // childNodes of ALRD
-            for (var node of child) {
+    public static parseBuilding(tree: any, zip:any){
+        return new Promise(function(fulfill,reject) {
+            var rooms: any[] = []
+            var room: any = {}
+            for (var node of tree['childNodes']) {
                 var attrs = node['attrs']
                 if (typeof attrs === 'object' && attrs.length != 0) {
-                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title') {
-                        var td = node
-                    }
-                }
-            }
-            for (var node of td['childNodes']) {
-                if (node['nodeName'] == 'a') {
-                    var a = node
-                }
-            }
-            for (var attr of a['attrs']) {
-                if (attr['name'] == 'href') {
-                    var path = attr['value']
-                }
-            }
-            //array.push(path)
-        //}
-        //return array
-        return path
-    }
+                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-code') {
+                        var rooms_shortname = node['childNodes'][0]['value']
+                        room['room_shortname'] = rooms_shortname.trim()
 
-    public static parseBuilding(tree: any){
-        var room:any = {}
-        for (var node of tree['childNodes']) {
-            var attrs = node['attrs']
-            if (typeof attrs === 'object' && attrs.length != 0) {
+                    } else if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-address') {
+                        var rooms_address = node['childNodes'][0]['value']
+                        room['room_address'] = rooms_address.trim()
+                        var encodedAds = encodeURI(rooms_address)
+                        var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'//'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds
+                        var http = require('http')
+                        var rooms_lat = 49.26125;
+                        room['room_lat'] = rooms_lat;
+                        var rooms_lon = -123.24807;
+                        room['room_lon'] = rooms_lon;
+                        //dummy lat & lon <-------------------------------------
+                    } else if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title') {
+                        for (var cNode of node['childNodes']) {
+                            if (cNode['nodeName'] == 'a') {
+                                var rooms_fullname = cNode['childNodes'][0]['value']
+                                room['room_fullname'] = rooms_fullname
+                                for (var attr of cNode['attrs']) {
+                                    if (attr['name'] == 'href') {
+                                        var path = attr['value']
+                                        Rooms.footer(zip, path).then(function (roomInfo: any) { // roomInfo is an array of rooms in one building
+                                            for (var rm of roomInfo) {
+                                                rm['rooms_shortname'] = room.room_shortname
+                                                rm['rooms_fullname'] = room.room_fullname
+                                                rm['rooms_address'] = room.room_address
+                                                rm['rooms_lat'] = room.room_lat
+                                                rm['rooms_lon'] = room.room_lon
+                                                rooms.push(rm)
 
-                if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-code') {
-                    var rooms_shortname = node['childNodes'][0]['value']
-                    room['room_shortname'] = rooms_shortname.trim()
-                }else if(attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title'){
-                    for(var cNode of node['childNodes']){
-                        if (cNode['nodeName'] == 'a'){
-                            for (var attr of cNode['attrs']) {
-                                if (attr['name'] == 'href') {
-                                    var path = attr['value'] //  path is here <-----------------
+                                            }
+                                            //console.log(rooms)
+                                            fulfill(rooms)
+                                        })
+                                    }
                                 }
                             }
-                            var rooms_fullname = cNode['childNodes'][0]['value']
-                            room['room_fullname'] = rooms_fullname
                         }
                     }
-                }else if(attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-address'){
-                    var rooms_address = node['childNodes'][0]['value']
-                    room['room_address'] = rooms_address.trim()
-                    var encodedAds = encodeURI(rooms_address)
-                    var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'//'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds
-                    var http = require('http')
-                    // geocoding that does not work
-                    // return new Promise(function (fulfill, reject) {
-                    //
-                    //     var aPromise = new Promise(function (resolve, reject) {
-                    //         http.get(request, function (res: any) {
-                    //             Helper.consoleLog('Hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                    //             resolve(res)
-                    //         })
-                    //     })
-                    //     var a = aPromise.then(function (r: any) {
-                    //         Helper.consoleLog('Hi!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-                    //
-                    //         return r
-                    //     })
-                    //     //Helper.consoleLog(a)
-                    //     fulfill(a)
-                    //
-                    // })
-
                 }
             }
-        }
-        //Helper.consoleLog(room)
-        //console.log(bCode)
+        })
+    }
+
+    public static footer(zip:any, path:any){
+         //Helper.consoleLog(rm[0])
+        return new Promise(function(fulfill,reject) {
+            zip.file(path.substring(2)).async("string").then(function (building: any) {
+                var section = Rooms.getPageSection(building)
+                for (var node of section['childNodes']) {
+                    if (node['nodeName'] == 'div') {
+                        var view = node;
+                    }
+                }
+                for (var node of view['childNodes']) {
+                    var attrs = node['attrs']
+                    if (typeof attrs === 'object' && attrs.length != 0) {
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-footer') {
+                            var footer = node
+                        }
+                    }
+                }
+
+                var rooms: roomObject[] = [];
+
+                for (var node of footer['childNodes']) {
+                    if (node['nodeName'] == 'div') {
+                        var row = node;
+                    }
+                }
+                for (var node of row['childNodes']) {
+                    var attrs = node['attrs'];
+                    if (typeof attrs === 'object' && attrs.length != 0) {
+                        if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-content') {
+                            var content = node;
+                            //console.log(content)
+                        }
+                    }
+                }
+                if (typeof content === 'object') {
+                    for (var node of content['childNodes']) {
+                        //console.log(content['childNodes'])
+                        if (node['nodeName'] == 'table') {
+                            var table = node
+                        }
+                    }
+                }
+                if (typeof table === 'object') {
+                    for (var node of table['childNodes']) {
+                        if (node['nodeName'] == 'tbody') {
+                            var tbody = node;
+                        }
+                    }
+                }
+                if (typeof tbody === 'object') {
+                    for (var node of tbody['childNodes']) {
+                        if (node['nodeName'] == 'tr') {
+                            var room: roomObject = {
+                                rooms_name: null,
+                                rooms_number: null,
+                                rooms_seats: null,
+                                rooms_furniture: null,
+                                rooms_type: null,
+                                rooms_href: null,
+                                rooms_shortname: null, //= rm['rooms_shortname'],
+                                rooms_fullname: null,
+                                rooms_address : null,
+                                rooms_lat : null,
+                                rooms_lon: null
+                            };
+                            for (var td of node['childNodes']) {
+                                var attrs = td['attrs'];
+                                if (typeof attrs === 'object' && attrs.length != 0) {
+                                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-number') {
+                                        var tagA = td['childNodes'][1];
+                                        if (tagA['nodeName'] === "a") {
+                                            room.rooms_number = tagA['childNodes'][0]['value'];
+                                        }
+                                    }
+                                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-capacity') {
+                                        if (td['childNodes'][0]['nodeName'] === "#text") {
+                                            var capacity = td['childNodes'][0]['value'];
+                                            var res = capacity.split(" ");
+                                            room.rooms_seats = res[12];
+                                        }
+                                    }
+                                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-furniture') {
+                                        if (td['childNodes'][0]['nodeName'] === "#text") {
+                                            var str = td['childNodes'][0]['value'];
+                                            room.rooms_furniture = str.slice(13, str.length - 10);
+                                        }
+                                    }
+                                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-type') {
+                                        if (td['childNodes'][0]['nodeName'] === "#text") {
+                                            var str = td['childNodes'][0]['value'];
+                                            room.rooms_type = str.slice(13, str.length - 10);
+                                        }
+                                    }
+                                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-nothing') {
+                                        if (td['childNodes'][1]['nodeName'] === "a") {
+                                            var str = td['childNodes'][1]['attrs'][0]['value'];
+                                            room.rooms_href = str;
+                                            var res = str.slice(69).replace("-", "_");
+                                            room.rooms_name = res;
+                                        }
+                                    }
+                                }
+                            }
+                            rooms.push(room);
+                        }
+                    }
+                    //console.log(rooms)
+                    fulfill(rooms)
+                }
+            })
+        })
     }
 }
