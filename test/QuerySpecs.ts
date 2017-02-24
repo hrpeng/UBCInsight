@@ -533,6 +533,21 @@ describe("AddSpec", function () {
         }
     }
 
+    var roomQuery: QueryRequest = {
+        "WHERE": {
+        "IS": {
+            "rooms_name": "DMP_*"
+        }
+    },
+        "OPTIONS": {
+        "COLUMNS": [
+            "rooms_name"
+        ],
+            "ORDER": "rooms_name",
+            "FORM": "TABLE"
+    }
+    }
+
     beforeEach(function () {
         isf = new InsightFacade();
     });
@@ -540,6 +555,14 @@ describe("AddSpec", function () {
     afterEach(function () {
         isf = null;
     });
+
+    it("XXX", function () {
+        return isf.performQuery(roomQuery).then(function(response : any){
+            //Helper.consoleLog(response['body']['result'])
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
+    })
 
     // it("XXX", function () {
     //     return isf.performQuery(bQuery).then(function(response : any){

@@ -20,15 +20,20 @@ export interface roomObject {
     rooms_lat :any
     rooms_lon:any
 
-};
+}
+
+interface GeoResponse {
+    lat?: number;
+    lon?: number;
+    error?: string;
+}
 
 export default class Rooms {
 
-    public static readIndex(content: string){
+    public static readIndex(content: string) : Promise<any> {
         "use strict";
         const JSZip = require('jszip');
         var keys: any[] = [];
-
 
         return new Promise(function (fulfill, reject) {
             JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
@@ -45,10 +50,11 @@ export default class Rooms {
         })
     }
 
-    public static parseIndex(zip: any, iKey:any){
+    public static parseIndex(zip: any, iKey:any) : Promise<any>{
         return new Promise(function(fulfill,reject) {
             var buildings: any[] = [];
             var allBuildings: any[] = []
+            var json:any = {}
             zip.file(iKey).async("string").then(function (data: any) {
                 var bsm: any = Rooms.getPageSection(data)
                 for (var node of bsm['childNodes']) {
@@ -90,7 +96,12 @@ export default class Rooms {
                             //console.log(e)
                             if (e == buildings.length - 1) {
                                 //console.log(allBuildings)
-                                fulfill(allBuildings)
+                                json['rooms'] = allBuildings
+                                const fs = require('fs');
+                                fs.writeFile('rooms', JSON.stringify(json), (err : any) => {
+                                    if (err) throw err;
+                                });
+                                fulfill(json)
                             }
                         })
                     })(i)
@@ -99,6 +110,61 @@ export default class Rooms {
                 reject(err);
                 //error handling
             })
+        })
+    }
+
+    public static requestURL(encodedAds: string): Promise<GeoResponse> {
+        return new Promise(function (fulfill, reject) {
+            var http = require('http');
+            //console.log(encodedAds);
+            http.get('http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall', (res: any) => {
+                //console.log("hit");
+                const statusCode = res.statusCode;
+                const contentType = res.headers['content-type'];
+
+                let error;
+                if (statusCode !== 200) {
+                    error = new Error(`Request Failed.\n` +
+                        `Status Code: ${statusCode}`);
+                } else if (!/^application\/json/.test(contentType)) {
+                    error = new Error(`Invalid content-type.\n` +
+                        `Expected application/json but received ${contentType}`);
+                }
+                if (error) {
+                    console.log(error.message);
+                    // consume response data to free up memory
+                    res.resume();
+                    var gp: GeoResponse = {
+                        error: error.message
+                    }
+                    reject(gp);
+                    return;
+                }
+
+                res.setEncoding('utf8');
+                let rawData = '';
+                res.on('data', (chunk:any) => rawData += chunk);
+                res.on('end', () => {
+                    try {
+                        let parsedData = JSON.parse(rawData);
+                        //console.log(parsedData);
+                        //parsedData['lat']
+                        var gp1: GeoResponse = {
+                            lat: parsedData['lat'],
+                            lon: parsedData['lon']
+                        };
+                        fulfill(gp1);
+                    } catch (e) {
+                        console.log(e.message);
+                        var gp2: GeoResponse = {
+                            error: e.message
+                        };
+                        reject(gp2);
+                    }
+                });
+            }).on('error', (e:any) => {
+                console.log(`Got error: ${e.message}`);
+            });
         })
     }
 
@@ -148,7 +214,7 @@ export default class Rooms {
         return bsm
     }
 
-    public static parseBuilding(tree: any, zip:any){
+    public static parseBuilding(tree: any, zip:any) : Promise<any>{
         return new Promise(function(fulfill,reject) {
             var rooms: any[] = []
             var room: any = {}
@@ -162,9 +228,14 @@ export default class Rooms {
                     } else if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-address') {
                         var rooms_address = node['childNodes'][0]['value']
                         room['room_address'] = rooms_address.trim()
-                        var encodedAds = encodeURI(rooms_address)
-                        var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'//'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds
-                        var http = require('http')
+                        // var encodedAds = encodeURI(rooms_address.trim())
+                        // var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds; //'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'
+                        // console.log(request)
+                        // Rooms.requestURL(request).then(function(response:any){
+                        //     console.log(response)
+                        //
+                        // })
+
                         var rooms_lat = 49.26125;
                         room['room_lat'] = rooms_lat;
                         var rooms_lon = -123.24807;
@@ -202,7 +273,7 @@ export default class Rooms {
         })
     }
 
-    public static footer(zip:any, path:any){
+    public static footer(zip:any, path:any):Promise<any>{
          //Helper.consoleLog(rm[0])
         return new Promise(function(fulfill,reject) {
             zip.file(path.substring(2)).async("string").then(function (building: any) {

@@ -53,7 +53,7 @@ describe("AddSpec", function () {
     // })
     // it("add3", function () {
     //     isf.addDataset('Courses',content).then(function(response : any){
-    //         //Helper.consoleLog(response)
+    //         Helper.consoleLog(response)
     //     }).catch(function(err){
     //         // Helper.consoleLog(err)
     //     })
@@ -82,9 +82,17 @@ describe("AddSpec", function () {
     //     })
     // })
 
-    it("rooms", function () {
-        Rooms.readIndex(room).then(function(result:any){
-            console.log(result)
+    // it("rooms", function () {
+    //     Rooms.readIndex(room).then(function(result:any){
+    //         //console.log(result)
+    //         return result
+    //     })
+    // })
+    it("addRooms", function () {
+        isf.addDataset('rooms',room).then(function(response : any){
+                    //Helper.consoleLog(response)
+        }).catch(function(err){
+                    // Helper.consoleLog(err)
         })
     })
 })

@@ -1,6 +1,7 @@
 
 
 import {isArray} from "util";
+import Rooms from "./Rooms";
 
 export default class Helper {
 
@@ -86,32 +87,43 @@ export default class Helper {
 
 
     public static parseData(id:any,content:any) : Promise<Object>{
-        "use strict";
-        var JSZip = require('jszip');
-        var keys: any[] = [];
-
-        return new Promise(function (fulfill, reject) {
-            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
-                var files = zip['files'];
-                keys = Object.keys(files)
-                var jsonCourses: any = {};
-                if(keys.length == 1){
-                    reject('empty zip')
-                }
-                Helper.forLoop(keys,id,zip).then(function(jsonArray:any){
-                    jsonCourses[id] = jsonArray
-                    const fs = require('fs');
-                    fs.writeFile(id, JSON.stringify(jsonCourses), (err : any) => {
-                        if (err) throw err;
-                    });
-                    fulfill(jsonCourses)
-                }).catch(function(e:any) {
-                    reject(e)
+        if(id == 'rooms'){
+            return new Promise(function (fulfill, reject) {
+                Rooms.readIndex(content).then(function (res: any) {
+                    //console.log(res)
+                    fulfill(res)
+                }).catch(function(err:any){
+                    reject(err)
                 })
-            }).catch(function(e:any){
-                reject('invalid zip file')
             })
-        })
+        }else {
+            "use strict";
+            var JSZip = require('jszip');
+            var keys: any[] = [];
+
+            return new Promise(function (fulfill, reject) {
+                JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
+                    var files = zip['files'];
+                    keys = Object.keys(files)
+                    var jsonCourses: any = {};
+                    if (keys.length == 1) {
+                        reject('empty zip')
+                    }
+                    Helper.forLoop(keys, id, zip).then(function (jsonArray: any) {
+                        jsonCourses[id] = jsonArray
+                        const fs = require('fs');
+                        fs.writeFile(id, JSON.stringify(jsonCourses), (err: any) => {
+                            if (err) throw err;
+                        });
+                        fulfill(jsonCourses)
+                    }).catch(function (e: any) {
+                        reject(e)
+                    })
+                }).catch(function (e: any) {
+                    reject('invalid zip file')
+                })
+            })
+        }
     }
 
     public static readJSON(path : string) {
@@ -137,7 +149,7 @@ export default class Helper {
             return validWhere
         }
     }
-// NOT value should be a filter!! remember to fix that
+
     public static  validateWhere(where : any) : string {
         if(typeof where !== 'object') {
             return 'invalid object'
@@ -149,69 +161,71 @@ export default class Helper {
         var value = whereValue[key]   //97 cpsc etc..
 
         var fs = require('fs');
-            switch (whereKey) {
-                case 'GT':
-                case 'LT':
-                case 'EQ':
-                    if (!key.includes("_")) {
+        switch (whereKey) {
+            case 'GT':
+            case 'LT':
+            case 'EQ':
+                if (!key.includes("_")) {
+                    return 'invalid MCOMPARISON key'
+                } else {
+                    var idName = key.split("_")[0]  //courses
+                    try {
+                        fs.accessSync('./' + idName);
+                    } catch (e) {
+                        return 'invalid id, dataset has not been PUT'
+                    }
+                    var keyvar = key.split("_")[1]
+                    if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit' && keyvar != 'lat'
+                        && keyvar != 'lon' && keyvar != 'seats') {
                         return 'invalid MCOMPARISON key'
-                    } else {
-                        var idName = key.split("_")[0]  //courses
-                        try {
-                            fs.accessSync('./' + idName);
-                        } catch (e) {
-                            return 'invalid id, dataset has not been PUT'
-                        }
-                            var keyvar = key.split("_")[1]
-                            if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
-                                return 'invalid MCOMPARISON key'
-                            } else if (typeof value !== 'number') {
-                                return 'invalid MCOMPARISON value'
-                            }
-                            return idName
+                    } else if (typeof value !== 'number') {
+                        return 'invalid MCOMPARISON value'
                     }
+                    return idName
+                }
 
-                case 'IS':
-                    if (!key.includes("_")) {
-                        return 'invalid SCOMPARISON key'
-                    } else {
-                        var id = key.split("_")[0]
-                        try {
-                            fs.accessSync('./' + id);
-                        } catch (e) {
-                            return 'invalid id, dataset has not been PUT'
-                        }
-                        var keyvar = key.split("_")[1]
-                        if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
-                            return 'invalid MCOMPARISON key'
-                        } else if (typeof value !== 'string') {
-                            return 'invalid MCOMPARISON value'
-                        }
-                        return id
+            case 'IS':
+                if (!key.includes("_")) {
+                    return 'invalid SCOMPARISON key'
+                } else {
+                    var id = key.split("_")[0]
+                    try {
+                        fs.accessSync('./' + id);
+                    } catch (e) {
+                        return 'invalid id, dataset has not been PUT'
                     }
+                    var keyvar = key.split("_")[1]
+                    if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid' && keyvar != 'fullname' && keyvar != 'shortname' && keyvar != 'number' && keyvar != 'name' && keyvar != 'address'
+                        && keyvar != 'type' && keyvar != 'furniture' && keyvar != 'href') {
+                        return 'invalid MCOMPARISON key'
+                    } else if (typeof value !== 'string') {
+                        return 'invalid MCOMPARISON value'
+                    }
+                    return id
+                }
 
-                case 'NOT':
-                    return Helper.validateWhere(whereValue)
-                case 'AND':
-                case 'OR':
-                    if (!(whereValue instanceof Array)) {
+            case 'NOT':
+                return Helper.validateWhere(whereValue)
+            case 'AND':
+            case 'OR':
+                if (!(whereValue instanceof Array)) {
+                    return 'invalid LOGIC value'
+                } else {
+                    if (whereValue.length == 0) {
                         return 'invalid LOGIC value'
-                    } else {
-                        if (whereValue.length == 0) {
-                            return 'invalid LOGIC value'
-                        }
-                        var idName:string = ''
-                        for (var i = 0; i < whereValue.length; i++) {
-                            var validEach: string = Helper.validateWhere(whereValue[i])
-                            if (validEach.includes('invalid')) {
-                                return validEach
-                            }else{
-                                idName = validEach
-                            }
-                        }
-                        return idName
                     }
-            }
+                    var idName:string = ''
+                    for (var i = 0; i < whereValue.length; i++) {
+                        var validEach: string = Helper.validateWhere(whereValue[i])
+                        if (validEach.includes('invalid')) {
+                            return validEach
+                        }else{
+                            idName = validEach
+                        }
+                    }
+                    return idName
+                }
+        }
         return 'invalid WHERE'
     }
 
@@ -280,10 +294,18 @@ export default class Helper {
                 case "pass":
                 case "fail":
                 case "audit":
+                case "lat":
+                case "lon":
+                case "seats":
                     return a[keyword] - b[keyword];
                 case "dept":
                 case "instructor":
                 case "title":
+                case "fullname":
+                case "shortname":
+                case "name":
+                case "type":
+                case "furniture":
                     var aobj = a[Object.keys(a)[0]]
                     var bobj = b[Object.keys(b)[0]]
                     var x = a[keyword].toLowerCase();
@@ -291,12 +313,13 @@ export default class Helper {
                     return x < y ? -1 : x > y ? 1 : 0;
                 case "id":
                 case "uuid":
+                case "number":
                     var x: any = Number(a[keyword]);
                     var y: any = Number(b[keyword]);
                     return x < y ? -1 : x > y ? 1 : 0;
             }
         })
-       // console.log(spliced)
+        // console.log(spliced)
         return spliced;
     }
 
