@@ -84,7 +84,7 @@ describe("AddSpec", function () {
 
     it("rooms", function () {
         Rooms.readIndex(room).then(function(result:any){
-            //console.log(result)
+            console.log(result)
         })
     })
 })
