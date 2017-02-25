@@ -93,7 +93,6 @@ export default class Rooms {
                     (function(e) {
                         Rooms.parseBuilding(buildings[e], zip).then(function (b: any) {
                             allBuildings = allBuildings.concat(b);
-                            //console.log(e)
                             if (e == buildings.length - 1) {
                                 //console.log(allBuildings)
                                 json['rooms'] = allBuildings
@@ -113,11 +112,11 @@ export default class Rooms {
         })
     }
 
-    public static requestURL(encodedAds: string): Promise<GeoResponse> {
+    public static requestURL(request: string): Promise<GeoResponse> {
         return new Promise(function (fulfill, reject) {
             var http = require('http');
             //console.log(encodedAds);
-            http.get('http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall', (res: any) => {
+            http.get(request, (res: any) => {
                 //console.log("hit");
                 const statusCode = res.statusCode;
                 const contentType = res.headers['content-type'];
@@ -218,58 +217,49 @@ export default class Rooms {
         return new Promise(function(fulfill,reject) {
             var rooms: any[] = []
             var room: any = {}
+            var nodes : any = []
             for (var node of tree['childNodes']) {
                 var attrs = node['attrs']
                 if (typeof attrs === 'object' && attrs.length != 0) {
-                    if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-code') {
-                        var rooms_shortname = node['childNodes'][0]['value']
-                        room['room_shortname'] = rooms_shortname.trim()
+                    nodes.push(node)
+                }
+            }
+            var rooms_shortname = nodes[1]['childNodes'][0]['value']
+            room['room_shortname'] = rooms_shortname.trim()
+            var rooms_address = nodes[3]['childNodes'][0]['value']
+            room['room_address'] = rooms_address.trim()
+            var encodedAds = encodeURI(rooms_address.trim())
+            Rooms.requestURL('http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds).then(function(response:any) {
+                //console.log(response)
+                room['room_lat'] = response.lat
+                room['room_lon'] = response.lon
 
-                    } else if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-building-address') {
-                        var rooms_address = node['childNodes'][0]['value']
-                        room['room_address'] = rooms_address.trim()
-                        // var encodedAds = encodeURI(rooms_address.trim())
-                        // var request = 'http://skaha.cs.ubc.ca:11316/api/v1/team181/' + encodedAds; //'http://skaha.cs.ubc.ca:11316/api/v1/team181/1933%20West%20Mall'
-                        // console.log(request)
-                        // Rooms.requestURL(request).then(function(response:any){
-                        //     console.log(response)
-                        //
-                        // })
-
-                        var rooms_lat = 49.26125;
-                        room['room_lat'] = rooms_lat;
-                        var rooms_lon = -123.24807;
-                        room['room_lon'] = rooms_lon;
-                        //dummy lat & lon <-------------------------------------
-                    } else if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-title') {
-                        for (var cNode of node['childNodes']) {
-                            if (cNode['nodeName'] == 'a') {
-                                var rooms_fullname = cNode['childNodes'][0]['value']
-                                room['room_fullname'] = rooms_fullname
-                                for (var attr of cNode['attrs']) {
-                                    if (attr['name'] == 'href') {
-                                        var path = attr['value']
-                                        Rooms.footer(zip, path).then(function (roomInfo: any) { // roomInfo is an array of rooms in one building
-                                            for (var rm of roomInfo) {
-                                                rm['rooms_shortname'] = room.room_shortname
-                                                rm['rooms_fullname'] = room.room_fullname
-                                                rm['rooms_address'] = room.room_address
-                                                rm['rooms_lat'] = room.room_lat
-                                                rm['rooms_lon'] = room.room_lon
-                                                rooms.push(rm)
-                                            }
-                                            //console.log(rooms)
-                                            fulfill(rooms)
-                                        }).catch(function(e:any){
-                                            reject(e)
-                                        })
-                                    }
-                                }
+                for (var cNode of nodes[2]['childNodes']) {
+                    if (cNode['nodeName'] == 'a') {
+                        var rooms_fullname = cNode['childNodes'][0]['value']
+                        room['room_fullname'] = rooms_fullname
+                        for (var attr of cNode['attrs']) {
+                            if (attr['name'] == 'href') {
+                                var path = attr['value']
                             }
                         }
                     }
                 }
-            }
+                Rooms.footer(zip, path).then(function (roomInfo: any) { // roomInfo is an array of rooms in one building
+                    for (var rm of roomInfo) {
+                        rm['rooms_shortname'] = room.room_shortname
+                        rm['rooms_fullname'] = room.room_fullname
+                        rm['rooms_address'] = room.room_address
+                        rm['rooms_lat'] = room.room_lat
+                        rm['rooms_lon'] = room.room_lon
+                        rooms.push(rm)
+                    }
+                    //console.log(rooms)
+                    fulfill(rooms)
+                }).catch(function(e:any){
+                    reject(e)
+                })
+            })
         })
     }
 

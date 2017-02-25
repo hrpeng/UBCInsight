@@ -176,7 +176,7 @@ export default class Helper {
                     }
                     var keyvar = key.split("_")[1]
                     if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit' && keyvar != 'lat'
-                        && keyvar != 'lon' && keyvar != 'seats') {
+                        && keyvar != 'lon' && keyvar != 'seats' && keyvar != 'year') {
                         return 'invalid MCOMPARISON key'
                     } else if (typeof value !== 'number') {
                         return 'invalid MCOMPARISON value'
@@ -297,6 +297,7 @@ export default class Helper {
                 case "lat":
                 case "lon":
                 case "seats":
+                case "year":
                     return a[keyword] - b[keyword];
                 case "dept":
                 case "instructor":
