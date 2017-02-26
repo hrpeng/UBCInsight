@@ -11,4 +11,6 @@ Commits:
 * https://github.com/CS310-2017Jan/cpsc310project_team181/commit/1ace0ece6e23acc7a9cef8413f253381267af30b
 
 Comments:
-We ran into a lot of problems with this deliverable but overall it was good. 
+* We ran into a lot of problems with async stuff but overall learned a lot
+* next deliverable we should test as we code so that we can keep track better
+* need to use commits better to organize 
