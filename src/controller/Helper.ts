@@ -234,7 +234,7 @@ export default class Helper {
                         return 'invalid LOGIC value'
                     }
                     var totalArray:any[] = []
-                    var idName:string = ''
+                    var idName:string = '!'
                     for (var i = 0; i < whereValue.length; i++) {
                         var validEach: any = Helper.validateWhere(whereValue[i])
                         if(validEach instanceof Array){
@@ -244,6 +244,9 @@ export default class Helper {
                             if (validEach.includes('invalid')) {
                                 return validEach
                             } else {
+                                if(idName != '!' && idName != validEach){
+                                    return 'invalid set of id names'
+                                }
                                 idName = validEach
                             }
                         }
