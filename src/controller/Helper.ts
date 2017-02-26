@@ -1,6 +1,7 @@
 
 
 import {isArray} from "util";
+import Rooms from "./Rooms";
 
 export default class Helper {
 
@@ -22,14 +23,11 @@ export default class Helper {
         var array : any[] = []
         if (typeof content === 'object'){
             if (isArray(content.result)){
-                //Helper.consoleLog(content)
-                //has 112
                 for (let i= 0; i < content.result.length; i++){
-                    //var jsonCourse: any = {};
                     var section = content.result[i];
+                    //console.log(section);
                     //has 112 so far
                     if (typeof section === 'object'){
-                        //Helper.consoleLog(content.result.length)
                         var dept = id + "_dept"
                         var cid = id + "_id"
                         var sec = id + "_sec"
@@ -41,9 +39,13 @@ export default class Helper {
                         var audit = id + "_audit"
                         var year = id + "_year"
                         var uuid = id + "_uuid"
+                        if (section.Section === "overall"){
+                            section.Year = 1900;
+                        }
                         var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
                             [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
-                            [audit]: section.Audit, [year]: section.Year, [uuid]: section['id'].toString()};
+                            [audit]: section.Audit, [year]: Number(section.Year), [uuid]: section['id'].toString()};
+
                         array.push(jsonSection);
                     }
                 }
@@ -51,10 +53,6 @@ export default class Helper {
         }
         return array;
     }
-
-    // public static onComplete(jsonCourses : any, id:string){
-    //
-    // }
 
     public static exist(path:string) : Promise<boolean>{
         return new Promise(function(resolve, reject) {
@@ -70,8 +68,12 @@ export default class Helper {
         return new Promise(function(fulfill,reject) {
             var jsonCoursesArray: any[] = [];
             var promiseList: any[] = [];
+            if(zip.file(keys[keys.length-1]).name == 'index.htm'){
+                reject('wrong id')
+            }
             for (var i = 1; i < keys.length; i++) { //length = 5945
                 var aPromise = zip.file(keys[i]).async("string")
+                //console.log(zip.file(keys[i]))
                 promiseList.push(aPromise)
                 //Helper.consoleLog(promiseList)
             }
@@ -94,32 +96,45 @@ export default class Helper {
 
 
     public static parseData(id:any,content:any) : Promise<Object>{
-        "use strict";
-        var JSZip = require('jszip');
-        var keys: any[] = [];
-
-        return new Promise(function (fulfill, reject) {
-            JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
-                var files = zip['files'];
-                keys = Object.keys(files)
-                var jsonCourses: any = {};
-                if(keys.length == 1){
-                    reject('empty zip')
-                }
-                Helper.forLoop(keys,id,zip).then(function(jsonArray:any){
-                    jsonCourses[id] = jsonArray
-                    const fs = require('fs');
-                    fs.writeFile(id, JSON.stringify(jsonCourses), (err : any) => {
-                        if (err) throw err;
-                    });
-                    fulfill(jsonCourses)
-                }).catch(function(e:any) {
-                    reject(e)
+        if(id == 'rooms'){
+            return new Promise(function (fulfill, reject) {
+                Rooms.readIndex(content).then(function (res: any) {
+                    //console.log(res)
+                    fulfill(res)
+                }).catch(function(err:any){
+                    //console.log(err)
+                    reject(err)
                 })
-            }).catch(function(e:any){
-                reject('invalid zip file')
             })
-        })
+        }else {
+            "use strict";
+            var JSZip = require('jszip');
+            var keys: any[] = [];
+
+            return new Promise(function (fulfill, reject) {
+                JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
+                    var files = zip['files'];
+                    keys = Object.keys(files)
+                    //console.log(keys)
+                    var jsonCourses: any = {};
+                    if (keys.length == 1) {
+                        reject('empty zip')
+                    }
+                    Helper.forLoop(keys, id, zip).then(function (jsonArray: any) {
+                        jsonCourses[id] = jsonArray
+                        const fs = require('fs');
+                        fs.writeFile(id, JSON.stringify(jsonCourses), (err: any) => {
+                            if (err) throw err;
+                        });
+                        fulfill(jsonCourses)
+                    }).catch(function (e: any) {
+                        reject(e)
+                    })
+                }).catch(function (e: any) {
+                    reject('invalid zip file')
+                })
+            })
+        }
     }
 
     public static readJSON(path : string) {
@@ -137,7 +152,9 @@ export default class Helper {
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
         var validOptions = Helper.validateOptions(options)
-        if(validWhere.includes('invalid')){
+        if(validWhere instanceof Array){
+            return validWhere
+        }else if(validWhere.includes('invalid')){
             return validWhere
         }else if(validOptions != 'valid'){
             return validOptions
@@ -145,8 +162,8 @@ export default class Helper {
             return validWhere
         }
     }
-// NOT value should be a filter!! remember to fix that
-    public static  validateWhere(where : any) : string {
+
+    public static  validateWhere(where : any) : any {
         if(typeof where !== 'object') {
             return 'invalid object'
         }
@@ -157,69 +174,89 @@ export default class Helper {
         var value = whereValue[key]   //97 cpsc etc..
 
         var fs = require('fs');
-            switch (whereKey) {
-                case 'GT':
-                case 'LT':
-                case 'EQ':
-                    if (!key.includes("_")) {
+        switch (whereKey) {
+            case 'GT':
+            case 'LT':
+            case 'EQ':
+                if (!key.includes("_")) {
+                    return 'invalid MCOMPARISON key'
+                } else {
+                    var idName = key.split("_")[0]  //courses
+                    try {
+                        fs.accessSync('./' + idName);
+                    } catch (e) {
+                        var arr :any[] = []
+                        arr.push(idName)
+                        return arr
+                        //return 'invalid id, dataset has not been PUT'
+                    }
+                    var keyvar = key.split("_")[1]
+                    if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit' && keyvar != 'lat'
+                        && keyvar != 'lon' && keyvar != 'seats' && keyvar != 'year') {
                         return 'invalid MCOMPARISON key'
-                    } else {
-                        var idName = key.split("_")[0]  //courses
-                        try {
-                            fs.accessSync('./' + idName);
-                        } catch (e) {
-                            return 'invalid id, dataset has not been PUT'
-                        }
-                            var keyvar = key.split("_")[1]
-                            if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit') {
-                                return 'invalid MCOMPARISON key'
-                            } else if (typeof value !== 'number') {
-                                return 'invalid MCOMPARISON value'
-                            }
-                            return idName
+                    } else if (typeof value !== 'number') {
+                        return 'invalid MCOMPARISON value'
                     }
+                    return idName
+                }
 
-                case 'IS':
-                    if (!key.includes("_")) {
-                        return 'invalid SCOMPARISON key'
-                    } else {
-                        var id = key.split("_")[0]
-                        try {
-                            fs.accessSync('./' + id);
-                        } catch (e) {
-                            return 'invalid id, dataset has not been PUT'
-                        }
-                        var keyvar = key.split("_")[1]
-                        if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid') {
-                            return 'invalid MCOMPARISON key'
-                        } else if (typeof value !== 'string') {
-                            return 'invalid MCOMPARISON value'
-                        }
-                        return id
+            case 'IS':
+                if (!key.includes("_")) {
+                    return 'invalid SCOMPARISON key'
+                } else {
+                    var id = key.split("_")[0]
+                    try {
+                        fs.accessSync('./' + id);
+                    } catch (e) {
+                        var arr :any[] = []
+                        //return 'invalid id, dataset has not been PUT'
+                        arr.push(id)
+                        return arr
                     }
+                    var keyvar = key.split("_")[1]
+                    if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid' && keyvar != 'fullname' && keyvar != 'shortname' && keyvar != 'number' && keyvar != 'name' && keyvar != 'address'
+                        && keyvar != 'type' && keyvar != 'furniture' && keyvar != 'href') {
+                        return 'invalid MCOMPARISON key'
+                    } else if (typeof value !== 'string') {
+                        return 'invalid MCOMPARISON value'
+                    }
+                    return id
+                }
 
-                case 'NOT':
-                    return Helper.validateWhere(whereValue)
-                case 'AND':
-                case 'OR':
-                    if (!(whereValue instanceof Array)) {
+            case 'NOT':
+                return Helper.validateWhere(whereValue)
+            case 'AND':
+            case 'OR':
+                if (!(whereValue instanceof Array)) {
+                    return 'invalid LOGIC value'
+                } else {
+                    if (whereValue.length == 0) {
                         return 'invalid LOGIC value'
-                    } else {
-                        if (whereValue.length == 0) {
-                            return 'invalid LOGIC value'
+                    }
+                    var totalArray:any[] = []
+                    var idName:string = '!'
+                    for (var i = 0; i < whereValue.length; i++) {
+                        var validEach: any = Helper.validateWhere(whereValue[i])
+                        if(validEach instanceof Array){
+                            totalArray = totalArray.concat(validEach)
                         }
-                        var idName:string = ''
-                        for (var i = 0; i < whereValue.length; i++) {
-                            var validEach: string = Helper.validateWhere(whereValue[i])
+                        if(totalArray.length == 0){
                             if (validEach.includes('invalid')) {
                                 return validEach
-                            }else{
+                            } else {
+                                if(idName != '!' && idName != validEach){
+                                    return 'invalid set of id names'
+                                }
                                 idName = validEach
                             }
                         }
-                        return idName
                     }
-            }
+                    if(totalArray.length != 0){
+                        return totalArray
+                    }
+                    return idName
+                }
+        }
         return 'invalid WHERE'
     }
 
@@ -288,10 +325,21 @@ export default class Helper {
                 case "pass":
                 case "fail":
                 case "audit":
+                case "lat":
+                case "lon":
+                case "seats":
+                case "year":
                     return a[keyword] - b[keyword];
                 case "dept":
                 case "instructor":
                 case "title":
+                case "fullname":
+                case "shortname":
+                case "name":
+                case "type":
+                case "furniture":
+                case "href":
+                case "address":
                     var aobj = a[Object.keys(a)[0]]
                     var bobj = b[Object.keys(b)[0]]
                     var x = a[keyword].toLowerCase();
@@ -299,12 +347,13 @@ export default class Helper {
                     return x < y ? -1 : x > y ? 1 : 0;
                 case "id":
                 case "uuid":
+                case "number":
                     var x: any = Number(a[keyword]);
                     var y: any = Number(b[keyword]);
                     return x < y ? -1 : x > y ? 1 : 0;
             }
         })
-       // console.log(spliced)
+        // console.log(spliced)
         return spliced;
     }
 

@@ -4,13 +4,15 @@
 
 import Server from "../src/rest/Server";
 import {expect} from 'chai';
+import {assert} from 'chai';
 import Log from "../src/Util";
 import {InsightResponse} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
 import Rooms from "../src/controller/Rooms";
-import roomObject from "../src/controller/Rooms";
+import {roomObject} from "../src/controller/Rooms";
+
 
 describe("AddSpec", function () {
     var isf: InsightFacade = null;
@@ -39,116 +41,69 @@ describe("AddSpec", function () {
      // expect.fail();
      //     })*/
 
-    // it("add1", function () {
-    //     isf.addDataset('apple',content)
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
-    // it("add2", function () {
-    //     isf.addDataset('null', null).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         // Helper.consoleLog(err)
-    //     });
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
-    // it("add3", function () {
-    //     isf.addDataset('Courses',content).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         // Helper.consoleLog(err)
-    //     })
-    //     //Helper.consoleLog(addData('1',content0))
-    // })
-    // it("add4", function () {
-    //     isf.addDataset('fileNoData',contentFND).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         // Helper.consoleLog(err)
-    //     })
-    // })
-    //
-    // it("add5", function () {
-    //     isf.addDataset('noData',contentND).then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //         // Helper.consoleLog(err)
-    //     })
-    // })
-    // it("remove", function () {
-    //     return isf.removeDataset('shit').then(function(response : any){
-    //         //Helper.consoleLog(response)
-    //     }).catch(function(err){
-    //        // Helper.consoleLog(err)
-    //     })
-    // })
-
-    it("rooms", function () {
-        Rooms.readIndex(room).then(function(trees:any){
-            var roomsArray:roomObject[];
-            var paths = Rooms.getPaths(trees)
-            "use strict";
-            var JSZip = require('jszip');
-            JSZip.loadAsync(room, {base64: true}).then(function (zip: any) {
-                var files = zip['files'];
-                //Helper.consoleLog(zip.file(paths[1].substring(2)))
-                var aPromise = zip.file(paths[1].substring(2)).async("string").then(function(building:any){
-                    //parse a building
-                    var section = Rooms.getPageSection(building);
-                    //console.log(section);
-                    for(var node of section['childNodes']){
-                        if(node['nodeName'] == 'div'){
-                            var view = node;
-                        }
-                    }
-                    for (var node of view['childNodes']) {
-                        var attrs = node['attrs']
-                        if (typeof attrs === 'object' && attrs.length != 0) {
-                            if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-content') {
-                                var content = node
-                            }
-                            if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'view-footer') {
-                                var roomsInfo = node
-                                Rooms.footer(roomsInfo);
-                            }
-                        }
-                    }
-                    for (var node of content['childNodes']) {
-                        if(node['nodeName'] == 'div'){
-                            var row = node;
-                        }
-                    }
-                    for (var node of row['childNodes']) {
-                        var attrs = node['attrs']
-                        if (typeof attrs === 'object' && attrs.length != 0) {
-                            if (attrs[0]['name'] == 'id' && attrs[0]['value'] == 'buildings-wrapper') {
-                                var bwrapper = node
-                            }
-                        }
-                    }
-                    for (var node of bwrapper['childNodes']) {
-                        var attrs = node['attrs']
-                        if (typeof attrs === 'object' && attrs.length != 0) {
-                            if (attrs[0]['name'] == 'id' && attrs[0]['value'] == 'building-info') {
-                                var buildingInfo = node
-                            }
-                        }
-                    }
-                    for (var node of buildingInfo['childNodes']) {
-                        if(node['nodeName'] == 'h2'){
-                            var h2 = node;
-                            var span = h2['childNodes'][0]
-                            var text = span['childNodes'][0]
-                        }
-                    }
-                    var buildingName = text['value']
-                    //Helper.consoleLog(buildingName)
-                })
-
-
-                //promiseList.push(aPromise)
-
-            })
+    it("invalid zip file", function () {
+        return isf.addDataset('null', null).then(function(response : any){
+            expect.fail()
+        }).catch(function(err){
+            expect(err.body['error']).to.equal('invalid zip file')
+        });
+    })
+    it("add Courses", function () {
+        this.timeout(10000)
+        return isf.addDataset('Courses',content).then(function(response : any){
+            assert.equal(response.body['jsc']['Courses'].length,64612,'there are 64612 sections in the dataset')
+        }).catch(function(err){
+             expect.fail()
         })
+    })
+    it("file no data", function () {
+        return isf.addDataset('fileNoData',contentFND).then(function(response : any){
+            expect.fail()
+        }).catch(function(err){
+            expect(err.body['error']).to.equal('zip file with no real data')
+        })
+    })
 
+
+    it("empty zip", function () {
+        return isf.addDataset('noData',contentND).then(function(response : any){
+            expect.fail()
+        }).catch(function(err){
+             assert.equal(err.body['error'],'empty zip','adding an empty zip file')
+        })
+    })
+
+
+    it("add cour", function () {
+        return isf.addDataset('cour',content0).then(function(response : any){
+            assert.isArray(response.body['jsc']['cour'])
+        }).catch(function(err){
+            expect.fail()
+        })
+    })
+
+    it("remove", function () {
+        return isf.removeDataset('cour').then(function(response : any){
+            assert.equal(response.code,204)
+        }).catch(function(err){
+            expect.fail()
+        })
+    })
+
+    it("remove", function () {
+        return isf.removeDataset('shit').then(function(response : any){
+            expect.fail()
+        }).catch(function(err){
+            assert.equal(err.code,404)
+        })
+    })
+
+    it("add rooms", function () {
+        this.timeout(10000);
+        return isf.addDataset('rooms',room).then(function(response : any){
+            assert.isArray(response.body['jsc']['rooms'],'dataset has an array')
+        }).catch(function(err){
+            expect.fail()
+        })
     })
 })

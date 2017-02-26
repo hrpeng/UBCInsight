@@ -21,14 +21,12 @@ export default class Query{
                 whereFinal.push(section)
             }
         }
-        var columnKeywords = query.OPTIONS['COLUMNS']
-        var columnOutput = Helper.columnsPick(whereFinal, columnKeywords)
+        var columnKeywords = query.OPTIONS['COLUMNS'];
+        var columnOutput = Helper.columnsPick(whereFinal, columnKeywords);
         if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
             return columnOutput;
         } else {
-            var orderKeyword = query.OPTIONS['ORDER']
-            var final = Helper.sort(columnOutput, orderKeyword)
-            return final
+            return Helper.sort(columnOutput, query.OPTIONS['ORDER']);
         }
     }
 
