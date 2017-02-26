@@ -95,18 +95,12 @@ describe("AddSpec", function () {
         })
     })
 
-    // it("rooms", function () {
-    //     Rooms.readIndex(room).then(function(result:any){
-    //         //console.log(result)
-    //         return result
-    //     })
-    // })
-    // it("add rooms", function () {
-    //     this.timeout(10000);
-    //     return isf.addDataset('rooms',room).then(function(response : any){
-    //         assert.isArray(response.body['jsc']['rooms'],'dataset has an array')
-    //     }).catch(function(err){
-    //         expect.fail()
-    //     })
-    // })
+    it("add rooms", function () {
+        this.timeout(10000);
+        return isf.addDataset('rooms',room).then(function(response : any){
+            assert.isArray(response.body['jsc']['rooms'],'dataset has an array')
+        }).catch(function(err){
+            expect.fail()
+        })
+    })
 })
