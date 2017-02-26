@@ -89,10 +89,11 @@ describe("AddSpec", function () {
     //     })
     // })
     it("addRooms", function () {
-        isf.addDataset('rooms',room).then(function(response : any){
-                    //Helper.consoleLog(response)
+        this.timeout(100000);
+        return isf.addDataset('rooms',room).then(function(response : any){
+            //Helper.consoleLog(response)
         }).catch(function(err){
-                    // Helper.consoleLog(err)
+            //Helper.consoleLog(err)
         })
     })
 })

@@ -25,6 +25,7 @@ export default class Helper {
             if (isArray(content.result)){
                 for (let i= 0; i < content.result.length; i++){
                     var section = content.result[i];
+                    //console.log(section);
                     //has 112 so far
                     if (typeof section === 'object'){
                         var dept = id + "_dept"
@@ -38,9 +39,13 @@ export default class Helper {
                         var audit = id + "_audit"
                         var year = id + "_year"
                         var uuid = id + "_uuid"
+                        if (section.Section === "overall"){
+                            section.Year = 1900;
+                        }
                         var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
                             [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
-                            [audit]: section.Audit, [year]: section.Year, [uuid]: section['id'].toString()};
+                            [audit]: section.Audit, [year]: Number(section.Year), [uuid]: section['id'].toString()};
+
                         array.push(jsonSection);
                     }
                 }
@@ -63,8 +68,12 @@ export default class Helper {
         return new Promise(function(fulfill,reject) {
             var jsonCoursesArray: any[] = [];
             var promiseList: any[] = [];
+            if(zip.file(keys[keys.length-1]).name == 'index.htm'){
+                reject('wrong id')
+            }
             for (var i = 1; i < keys.length; i++) { //length = 5945
                 var aPromise = zip.file(keys[i]).async("string")
+                //console.log(zip.file(keys[i]))
                 promiseList.push(aPromise)
                 //Helper.consoleLog(promiseList)
             }
@@ -93,6 +102,7 @@ export default class Helper {
                     //console.log(res)
                     fulfill(res)
                 }).catch(function(err:any){
+                    //console.log(err)
                     reject(err)
                 })
             })
@@ -105,6 +115,7 @@ export default class Helper {
                 JSZip.loadAsync(content, {base64: true}).then(function (zip: any) {
                     var files = zip['files'];
                     keys = Object.keys(files)
+                    //console.log(keys)
                     var jsonCourses: any = {};
                     if (keys.length == 1) {
                         reject('empty zip')
@@ -141,7 +152,9 @@ export default class Helper {
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
         var validOptions = Helper.validateOptions(options)
-        if(validWhere.includes('invalid')){
+        if(validWhere instanceof Array){
+            return validWhere
+        }else if(validWhere.includes('invalid')){
             return validWhere
         }else if(validOptions != 'valid'){
             return validOptions
@@ -150,7 +163,7 @@ export default class Helper {
         }
     }
 
-    public static  validateWhere(where : any) : string {
+    public static  validateWhere(where : any) : any {
         if(typeof where !== 'object') {
             return 'invalid object'
         }
@@ -172,7 +185,10 @@ export default class Helper {
                     try {
                         fs.accessSync('./' + idName);
                     } catch (e) {
-                        return 'invalid id, dataset has not been PUT'
+                        var arr :any[] = []
+                        arr.push(idName)
+                        return arr
+                        //return 'invalid id, dataset has not been PUT'
                     }
                     var keyvar = key.split("_")[1]
                     if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit' && keyvar != 'lat'
@@ -192,7 +208,10 @@ export default class Helper {
                     try {
                         fs.accessSync('./' + id);
                     } catch (e) {
-                        return 'invalid id, dataset has not been PUT'
+                        var arr :any[] = []
+                        //return 'invalid id, dataset has not been PUT'
+                        arr.push(id)
+                        return arr
                     }
                     var keyvar = key.split("_")[1]
                     if (keyvar != 'dept' && keyvar != 'id' && keyvar != 'instructor' && keyvar != 'title' && keyvar != 'uuid' && keyvar != 'fullname' && keyvar != 'shortname' && keyvar != 'number' && keyvar != 'name' && keyvar != 'address'
@@ -214,14 +233,23 @@ export default class Helper {
                     if (whereValue.length == 0) {
                         return 'invalid LOGIC value'
                     }
+                    var totalArray:any[] = []
                     var idName:string = ''
                     for (var i = 0; i < whereValue.length; i++) {
-                        var validEach: string = Helper.validateWhere(whereValue[i])
-                        if (validEach.includes('invalid')) {
-                            return validEach
-                        }else{
-                            idName = validEach
+                        var validEach: any = Helper.validateWhere(whereValue[i])
+                        if(validEach instanceof Array){
+                            totalArray = totalArray.concat(validEach)
                         }
+                        if(totalArray.length == 0){
+                            if (validEach.includes('invalid')) {
+                                return validEach
+                            } else {
+                                idName = validEach
+                            }
+                        }
+                    }
+                    if(totalArray.length != 0){
+                        return totalArray
                     }
                     return idName
                 }
@@ -307,6 +335,8 @@ export default class Helper {
                 case "name":
                 case "type":
                 case "furniture":
+                case "href":
+                case "address":
                     var aobj = a[Object.keys(a)[0]]
                     var bobj = b[Object.keys(b)[0]]
                     var x = a[keyword].toLowerCase();

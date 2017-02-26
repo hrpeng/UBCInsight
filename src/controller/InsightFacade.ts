@@ -87,10 +87,10 @@ export default class InsightFacade implements IInsightFacade {
         return new Promise(function (fulfill, reject) {
             var valid = Helper.validate(query);
             //console.log(valid)
-            if (valid == 'invalid id, dataset has not been PUT'){
+            if (valid instanceof Array){
                 var is : InsightResponse = {
                     code: 424,
-                    body:{'error': valid}
+                    body:{'missing': valid}
                 }
                 reject(is);
             }

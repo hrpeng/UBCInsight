@@ -535,15 +535,25 @@ describe("AddSpec", function () {
 
     var roomQuery: QueryRequest = {
         "WHERE": {
-        "IS": {
-            "rooms_name": "DMP_*"
-        }
+            "AND": [
+                {
+                    "IS": {
+                        "rooms_address": "*7*"
+                    }
+                },
+                {
+                    "IS": {
+                        "rooms_address": "*B*"
+                    }
+                },
+            ]
     },
         "OPTIONS": {
         "COLUMNS": [
-            "rooms_name"
+            //"rooms_name",
+            "rooms_address"
         ],
-            "ORDER": "rooms_name",
+            "ORDER": "rooms_address",
             "FORM": "TABLE"
     }
     }
@@ -558,7 +568,7 @@ describe("AddSpec", function () {
 
     it("XXX", function () {
         return isf.performQuery(roomQuery).then(function(response : any){
-            //Helper.consoleLog(response['body']['result'])
+            //Helper.consoleLog(response['body'])
         }).catch(function(err){
             Helper.consoleLog(err)
         })

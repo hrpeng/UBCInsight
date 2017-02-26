@@ -8,17 +8,17 @@ import {stringify} from "querystring";
 import {type} from "os";
 
 export interface roomObject {
-    rooms_name: any;
-    rooms_number: any;
-    rooms_seats: any;
-    rooms_furniture: any;
-    rooms_type: any;
-    rooms_href: any;
-    rooms_shortname: any
-    rooms_fullname: any
-    rooms_address :any
-    rooms_lat :any
-    rooms_lon:any
+    rooms_name: string
+    rooms_number: string
+    rooms_seats: number
+    rooms_furniture: string
+    rooms_type: string
+    rooms_href: string
+    rooms_shortname: string
+    rooms_fullname: string
+    rooms_address :string
+    rooms_lat :number
+    rooms_lon:number
 
 }
 
@@ -42,8 +42,12 @@ export default class Rooms {
                 Rooms.parseIndex(zip,keys[keys.length - 1]).then(function(result:any){
                     //console.log(result)
                     fulfill(result)
+                }).catch(function(e:any){
+                    //console.log(e)
+                    reject(e)
                 })
             }).catch(function (e: any) {
+                console.log(e)
                 reject(e);
                 //not a zip file
             })
@@ -56,7 +60,11 @@ export default class Rooms {
             var allBuildings: any[] = []
             var json:any = {}
             zip.file(iKey).async("string").then(function (data: any) {
+                //console.log(JSON.parse(data))
                 var bsm: any = Rooms.getPageSection(data)
+                if(bsm === undefined){
+                    reject('wrong id')
+                }
                 for (var node of bsm['childNodes']) {
                     var attrs = node['attrs']
                     if (typeof attrs === 'object' && attrs.length != 0) {
@@ -102,6 +110,9 @@ export default class Rooms {
                                 });
                                 fulfill(json)
                             }
+                        }).catch(function(e:any){
+                            console.log(e)
+                            reject(e)
                         })
                     })(i)
                 }
@@ -117,7 +128,6 @@ export default class Rooms {
             var http = require('http');
             //console.log(encodedAds);
             http.get(request, (res: any) => {
-                //console.log("hit");
                 const statusCode = res.statusCode;
                 const contentType = res.headers['content-type'];
 
@@ -170,12 +180,14 @@ export default class Rooms {
     public static getPageSection(data: any){
         const parse5 = require('parse5');
         const document = parse5.parse(data);
+        //console.log(document)
         var childnodes = document['childNodes']
         for (var node of childnodes) {
             if (node['nodeName'] == 'html') {
                 var html = node
             }
         }
+        //console.log(html)
         for (var node of html['childNodes']) {
             if (node['nodeName'] == 'body') {
                 var body = node
@@ -188,6 +200,9 @@ export default class Rooms {
                     var fwc = node
                 }
             }
+        }
+        if(fwc === undefined){
+            return fwc
         }
         for (var node of fwc['childNodes']) {
             var attrs = node['attrs']
@@ -259,6 +274,9 @@ export default class Rooms {
                 }).catch(function(e:any){
                     reject(e)
                 })
+            }).catch(function(e:any){
+                console.log(e)
+                reject(e)
             })
         })
     }
@@ -317,17 +335,17 @@ export default class Rooms {
                     for (var node of tbody['childNodes']) {
                         if (node['nodeName'] == 'tr') {
                             var room: roomObject = {
-                                rooms_name: null,
-                                rooms_number: null,
-                                rooms_seats: null,
-                                rooms_furniture: null,
-                                rooms_type: null,
-                                rooms_href: null,
-                                rooms_shortname: null, //= rm['rooms_shortname'],
-                                rooms_fullname: null,
-                                rooms_address : null,
-                                rooms_lat : null,
-                                rooms_lon: null
+                                rooms_name: undefined,
+                                rooms_number: undefined,
+                                rooms_seats: undefined,
+                                rooms_furniture: undefined,
+                                rooms_type: undefined,
+                                rooms_href: undefined,
+                                rooms_shortname: undefined, //= rm['rooms_shortname'],
+                                rooms_fullname: undefined,
+                                rooms_address : undefined,
+                                rooms_lat : undefined,
+                                rooms_lon: undefined
                             };
                             for (var td of node['childNodes']) {
                                 var attrs = td['attrs'];
@@ -342,7 +360,7 @@ export default class Rooms {
                                         if (td['childNodes'][0]['nodeName'] === "#text") {
                                             var capacity = td['childNodes'][0]['value'];
                                             var res = capacity.split(" ");
-                                            room.rooms_seats = res[12];
+                                            room.rooms_seats = Number(res[12]);
                                         }
                                     }
                                     if (attrs[0]['name'] == 'class' && attrs[0]['value'] == 'views-field views-field-field-room-furniture') {
