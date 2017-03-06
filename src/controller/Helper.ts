@@ -2,6 +2,7 @@
 
 import {isArray} from "util";
 import Rooms from "./Rooms";
+import {type} from "os";
 
 export default class Helper {
 
@@ -151,15 +152,113 @@ export default class Helper {
         var where = query['WHERE'];
         var options = query['OPTIONS']
         var validWhere = Helper.validateWhere(where)
-        var validOptions = Helper.validateOptions(options)
+        var validOptions = Helper.validateOptions(options, query);
+        if (query['TRANSFORMATIONS']){
+            var transformations = query['TRANSFORMATIONS']
+            var validTransformations = Helper.validateTransformations(transformations, options);
+        }
+
         if(validWhere instanceof Array){
             return validWhere
         }else if(validWhere.includes('invalid')){
             return validWhere
-        }else if(validOptions != 'valid'){
+        }else if(validOptions !== 'valid'){
             return validOptions
-        }else {
+        }else if(query['TRANSFORMATIONS'] && validTransformations !== 'valid'){
+            return validTransformations
+        }
+        else {
             return validWhere
+        }
+    }
+
+    // validateTransformations also checks that everything in OPTIONS->COLUMNS exists in either GROUP OR APPLY
+    public static validateTransformations(transformations: any, options: any) : any {
+        if (typeof transformations !== 'object'){
+            return 'invalid object'
+        }
+        var transKeys = Object.keys(transformations); // GROUP/APPLY
+        if(transKeys[0] !== 'GROUP'){
+            return 'invalid OPTIONS: absence of GROUP in TRANSFORMATIONS'
+        }
+        if(transKeys[1] !== 'APPLY'){
+            return 'invalid OPTIONS: absence of APPLY in TRANSFORMATIONS'
+        }
+        var group = transformations[transKeys[0]];
+        var apply = transformations[transKeys[1]];
+        if (!isArray(group) || !(group.length > 0)){
+            return 'invalid group: group is not an array or does not have at least 1 element'
+        } else{
+            for (let g of group){
+                if (g.includes("_")){
+                    if (g.split("_")[1] !== 'shortname' && 'name' && 'number' && 'seats' && 'furniture' && 'type'
+                        && 'fullname' && 'address' && 'lat' && 'lon' && 'dept' && 'id' && 'sec' && 'avg' && 'instructor'
+                     && 'title' && 'pass' && 'fail' && 'year' && 'uuid' && 'audit'){
+                        return 'invalid GROUP elements'
+                    }
+                } else {
+                    return 'invalid group element: no "_"';
+                }
+            }
+        }
+        if (!isArray(apply)){
+            return 'invalid, apply is not an array'
+        }
+        var termsInApply: any[] = [];
+        for (let i of apply){          // create an array of the keys in apply to check with COLUMNS
+            var applyKeys = Object.keys(i);
+            termsInApply.push(applyKeys[0]);
+        }
+        var allTerms = termsInApply.concat(group);  // keys in both group and apply, used for verifying columns
+        for (let column of options['COLUMNS']){        // check if everything in columns is either in GROUP or is defined in APPLY
+            // if (allTerms.some(x =>  column !== x)){
+            //     return 'invalid, key defined in column does no exist in GROUP or APPLY'
+            // }
+            var flag: boolean = false
+            for (let term of allTerms){
+                if (column === term){
+                    flag = true;
+                }
+            }
+            if (flag === false){
+                return 'invalid, key defined in column does no exist in GROUP or APPLY'
+            }
+        }
+        var validateApp = Helper.validateApply(apply);
+        if (validateApp.includes('invalid')){
+            return validateApp;
+        }
+        // checking if ORDER->KEYS contains elements defined in APPLY because it is easier to do here
+        var keysFromOrder = options['ORDER']['keys'];
+        for (let k of keysFromOrder){
+            if (!k.includes("_")){
+                // if k is not defined in apply then return error message
+                if(termsInApply.some(x => x !== k)){
+                    return 'invalid ORDER: keys without _ are not defined in APPLY'
+                }
+            }
+        }
+        return 'valid';
+    }
+
+    public static validateApply(apply: any): any{
+        for (let a of apply){
+            if (typeof a == 'object'){
+                var applyKey = Object.keys(a);
+                //console.log(applyKey);
+                if (typeof a[applyKey[0]] == 'object'){
+                    var applyToken = Object.keys(a[applyKey[0]]);
+                    if (applyToken[0] === 'MAX' || 'MIN' || 'AVG' || 'COUNT' || 'SUM' ) {
+                        if (a[applyKey[0]][applyToken[0]].split("_")[1] === 'avg' || 'fail' || 'pass' || 'audit' ||
+                        'lat' || 'lon' || 'seats' || 'year'){
+                            return 'valid';
+                        }
+                        return 'invalid item in ApplyToken'
+                    }
+                    return 'invalid APPLYTOKEN';
+                }
+            }
+            return 'invalid APPLY Element'
         }
     }
 
@@ -228,6 +327,7 @@ export default class Helper {
             case 'AND':
             case 'OR':
                 if (!(whereValue instanceof Array)) {
+                    console.log("asdf");
                     return 'invalid LOGIC value'
                 } else {
                     if (whereValue.length == 0) {
@@ -260,7 +360,7 @@ export default class Helper {
         return 'invalid WHERE'
     }
 
-    public static  validateOptions(options : any) {
+    public static  validateOptions(options : any, query: any) {
         if(typeof options !== 'object') {
             return 'invalid object'
         }
@@ -281,22 +381,75 @@ export default class Helper {
                 } else {
                     for(var element of options['COLUMNS']){
                         //console.log(element)
-                        if(typeof element !== 'string' || !(element.includes('_'))){
-                            return 'invalid COLUMNS key'
-                        }else{
-                            var id = element.split("_")[0]
-                            try {
-                                fs.accessSync('./' + id);
-                            } catch (e) {
+                        // if(typeof element !== 'string' || !(element.includes('_'))){
+                        //     return 'invalid COLUMNS key'
+                        // }else{
+                        //     var id = element.split("_")[0]
+                        //     try {
+                        //         fs.accessSync('./' + id);
+                        //     } catch (e) {
+                        //         return 'invalid COLUMNS key'
+                        //     }
+                        // }
+                        if(typeof element == 'string'){
+                            if (element.includes('_')){
+                                var id = element.split("_")[0]
+                                try {
+                                    fs.accessSync('./' + id);
+                                } catch (e) {
+                                    return 'invalid COLUMNS key'
+                                }
+                            } else if(!query['TRANSFORMATIONS']){
                                 return 'invalid COLUMNS key'
                             }
+                        } else{
+                            return 'invalid COLUMNS key'
                         }
                     }
                 }
             } else if(key == 'ORDER') {
-                if (typeof options['ORDER'] !== 'string' || !(options['ORDER'].includes('_'))) {
-                    return 'invalid ORDER key'
-                } else {
+                if (typeof options['ORDER'] == 'object'){
+                    // implement object case here
+                    // WTFF!!!????
+                    var keys1 = Object.keys(options['ORDER']);
+                    //console.log(keys1);
+                    if (keys1.length === 2 && keys1[0] === 'dir' && keys1[1] === 'keys'){
+                        if (options['ORDER']['dir'] !== 'UP' && options['ORDER']['dir'] !== 'DOWN'){
+                            //console.log(options['ORDER']['dir']);
+                            return 'invalid ORDER: dir key'
+                        }
+                        if (isArray(options['ORDER']['keys'])){
+                            var keysArray = options['ORDER']['keys'];
+                            for (let i of keysArray){
+                                if (i.includes("_")){
+                                    if (i.split("_")[1] !== 'shortname' || 'name' || 'number' || 'seats' || 'furniture' || 'type'
+                                        || 'fullname' || 'address' || 'lat' || 'lon' || 'dept' || 'id' || 'sec' || 'avg' || 'instructor'
+                                        || 'title' || 'pass' || 'fail' || 'year' || 'uuid' || 'audit'){
+                                        return 'invalid ORDER: bad key elements'
+                                    }
+                                }
+                            }
+                        } else {
+                            return 'invalid ORDER: keys is not an array'
+                        }
+                    } else {
+                        return 'invalid ORDER'
+                    }
+                    for (let k of options['ORDER']['keys']){
+                        if (!(options['COLUMNS'].includes(k))){
+                            return 'invalid ORDER key: not included in COLUMNS'
+                        }
+                        if (k.includes('_')) {
+                            var orderId = options['ORDER'].split("_")[0]
+                            try {
+                                fs.accessSync('./' + orderId);
+                            } catch (e) {
+                                return 'invalid id, dataset has not been PUT'
+                            }
+                        }
+                    }
+                }else if (typeof options['ORDER'] === 'string' && (options['ORDER'].includes('_'))) {
+                    //console.log("hit here");
                     var orderId = options['ORDER'].split("_")[0]
                     try {
                         fs.accessSync('./' + orderId);
@@ -306,6 +459,8 @@ export default class Helper {
                     if(!(options['COLUMNS'].includes(options['ORDER']))){
                         return 'invalid ORDER key: not included in COLUMNS'
                     }
+                } else {
+                    return 'invalid ORDER key'
                 }
             } else if(key == 'FORM'){
                 if(options['FORM'] != 'TABLE'){
@@ -313,6 +468,7 @@ export default class Helper {
                 }
             }
         }
+        //console.log('returns valid');
         return 'valid'
     }
 

@@ -560,6 +560,40 @@ describe("AddSpec", function () {
         }
     }
 
+    var d3Query: QueryRequest =
+        {
+            "WHERE": {
+                "AND": [{
+                    "IS": {
+                        "rooms_furniture": "*Tables*"
+                    }
+                }, {
+                    "GT": {
+                        "rooms_seats": 300
+                    }
+                }]
+            },
+            "OPTIONS": {
+                "COLUMNS": [
+                    "rooms_shortname",
+                    "maxSeats"
+                ],
+                "ORDER": {
+                    "dir": "DOWN",
+                    "keys": ["maxSeats"]
+                },
+                "FORM": "TABLE"
+            },
+            "TRANSFORMATIONS": {
+                "GROUP": ["rooms_shortname"],
+                "APPLY": [{
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }]
+            }
+        }
+
     beforeEach(function () {
         isf = new InsightFacade();
     });
@@ -763,26 +797,30 @@ describe("AddSpec", function () {
              assert.equal(err.code,400)
         });
     })
-    it("Coverage OR", function () {
+    it("Coverage OR1", function () {
         return isf.performQuery(badQueryor1).then(function (response: any) {
             expect.fail()
         }).catch(function (err) {
             assert.equal(err.body['error'],'invalid LOGIC value')
         });
     })
-    it("Coverage OR", function () {
+    it("Coverage OR2", function () {
         return isf.performQuery(badQueryor3).then(function (response: any) {
             expect.fail()
         }).catch(function (err) {
             assert.equal(err.body['error'],'invalid MCOMPARISON key')
         });
     })
-    it("Coverage OR", function () {
+    it("Coverage OR3", function () {
         return isf.performQuery(finalquery).then(function(response : any){
             assert.equal(response.body['result'].length,49)
         }).catch(function(err){
-             expect.fail()
+            expect.fail()
         });
+    })
+
+    it("validateQuery", function (){
+        console.log(Helper.validate(d3Query));
     })
     //
     it("NON-SENSE Coverage", function () {
@@ -796,9 +834,4 @@ describe("AddSpec", function () {
 
         //Helper.consoleLog("asdf");
     })
-    //
-    // it("remove", function (){
-    //     isf.removeDataset('apple')
-    //     isf.removeDataset('noData')
-    // })
 })

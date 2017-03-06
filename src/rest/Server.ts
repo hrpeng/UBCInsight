@@ -7,6 +7,7 @@ import restify = require('restify');
 
 import Log from "../Util";
 import {InsightResponse} from "../controller/IInsightFacade";
+import InsightFacade from "../controller/InsightFacade";
 
 /**
  * This configures the REST endpoints for the server.
@@ -64,6 +65,7 @@ export default class Server {
                 that.rest.get('/echo/:msg', Server.echo);
 
                 // Other endpoints will go here
+                that.rest.put('/dataset/:id', Server.addDataset);
 
                 that.rest.listen(that.port, function () {
                     Log.info('Server::start() - restify listening: ' + that.rest.url);
@@ -105,6 +107,15 @@ export default class Server {
         } else {
             return {code: 400, body: {error: 'Message not provided'}};
         }
+    }
+
+    public static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Log.trace('Server adding Data Set - params: ' + JSON.stringify(req.params));
+
+        var isf = new InsightFacade();
+        // call facade to add the dataset
+        isf.addDataset(req.params, req.body)
+
     }
 
 }
