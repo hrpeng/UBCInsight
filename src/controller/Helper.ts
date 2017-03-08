@@ -232,8 +232,14 @@ export default class Helper {
         var keysFromOrder = options['ORDER']['keys'];
         for (let k of keysFromOrder){
             if (!k.includes("_")){
+                var f: boolean = false
+                for (let term of termsInApply){
+                    if (k === term){
+                        f = true;
+                    }
+                }
                 // if k is not defined in apply then return error message
-                if(termsInApply.some(x => x !== k)){
+                if (f === false) {
                     return 'invalid ORDER: keys without _ are not defined in APPLY'
                 }
             }
@@ -436,9 +442,9 @@ export default class Helper {
                         return 'invalid ORDER'
                     }
                     for (let k of options['ORDER']['keys']){
-                        if (!(options['COLUMNS'].includes(k))){
-                            return 'invalid ORDER key: not included in COLUMNS'
-                        }
+                        // if (!(options['COLUMNS'].includes(k))){
+                        //     return 'invalid ORDER key: not included in COLUMNS'
+                        // }
                         if (k.includes('_')) {
                             var orderId = options['ORDER'].split("_")[0]
                             try {
