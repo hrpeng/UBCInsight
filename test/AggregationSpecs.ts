@@ -13,7 +13,7 @@ import Helper from "../src/controller/Helper";
 import {isArray} from "util";
 import Aggregation from "../src/controller/Aggregation";
 
-describe("AddSpec", function () {
+describe("AggregationSpec", function () {
     var isf: InsightFacade = null;
     var anArray = [{
         rooms_name: 'BIOL_1503',

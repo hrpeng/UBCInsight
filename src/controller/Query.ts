@@ -29,19 +29,20 @@ export default class Query{
             whereFinal = array_o;
         }
 
+
         if (query['TRANSFORMATIONS']){
             var grouping = query.TRANSFORMATIONS['GROUP'];
             var applying = query.TRANSFORMATIONS['APPLY'];
             var transOutput = Aggregation.groupBy(whereFinal,grouping,applying)
-            return transOutput
-        }else {
-            var columnKeywords = query.OPTIONS['COLUMNS'];
-            var columnOutput = Helper.columnsPick(whereFinal, columnKeywords);
-            if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
-                return columnOutput;
-            } else {
-                return Helper.sort(columnOutput, query.OPTIONS['ORDER']);
-            }
+            whereFinal = transOutput;
+        }
+        var columnKeywords = query.OPTIONS['COLUMNS'];
+        var columnOutput = Helper.columnsPick(whereFinal, columnKeywords);
+        if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
+            return columnOutput;
+        } else {
+            //console.log("go to sort");
+            return Helper.sort(columnOutput, query.OPTIONS['ORDER']);
         }
     }
 

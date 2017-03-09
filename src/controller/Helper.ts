@@ -170,7 +170,7 @@ export default class Helper {
             return validOptions
         }else if(query['TRANSFORMATIONS'] && validTransformations !== 'valid'){
             return validTransformations
-        }else if(validWhere == 'return all'){
+        } else if(validWhere == 'return all'){
             return validOptions
         }
         else {
@@ -200,7 +200,7 @@ export default class Helper {
                     var keyVar = g.split("_")[1]
                     if (keyVar !== 'shortname' && keyVar !== 'name' && keyVar !== 'number' && keyVar !== 'seats' && keyVar !== 'furniture' && keyVar !== 'type'
                         && keyVar !== 'fullname' &&keyVar !==  'address' && keyVar !== 'lat' && keyVar !== 'lon' && keyVar !== 'dept' && keyVar !== 'id' && keyVar !== 'sec' && keyVar !== 'avg' && keyVar !== 'instructor'
-                     && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit'){
+                        && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit'){
                         return 'invalid GROUP elements'
                     }
                 } else {
@@ -240,24 +240,21 @@ export default class Helper {
         // checking if ORDER->KEYS contains elements defined in APPLY because it is easier to do here
 
         var keysFromOrder = options['ORDER']['keys'];
-        if(typeof keysFromOrder === 'object') {
-            for (let k of keysFromOrder) {
-                if (!k.includes("_")) {
-                    var f: boolean = false
-                    for (let term of termsInApply) {
-                        if (k === term) {
-                            f = true;
-                        }
-                    }
-                    // if k is not defined in apply then return error message
-                    if (f === false) {
-                        return 'invalid ORDER: keys without _ are not defined in APPLY'
-                    }
+        for (let k of keysFromOrder){
+            var f: boolean = false
+            for (let term of options['COLUMNS']){
+                if (k === term){
+                    f = true;
                 }
+            }
+            // if k is not defined in apply then return error message
+            if (f === false) {
+                return 'invalid ORDER: Order key needs to be included in columns'
             }
         }
         return 'valid';
     }
+
 
     public static validateApply(apply: any): any{
         for (let a of apply){
@@ -268,7 +265,7 @@ export default class Helper {
                     var applyToken = Object.keys(a[applyKey[0]]);
                     if (applyToken[0] === 'MAX' || 'MIN' || 'AVG' || 'COUNT' || 'SUM' ) {
                         if (a[applyKey[0]][applyToken[0]].split("_")[1] === 'avg' || 'fail' || 'pass' || 'audit' ||
-                        'lat' || 'lon' || 'seats' || 'year'){
+                            'lat' || 'lon' || 'seats' || 'year'){
                             return 'valid';
                         }
                         return 'invalid item in ApplyToken'
@@ -288,6 +285,7 @@ export default class Helper {
 
         var whereKey = Object.keys(where)[0] //OR AND GT IS NOT etc...
         var whereValue = where[whereKey]    // value of OR NOT etc...
+        console.log(whereValue);
         var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
         var value = whereValue[key]   //97 cpsc etc..
 
@@ -346,6 +344,7 @@ export default class Helper {
             case 'AND':
             case 'OR':
                 if (!(whereValue instanceof Array)) {
+                    //console.log("asdf");
                     return 'invalid LOGIC value'
                 } else {
                     if (whereValue.length == 0) {
@@ -382,6 +381,7 @@ export default class Helper {
         if(typeof options !== 'object') {
             return 'invalid object'
         }
+
         var idName;
         var optionsKeys = Object.keys(options)//[0] //OR AND GT IS NOT etc...
         //console.log(optionsKeys)
@@ -440,9 +440,9 @@ export default class Helper {
                             var keysArray = options['ORDER']['keys'];
                             for (let i of keysArray){
                                 if (i.includes("_")){
-                                    if (i.split("_")[1] !== 'shortname' || 'name' || 'number' || 'seats' || 'furniture' || 'type'
+                                    if (!(i.split("_")[1] === 'shortname' || 'name' || 'number' || 'seats' || 'furniture' || 'type'
                                         || 'fullname' || 'address' || 'lat' || 'lon' || 'dept' || 'id' || 'sec' || 'avg' || 'instructor'
-                                        || 'title' || 'pass' || 'fail' || 'year' || 'uuid' || 'audit'){
+                                        || 'title' || 'pass' || 'fail' || 'year' || 'uuid' || 'audit')){
                                         return 'invalid ORDER: bad key elements'
                                     }
                                 }
@@ -458,7 +458,7 @@ export default class Helper {
                         //     return 'invalid ORDER key: not included in COLUMNS'
                         // }
                         if (k.includes('_')) {
-                            var orderId = options['ORDER'].split("_")[0]
+                            var orderId = k.split("_")[0]
                             try {
                                 fs.accessSync('./' + orderId);
                             } catch (e) {
@@ -467,6 +467,7 @@ export default class Helper {
                         }
                     }
                 }else if (typeof options['ORDER'] === 'string' && (options['ORDER'].includes('_'))) {
+                    //console.log("hit here");
                     var orderId = options['ORDER'].split("_")[0]
                     try {
                         fs.accessSync('./' + orderId);
@@ -485,48 +486,107 @@ export default class Helper {
                 }
             }
         }
+        //console.log('returns valid');
         return idName
     }
 
-    public static sort(input: any[], keyword: string){ //keyword: courses_avg, apple_uuid etc..
-        var keyvar = keyword.split('_')[1]
+    public static sort(input: any[], keyword: any){ //keyword: courses_avg, apple_uuid etc..
+        //console.log("hit sort");
         var spliced = input.splice(0)
+        let that = this;
+        //console.log(spliced);
+        var inp = keyword;
         spliced.sort(function(a,b) {
-            switch(keyvar){
-                case "avg":
-                case "pass":
-                case "fail":
-                case "audit":
-                case "lat":
-                case "lon":
-                case "seats":
-                case "year":
-                    return a[keyword] - b[keyword];
-                case "dept":
-                case "instructor":
-                case "title":
-                case "fullname":
-                case "shortname":
-                case "name":
-                case "type":
-                case "furniture":
-                case "href":
-                case "address":
-                    //var aobj = a[Object.keys(a)[0]]
-                    //var bobj = b[Object.keys(b)[0]]
-                    var x = a[keyword].toLowerCase();
-                    var y = b[keyword].toLowerCase();
-                    return x < y ? -1 : x > y ? 1 : 0;
-                case "id":
-                case "uuid":
-                case "number":
-                    var x: any = Number(a[keyword]);
-                    var y: any = Number(b[keyword]);
-                    return x < y ? -1 : x > y ? 1 : 0;
+            var order = 1;
+            //console.log("hit")
+            if (typeof inp == 'object') {
+                //console.log("hit object");
+                if (keyword['dir'] === "DOWN") {
+                    //console.log("hit here");
+                    order = -1;
+                }
+                inp = keyword['keys']
             }
+            var i = 0;
+            return order*(that.sortHelper(a,b, inp, i));
         })
-        // console.log(spliced)
         return spliced;
+    }
+
+    public static sortHelper(a: any, b:any, keyword: any, i : any) : number{
+        var keyVar: any;
+        if (typeof keyword == 'string') {
+            keyVar = keyword.split('_')[1]
+        }else if (isArray(keyword)) {
+            keyVar = keyword[i].split('_')[1]
+        }
+        //i++;
+        switch(keyVar){
+            case "avg":
+            case "pass":
+            case "fail":
+            case "audit":
+            case "lat":
+            case "lon":
+            case "seats":
+            case "year":
+                //console.log("hit seats");
+                if (isArray(keyword)){
+                    var returnValue = a[keyword[i]] - b[keyword[i]];
+                }else{
+                    var returnValue = a[keyword] - b[keyword];
+                }
+                if (returnValue === 0){
+                    if (isArray(keyword) && typeof keyword[i+1] !== 'undefined' ){
+                        //console.log("hit");
+                        returnValue = Helper.sortHelper(a, b, keyword, i+1);
+                    }
+                }
+                return returnValue;
+            case "dept":
+            case "instructor":
+            case "title":
+            case "fullname":
+            case "shortname":
+            case "name":
+            case "type":
+            case "furniture":
+            case "href":
+            case "address":
+                var x:any;
+                var y:any;
+                if (isArray(keyword)){
+                    x = a[keyword[i]].toLowerCase();
+                    y = b[keyword[i]].toLowerCase();
+                }else{
+                    x = a[keyword].toLowerCase();
+                    y = b[keyword].toLowerCase();
+                }
+                var returnValue1 = x < y ? -1 : x > y ? 1 : 0;
+                if (returnValue1 === 0 && typeof keyword[i+1] !== 'undefined' && isArray(keyword)){
+                    //keyword.splice(0,1);
+                    //console.log(keyword);
+                    returnValue1 = Helper.sortHelper(a, b, keyword, i+1);
+                }
+                return returnValue1;
+            case "id":
+            case "uuid":
+            case "number":
+                var c: any;
+                var d: any;
+                if (isArray(keyword)){
+                    c = Number(a[keyword[i]]);
+                    d = Number(b[keyword[i]]);
+                }else{
+                    c = Number(a[keyword]);
+                    d = Number(b[keyword]);
+                }
+                var returnValue2 = c < d ? -1 : c > d ? 1 : 0;
+                if (returnValue2 === 0 && typeof keyword[i+1] !== 'undefined' && isArray(keyword)){
+                    returnValue2 = Helper.sortHelper(a, b, keyword, i+1);
+                }
+                return returnValue2
+        }
     }
 
     public static columnsPick(input: any[], keywords: any[]){

@@ -12,7 +12,7 @@ import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
 
-describe("AddSpec", function () {
+describe("QuerySpec", function () {
 
     var isf: InsightFacade = null;
     var badQuery: QueryRequest = {
@@ -536,26 +536,19 @@ describe("AddSpec", function () {
 
     var roomQuery: QueryRequest = {
         "WHERE": {
-            "AND": [
-                {
-                    "IS": {
-                        "rooms_shortname": "*L*"
-                    }
-                },
-                {
-                    "IS": {
-                        "rooms_type": "Small*"
-                    }
-                }
-            ]
+            "IS": {
+                "rooms_shortname": "L*"
+            }
         },
         "OPTIONS": {
-        "COLUMNS": [
-            "rooms_name",
-            "rooms_shortname",
-            "rooms_type"
-        ],
-            "ORDER": "rooms_name",
+            "COLUMNS": [
+                "rooms_seats",
+                "rooms_number"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["rooms_seats", "rooms_number"]
+            },
             "FORM": "TABLE"
         }
     }
@@ -565,11 +558,11 @@ describe("AddSpec", function () {
             "WHERE": {
                 "AND": [{
                     "IS": {
-                        "rooms_furniture": "*Tables*"
+                        "rooms_shortname": "OSBO"
                     }
                 }, {
                     "GT": {
-                        "rooms_seats": 300
+                        "rooms_seats": 50
                     }
                 }]
             },
@@ -580,7 +573,7 @@ describe("AddSpec", function () {
                 ],
                 "ORDER": {
                     "dir": "DOWN",
-                    "keys": ["maxSeats"]
+                    "keys": ["rooms_shortname", "maxSeats"]
                 },
                 "FORM": "TABLE"
             },
@@ -602,13 +595,13 @@ describe("AddSpec", function () {
         isf = null;
     });
 
-//     it("XXX", function () {
-//         return isf.performQuery(roomQuery).then(function(response : any){
-//             //Helper.consoleLog(response['body'])
-//         }).catch(function(err){
-//             Helper.consoleLog(err)
-//         })
-//     })
+    it("XXX", function () {
+        return isf.performQuery(d3Query).then(function(response : any){
+            Helper.consoleLog(response['body'])
+        }).catch(function(err){
+            Helper.consoleLog(err)
+        })
+    })
 //
 //     it("XXX", function () {
 //         return isf.performQuery(bQuery).then(function(response : any){
