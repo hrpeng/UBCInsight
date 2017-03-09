@@ -151,7 +151,11 @@ export default class Helper {
         // }
         var where = query['WHERE'];
         var options = query['OPTIONS']
-        var validWhere = Helper.validateWhere(where)
+        if(Object.keys(where).length === 0){
+            validWhere = "return all"
+        }else {
+            var validWhere = Helper.validateWhere(where)
+        }
         var validOptions = Helper.validateOptions(options, query);
         if (query['TRANSFORMATIONS']){
             var transformations = query['TRANSFORMATIONS']
@@ -162,10 +166,12 @@ export default class Helper {
             return validWhere
         }else if(validWhere.includes('invalid')){
             return validWhere
-        }else if(validOptions !== 'valid'){
+        }else if(validOptions.includes('invalid')){
             return validOptions
         }else if(query['TRANSFORMATIONS'] && validTransformations !== 'valid'){
             return validTransformations
+        }else if(validWhere == 'return all'){
+            return validOptions
         }
         else {
             return validWhere
@@ -191,9 +197,10 @@ export default class Helper {
         } else{
             for (let g of group){
                 if (g.includes("_")){
-                    if (g.split("_")[1] !== 'shortname' && 'name' && 'number' && 'seats' && 'furniture' && 'type'
-                        && 'fullname' && 'address' && 'lat' && 'lon' && 'dept' && 'id' && 'sec' && 'avg' && 'instructor'
-                     && 'title' && 'pass' && 'fail' && 'year' && 'uuid' && 'audit'){
+                    var keyVar = g.split("_")[1]
+                    if (keyVar !== 'shortname' && keyVar !== 'name' && keyVar !== 'number' && keyVar !== 'seats' && keyVar !== 'furniture' && keyVar !== 'type'
+                        && keyVar !== 'fullname' &&keyVar !==  'address' && keyVar !== 'lat' && keyVar !== 'lon' && keyVar !== 'dept' && keyVar !== 'id' && keyVar !== 'sec' && keyVar !== 'avg' && keyVar !== 'instructor'
+                     && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit'){
                         return 'invalid GROUP elements'
                     }
                 } else {
@@ -224,23 +231,28 @@ export default class Helper {
                 return 'invalid, key defined in column does no exist in GROUP or APPLY'
             }
         }
+
         var validateApp = Helper.validateApply(apply);
+        //console.log(validateApp)
         if (validateApp.includes('invalid')){
             return validateApp;
         }
         // checking if ORDER->KEYS contains elements defined in APPLY because it is easier to do here
+
         var keysFromOrder = options['ORDER']['keys'];
-        for (let k of keysFromOrder){
-            if (!k.includes("_")){
-                var f: boolean = false
-                for (let term of termsInApply){
-                    if (k === term){
-                        f = true;
+        if(typeof keysFromOrder === 'object') {
+            for (let k of keysFromOrder) {
+                if (!k.includes("_")) {
+                    var f: boolean = false
+                    for (let term of termsInApply) {
+                        if (k === term) {
+                            f = true;
+                        }
                     }
-                }
-                // if k is not defined in apply then return error message
-                if (f === false) {
-                    return 'invalid ORDER: keys without _ are not defined in APPLY'
+                    // if k is not defined in apply then return error message
+                    if (f === false) {
+                        return 'invalid ORDER: keys without _ are not defined in APPLY'
+                    }
                 }
             }
         }
@@ -266,6 +278,7 @@ export default class Helper {
             }
             return 'invalid APPLY Element'
         }
+        return 'valid'
     }
 
     public static  validateWhere(where : any) : any {
@@ -333,7 +346,6 @@ export default class Helper {
             case 'AND':
             case 'OR':
                 if (!(whereValue instanceof Array)) {
-                    console.log("asdf");
                     return 'invalid LOGIC value'
                 } else {
                     if (whereValue.length == 0) {
@@ -370,7 +382,7 @@ export default class Helper {
         if(typeof options !== 'object') {
             return 'invalid object'
         }
-
+        var idName;
         var optionsKeys = Object.keys(options)//[0] //OR AND GT IS NOT etc...
         //console.log(optionsKeys)
         var fs = require('fs');
@@ -399,9 +411,9 @@ export default class Helper {
                         // }
                         if(typeof element == 'string'){
                             if (element.includes('_')){
-                                var id = element.split("_")[0]
+                                idName = element.split("_")[0]
                                 try {
-                                    fs.accessSync('./' + id);
+                                    fs.accessSync('./' + idName);
                                 } catch (e) {
                                     return 'invalid COLUMNS key'
                                 }
@@ -455,7 +467,6 @@ export default class Helper {
                         }
                     }
                 }else if (typeof options['ORDER'] === 'string' && (options['ORDER'].includes('_'))) {
-                    //console.log("hit here");
                     var orderId = options['ORDER'].split("_")[0]
                     try {
                         fs.accessSync('./' + orderId);
@@ -474,8 +485,7 @@ export default class Helper {
                 }
             }
         }
-        //console.log('returns valid');
-        return 'valid'
+        return idName
     }
 
     public static sort(input: any[], keyword: string){ //keyword: courses_avg, apple_uuid etc..

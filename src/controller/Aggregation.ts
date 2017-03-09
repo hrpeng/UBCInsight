@@ -11,10 +11,10 @@ import {type} from "os";
 export default class Aggregation {
 
     public static groupBy(array:any[], grouping:any[], applying:any[]) {
+
         var newArray:any[] = [];
         var groups :any[] = []; //grouping result [[],[],[]]
         var record :any[] = [];
-
         var applyVar:any[] = [];
         var Var;
         var applyToken:any[] = [];
@@ -40,6 +40,7 @@ export default class Aggregation {
                 return  o[key]  // [100, 200] etc.
             })
             var b = true
+            //console.log(groups)
             for (var j = 0; j < groups.length ; j++) {
                 if(groupKeys.toString() == groups[j].toString()){
                     numRow[j] += 1;

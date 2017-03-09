@@ -6,6 +6,7 @@ import Helper from "./Helper";
 import {isArray} from "util";
 import {stringify} from "querystring";
 import {type} from "os";
+import Aggregation from "./Aggregation";
 
 export default class Query{
 
@@ -13,20 +14,34 @@ export default class Query{
         var json = Helper.readJSON('./' + id)
         var array_o = json[id]
         var whereFinal: any[] = []
-        for (var section of array_o) {
-            //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
-            var whereKey: any = Object.keys(query['WHERE'])[0];
-            var whereValue = query['WHERE'][whereKey]
-            if (Query.meetCondition(whereKey, whereValue, section)) { //meet condition?
-                whereFinal.push(section)
+        var whereKey: any = Object.keys(query['WHERE'])[0];// AND, OR etc
+        var whereValue = query['WHERE'][whereKey]
+        if(typeof whereKey === 'string') {
+            for (var section of array_o) {
+                //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
+                // var whereKey: any = Object.keys(query['WHERE'])[0];
+                // var whereValue = query['WHERE'][whereKey]
+                if (Query.meetCondition(whereKey, whereValue, section)) { //meet condition?
+                    whereFinal.push(section)
+                }
             }
+        }else{
+            whereFinal = array_o;
         }
-        var columnKeywords = query.OPTIONS['COLUMNS'];
-        var columnOutput = Helper.columnsPick(whereFinal, columnKeywords);
-        if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
-            return columnOutput;
-        } else {
-            return Helper.sort(columnOutput, query.OPTIONS['ORDER']);
+
+        if (query['TRANSFORMATIONS']){
+            var grouping = query.TRANSFORMATIONS['GROUP'];
+            var applying = query.TRANSFORMATIONS['APPLY'];
+            var transOutput = Aggregation.groupBy(whereFinal,grouping,applying)
+            return transOutput
+        }else {
+            var columnKeywords = query.OPTIONS['COLUMNS'];
+            var columnOutput = Helper.columnsPick(whereFinal, columnKeywords);
+            if (!(Object.keys(query.OPTIONS).includes('ORDER'))) {
+                return columnOutput;
+            } else {
+                return Helper.sort(columnOutput, query.OPTIONS['ORDER']);
+            }
         }
     }
 

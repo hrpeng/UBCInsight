@@ -268,7 +268,7 @@ describe("AddSpec", function () {
             rooms_lon: 122
         }];
 
-    var aggQuery = {
+    var aggQueryA = {
         "WHERE": {
             "AND": [{
                 "IS": {
@@ -301,6 +301,21 @@ describe("AddSpec", function () {
         }
     }
 
+    var aggQueryB :any = {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_furniture"
+            ],
+            "ORDER": "rooms_furniture",
+            "FORM": "TABLE"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["rooms_furniture"],
+            "APPLY": []
+        }
+    }
+
     beforeEach(function () {
         isf = new InsightFacade();
     });
@@ -310,22 +325,15 @@ describe("AddSpec", function () {
     })
 
 
-
-    var grouping : any[] = ["rooms_shortname", "rooms_type"]
-    var applying : any[] = [{
-        "countSeats": {
-            "COUNT": "rooms_seats"
-        }
-    }, {
-        "countLon" : {
-            "COUNT": "rooms_lon"
-        }
-    }]
     it("XXX", function () {
-        // isf.performQuery(aggQuery).then(function(res:any){
-        //     console.log(res)
-        // })
+        isf.performQuery(aggQueryA).then(function(res:any){
+            //console.log(res)
+        })
     })
 
-
+    it("YYY", function () {
+        isf.performQuery(aggQueryB).then(function(res:any){
+            //console.log(res)
+        })
+    })
 })
