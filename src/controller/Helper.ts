@@ -340,8 +340,8 @@ export default class Helper {
                 case "furniture":
                 case "href":
                 case "address":
-                    var aobj = a[Object.keys(a)[0]]
-                    var bobj = b[Object.keys(b)[0]]
+                    //var aobj = a[Object.keys(a)[0]]
+                    //var bobj = b[Object.keys(b)[0]]
                     var x = a[keyword].toLowerCase();
                     var y = b[keyword].toLowerCase();
                     return x < y ? -1 : x > y ? 1 : 0;
