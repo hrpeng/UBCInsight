@@ -595,14 +595,14 @@ describe("QuerySpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(d3Query).then(function(response : any){
-            Helper.consoleLog(response['body'])
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-//
+//     it("XXX", function () {
+//         return isf.performQuery(d3Query).then(function(response : any){
+//             Helper.consoleLog(response['body'])
+//         }).catch(function(err){
+//             Helper.consoleLog(err)
+//         })
+//     })
+// //
 //     it("XXX", function () {
 //         return isf.performQuery(bQuery).then(function(response : any){
 //             //Helper.consoleLog(response)

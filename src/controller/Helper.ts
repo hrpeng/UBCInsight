@@ -238,18 +238,19 @@ export default class Helper {
             return validateApp;
         }
         // checking if ORDER->KEYS contains elements defined in APPLY because it is easier to do here
-
-        var keysFromOrder = options['ORDER']['keys'];
-        for (let k of keysFromOrder){
-            var f: boolean = false
-            for (let term of options['COLUMNS']){
-                if (k === term){
-                    f = true;
+        if (typeof options['ORDER'] == 'object'){
+            var keysFromOrder = options['ORDER']['keys'];
+            for (let k of keysFromOrder){
+                var f: boolean = false
+                for (let term of options['COLUMNS']){
+                    if (k === term){
+                        f = true;
+                    }
                 }
-            }
-            // if k is not defined in apply then return error message
-            if (f === false) {
-                return 'invalid ORDER: Order key needs to be included in columns'
+                // if k is not defined in apply then return error message
+                if (f === false) {
+                    return 'invalid ORDER: Order key needs to be included in columns'
+                }
             }
         }
         return 'valid';
@@ -285,7 +286,7 @@ export default class Helper {
 
         var whereKey = Object.keys(where)[0] //OR AND GT IS NOT etc...
         var whereValue = where[whereKey]    // value of OR NOT etc...
-        console.log(whereValue);
+        //console.log(whereValue);
         var key = Object.keys(where[whereKey])[0]  //courses_avg, courses_pass etc...
         var value = whereValue[key]   //97 cpsc etc..
 

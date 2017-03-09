@@ -325,11 +325,11 @@ describe("AggregationSpec", function () {
     })
 
 
-    it("XXX", function () {
-        isf.performQuery(aggQueryA).then(function(res:any){
-            //console.log(res)
-        })
-    })
+    // it("XXX", function () {
+    //     isf.performQuery(aggQueryA).then(function(res:any){
+    //         //console.log(res)
+    //     })
+    // })
 
     it("YYY", function () {
         isf.performQuery(aggQueryB).then(function(res:any){

@@ -86,7 +86,7 @@ export default class InsightFacade implements IInsightFacade {
     performQuery(query: QueryRequest): Promise <InsightResponse> {
         return new Promise(function (fulfill, reject) {
             var valid = Helper.validate(query);
-            //console.log(valid)
+            //console.log(valid);
             if (valid instanceof Array){
                 var is : InsightResponse = {
                     code: 424,
