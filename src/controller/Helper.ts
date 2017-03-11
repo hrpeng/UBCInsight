@@ -257,7 +257,6 @@ export default class Helper {
         return 'valid';
     }
 
-
     public static validateApply(apply: any): any{
         for (let a of apply){
             if (typeof a == 'object'){

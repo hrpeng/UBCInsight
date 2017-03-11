@@ -16,6 +16,7 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private isf: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -47,6 +48,7 @@ export default class Server {
      */
     public start(): Promise<boolean> {
         let that = this;
+
         return new Promise(function (fulfill, reject) {
             try {
                 Log.info('Server::start() - start');
@@ -54,6 +56,7 @@ export default class Server {
                 that.rest = restify.createServer({
                     name: 'insightUBC'
                 });
+                that.rest.use(restify.bodyParser({mapParams: true, mapFiles: true}));
 
                 that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
                     res.send(200);
@@ -63,10 +66,44 @@ export default class Server {
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
                 that.rest.get('/echo/:msg', Server.echo);  //endpoint, calling server.echo
-                that.rest.get('/square/:num',Server.square)
 
                 // Other endpoints will go here
-                that.rest.put('/dataset/:id', Server.addDataset);
+                // this is PUT
+                that.rest.put('/dataset/:id', function(req: restify.Request, res: restify.Response, next: restify.Next) {
+                    //Log.trace('Server adding Data Set - params: ' + JSON.stringify(req.params));
+
+                    let dataStr = new Buffer(req.params.body).toString('base64');
+                    that.isf.addDataset(req.params.id, dataStr).then(function(result){
+                        res.json(result.code, result.body);
+                    }).catch(function(err){
+                        res.json(err.code,err.body);
+                    })
+                    return next();
+                });
+
+                // THIS IS DELETE
+                that.rest.del('/dataset/:id', function(req: restify.Request, res: restify.Response, next: restify.Next){
+                    Log.trace('Server removing Data Set - params: ' + JSON.stringify(req.params));
+
+                    that.isf.removeDataset(req.params.id).then(function(result){
+                        res.json(result.code, result.body);
+                    }).catch(function(err){
+                        res.json(err.code, err.body);
+                    })
+                    return next();
+                });
+
+                // THIS IS POST
+                that.rest.post('/query', function(req: restify.Request, res: restify.Response, next: restify.Next){
+                    Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
+
+                    that.isf.performQuery(req.body).then(function(result){
+                        res.json(result.code, result.body);
+                    }).catch(function(err){
+                        res.json(err.code,err.body);
+                    })
+                    return next();
+                });
 
                 that.rest.listen(that.port, function () {
                     Log.info('Server::start() - restify listening: ' + that.rest.url);
@@ -102,6 +139,7 @@ export default class Server {
         return next();
     }
 
+
     public static performEcho(msg: string): InsightResponse {
         if (typeof msg !== 'undefined' && msg !== null) {
             return {code: 200, body: {message: msg + '...' + msg}};
@@ -110,27 +148,4 @@ export default class Server {
         }
     }
 
-    public static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        Log.trace('Server adding Data Set - params: ' + JSON.stringify(req.params));
-
-        var isf = new InsightFacade();
-        // call facade to add the dataset
-        isf.addDataset(req.params, req.body)
-
-    }
-
-    //----------------------------------
-    public static square(req:restify.Request, res: restify.Response, next:restify.Next){
-        let number = req.params.num;
-        let squared_number = number * number;
-        //return response by calling the method
-        let response_json = {"squared_number": squared_number}
-
-        res.json(200, response_json);
-
-        return next;
-        //can now run curl localhost:4321/square/3
-        //curl -X PUT -d  id=courses content=<base64> localhost:4321/dataset/courses
-        //curl localhost:4321/square/3
-    }
 }

@@ -184,12 +184,12 @@ describe("QuerySpec", function () {
             "AND": [
                 {
                     "IS":{
-                    "Courses_dept": "*ps*"
+                    "courses_dept": "*ps*"
                      }
                 },
                 {
                     "GT":{
-                        "Courses_avg": 90
+                        "courses_avg": 90
                     }
                 }
 
@@ -198,10 +198,10 @@ describe("QuerySpec", function () {
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_dept",
-                "Courses_audit"
+                "courses_dept",
+                "courses_audit"
             ],
-            "ORDER":"Courses_audit",
+            "ORDER":"courses_audit",
             "FORM":"TABLE"
         }
     }
@@ -211,30 +211,30 @@ describe("QuerySpec", function () {
             "AND":[
                 {
                     "GT":{
-                        "Courses_avg": 85
+                        "courses_avg": 85
                     }
                 },
                 {
                     "NOT": {
                         "IS": {
-                            "Courses_instructor": "*e"
+                            "courses_instructor": "*e"
                         }
                     }
                 },
                 {
                     "LT": {
-                        'Courses_avg': 90
+                        'courses_avg': 90
                     }
                 }
             ]
         },
         "OPTIONS":{
             "COLUMNS" : [
-                "Courses_dept",
-                "Courses_id",
-                "Courses_instructor"
+                "courses_dept",
+                "courses_id",
+                "courses_instructor"
             ],
-            "ORDER":"Courses_id",
+            "ORDER":"courses_id",
             "FORM":"TABLE"
         }
     }
@@ -243,12 +243,12 @@ describe("QuerySpec", function () {
             "AND": [
                 {
                     "IS":{
-                        "Courses_dept": "cps*"
+                        "courses_dept": "cps*"
                     }
                 },
                 {
                     "GT":{
-                        "Courses_avg": 90
+                        "courses_avg": 90
                     }
                 }
 
@@ -257,10 +257,10 @@ describe("QuerySpec", function () {
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_dept",
-                "Courses_audit"
+                "courses_dept",
+                "courses_audit"
             ],
-            "ORDER":"Courses_audit",
+            "ORDER":"courses_audit",
             "FORM":"TABLE"
         }
     }
@@ -269,7 +269,7 @@ describe("QuerySpec", function () {
             "OR":
                 {
                     "GT":{
-                        "Courses_avg": 90
+                        "courses_avg": 90
                     }
                 }
 
@@ -303,7 +303,7 @@ describe("QuerySpec", function () {
                 [
                     {
                         "EQ":{
-                            "Coursesavg": 90
+                            "coursesavg": 90
                         }
                     }
                 ]
@@ -440,15 +440,15 @@ describe("QuerySpec", function () {
     var aQuery: QueryRequest = {
         "WHERE":{
             "IS":{
-                "Courses_dept": "frst"
+                "courses_dept": "frst"
             }
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_dept",
-                "Courses_instructor",
-                "Courses_id",
-                "Courses_uuid"
+                "courses_dept",
+                "courses_instructor",
+                "courses_id",
+                "courses_uuid"
             ],
           //  "ORDER":"Courses_uuid",
             "FORM":"TABLE"
@@ -459,13 +459,13 @@ describe("QuerySpec", function () {
             "AND": [
                 {
                     "IS": {
-                        "Courses_dept": "frst"
+                        "courses_dept": "frst"
                     }
                 },
                 {
                     "NOT": {
                         "IS": {
-                            "Courses_instructor": "*john*"
+                            "courses_instructor": "*john*"
                         }
                     }
                 }
@@ -473,25 +473,25 @@ describe("QuerySpec", function () {
         },
         "OPTIONS": {
             "COLUMNS": [
-                "Courses_instructor",
-                "Courses_avg"
+                "courses_instructor",
+                "courses_avg"
             ],
-            "ORDER": "Courses_avg",
+            "ORDER": "courses_avg",
             "FORM": "TABLE"
         }
     }
     var finalquery: QueryRequest = {
         "WHERE":{
             "GT":{
-                "Courses_avg":97
+                "courses_avg":97
             }
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_id",
-                "Courses_uuid"
+                "courses_id",
+                "courses_uuid"
             ],
-            "ORDER":"Courses_id",
+            "ORDER":"courses_id",
             "FORM":"TABLE"
         }
     }
@@ -502,34 +502,34 @@ describe("QuerySpec", function () {
                     "AND":[
                         {
                             "GT":{
-                                "Courses_avg": 90
+                                "courses_avg": 90
                             }
                         },
                         {
                             "IS": {
-                                'Courses_dept': "cpsc"
+                                'courses_dept': "cpsc"
                             }
                         },
                         {
                             "LT": {
-                                'Courses_avg': 95
+                                'courses_avg': 95
                             }
                         },
                     ]
                 },
                 {
                     "EQ": {
-                        'Courses_avg': 4
+                        'courses_avg': 4
                     }
                 }
             ]
         },
         "OPTIONS":{
             "COLUMNS":[
-                "Courses_dept",
-                "Courses_avg"
+                "courses_dept",
+                "courses_avg"
             ],
-            "ORDER":"Courses_dept",
+            "ORDER":"courses_dept",
             "FORM":"TABLE"
         }
     }
@@ -594,7 +594,7 @@ describe("QuerySpec", function () {
     afterEach(function () {
         isf = null;
     });
-
+//
 //     it("XXX", function () {
 //         return isf.performQuery(d3Query).then(function(response : any){
 //             Helper.consoleLog(response['body'])
@@ -610,7 +610,7 @@ describe("QuerySpec", function () {
 //             Helper.consoleLog(err)
 //         })
 //     })
-//
+// //
 //     it("YYY", function () {
 //         return isf.performQuery(NOTaQuery).then(function(response : any){
 //             //Helper.consoleLog(response)
@@ -618,7 +618,7 @@ describe("QuerySpec", function () {
 //             Helper.consoleLog(err)
 //         })
 //     })
-//
+// //
 //     it("III", function () {
 //         return isf.performQuery(aQuery).then(function(response : any){
 //             //Helper.consoleLog(response)
@@ -812,9 +812,9 @@ describe("QuerySpec", function () {
 //         });
 //     })
 //
-//     it("validateQuery", function (){
-//         console.log(Helper.validate(d3Query));
-//     })
+    it("validateQuery", function (){
+        console.log(Helper.validate(d3Query));
+    })
 //     //
 //     it("NON-SENSE Coverage", function () {
 //         Log.info("asdf");

@@ -63,7 +63,7 @@ describe("AggregationSpec", function () {
             "GROUP": ["courses_avg"],
             "APPLY": [{
                 "countFail": {
-                    "MIN": "courses_dept"
+                    "COUNT": "courses_dept"
                 }
             }]
         }
@@ -78,17 +78,17 @@ describe("AggregationSpec", function () {
     })
 
 
-    // it("XXX", function () {
-    //     isf.performQuery(aggQueryA).then(function(res:any){
-    //         console.log(res)
-    //     }).catch(function(err:any){
-    //         console.log(err)
-    //     })
-    // })
+    it("XXX", function () {
+        isf.performQuery(aggQueryA).then(function(res:any){
+            //console.log(res)
+        }).catch(function(err:any){
+            console.log(err)
+        })
+    })
 
     it("YYY", function () {
         isf.performQuery(aggQueryB).then(function(res:any){
-            console.log(res)
+            //console.log(res)
         }).catch(function(err:any){
             console.log(err)
         })
