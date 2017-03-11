@@ -71,7 +71,6 @@ export default class Server {
                 // this is PUT
                 that.rest.put('/dataset/:id', function(req: restify.Request, res: restify.Response, next: restify.Next) {
                     //Log.trace('Server adding Data Set - params: ' + JSON.stringify(req.params));
-
                     let dataStr = new Buffer(req.params.body).toString('base64');
                     that.isf.addDataset(req.params.id, dataStr).then(function(result){
                         res.json(result.code, result.body);
@@ -83,7 +82,7 @@ export default class Server {
 
                 // THIS IS DELETE
                 that.rest.del('/dataset/:id', function(req: restify.Request, res: restify.Response, next: restify.Next){
-                    Log.trace('Server removing Data Set - params: ' + JSON.stringify(req.params));
+                    //Log.trace('Server removing Data Set - params: ' + JSON.stringify(req.params));
 
                     that.isf.removeDataset(req.params.id).then(function(result){
                         res.json(result.code, result.body);
@@ -95,7 +94,7 @@ export default class Server {
 
                 // THIS IS POST
                 that.rest.post('/query', function(req: restify.Request, res: restify.Response, next: restify.Next){
-                    Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
+                    //Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
 
                     that.isf.performQuery(req.body).then(function(result){
                         res.json(result.code, result.body);
@@ -147,5 +146,4 @@ export default class Server {
             return {code: 400, body: {error: 'Message not provided'}};
         }
     }
-
 }
