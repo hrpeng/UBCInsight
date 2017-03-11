@@ -62,7 +62,8 @@ export default class Server {
 
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
-                that.rest.get('/echo/:msg', Server.echo);
+                that.rest.get('/echo/:msg', Server.echo);  //endpoint, calling server.echo
+                that.rest.get('/square/:num',Server.square)
 
                 // Other endpoints will go here
                 that.rest.put('/dataset/:id', Server.addDataset);
@@ -91,9 +92,9 @@ export default class Server {
     public static echo(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('Server::echo(..) - params: ' + JSON.stringify(req.params));
         try {
-            let result = Server.performEcho(req.params.msg);
+            let result = Server.performEcho(req.params.msg); //core logic: can be facade.adddataset
             Log.info('Server::echo(..) - responding ' + result.code);
-            res.json(result.code, result.body);
+            res.json(result.code, result.body);//take response
         } catch (err) {
             Log.error('Server::echo(..) - responding 400');
             res.json(400, {error: err.message});
@@ -118,4 +119,18 @@ export default class Server {
 
     }
 
+    //----------------------------------
+    public static square(req:restify.Request, res: restify.Response, next:restify.Next){
+        let number = req.params.num;
+        let squared_number = number * number;
+        //return response by calling the method
+        let response_json = {"squared_number": squared_number}
+
+        res.json(200, response_json);
+
+        return next;
+        //can now run curl localhost:4321/square/3
+        //curl -X PUT -d  id=courses content=<base64> localhost:4321/dataset/courses
+        //curl localhost:4321/square/3
+    }
 }
