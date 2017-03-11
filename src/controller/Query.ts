@@ -13,10 +13,12 @@ export default class Query{
     public static primer(query:QueryRequest, id:string) {
         var json = Helper.readJSON('./' + id)
         var array_o = json[id]
+
         var whereFinal: any[] = []
         var whereKey: any = Object.keys(query['WHERE'])[0];// AND, OR etc
         var whereValue = query['WHERE'][whereKey]
-        if(typeof whereKey === 'string') {
+
+        if (typeof whereKey === 'string') {
             for (var section of array_o) {
                 //call subsequent function to deal with each {Courses_avg:xxx, Courses_dept:xxx...., Courses_uuid:xxx}
                 // var whereKey: any = Object.keys(query['WHERE'])[0];
@@ -25,15 +27,16 @@ export default class Query{
                     whereFinal.push(section)
                 }
             }
-        }else{
+        } else {
             whereFinal = array_o;
+            //console.log(whereFinal)
         }
 
 
-        if (query['TRANSFORMATIONS']){
+        if (query['TRANSFORMATIONS']) {
             var grouping = query.TRANSFORMATIONS['GROUP'];
             var applying = query.TRANSFORMATIONS['APPLY'];
-            var transOutput = Aggregation.groupBy(whereFinal,grouping,applying)
+            var transOutput = Aggregation.groupBy2(whereFinal, grouping, applying)
             whereFinal = transOutput;
         }
         var columnKeywords = query.OPTIONS['COLUMNS'];

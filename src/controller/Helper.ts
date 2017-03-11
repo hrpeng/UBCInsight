@@ -151,10 +151,11 @@ export default class Helper {
         // }
         var where = query['WHERE'];
         var options = query['OPTIONS']
+        var validWhere
         if(Object.keys(where).length === 0){
             validWhere = "return all"
         }else {
-            var validWhere = Helper.validateWhere(where)
+            validWhere = Helper.validateWhere(where)
         }
         var validOptions = Helper.validateOptions(options, query);
         if (query['TRANSFORMATIONS']){
@@ -199,7 +200,7 @@ export default class Helper {
                 if (g.includes("_")){
                     var keyVar = g.split("_")[1]
                     if (keyVar !== 'shortname' && keyVar !== 'name' && keyVar !== 'number' && keyVar !== 'seats' && keyVar !== 'furniture' && keyVar !== 'type'
-                        && keyVar !== 'fullname' &&keyVar !==  'address' && keyVar !== 'lat' && keyVar !== 'lon' && keyVar !== 'dept' && keyVar !== 'id' && keyVar !== 'sec' && keyVar !== 'avg' && keyVar !== 'instructor'
+                        && keyVar !== 'fullname' &&keyVar !==  'address' && keyVar !== 'lat' && keyVar !== 'lon' && keyVar !== 'dept' && keyVar !== 'id' && keyVar !== 'avg' && keyVar !== 'instructor'
                         && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit'){
                         return 'invalid GROUP elements'
                     }
@@ -213,8 +214,8 @@ export default class Helper {
         }
         var termsInApply: any[] = [];
         for (let i of apply){          // create an array of the keys in apply to check with COLUMNS
-            var applyKeys = Object.keys(i);
-            termsInApply.push(applyKeys[0]);
+            var applyKeys = Object.keys(i)[0]; //maxSeats
+            termsInApply.push(applyKeys);
         }
         var allTerms = termsInApply.concat(group);  // keys in both group and apply, used for verifying columns
         for (let column of options['COLUMNS']){        // check if everything in columns is either in GROUP or is defined in APPLY
@@ -263,18 +264,30 @@ export default class Helper {
                 var applyKey = Object.keys(a);
                 //console.log(applyKey);
                 if (typeof a[applyKey[0]] == 'object'){
-                    var applyToken = Object.keys(a[applyKey[0]]);
-                    if (applyToken[0] === 'MAX' || 'MIN' || 'AVG' || 'COUNT' || 'SUM' ) {
-                        if (a[applyKey[0]][applyToken[0]].split("_")[1] === 'avg' || 'fail' || 'pass' || 'audit' ||
-                            'lat' || 'lon' || 'seats' || 'year'){
-                            return 'valid';
+                    var applyToken = Object.keys(a[applyKey[0]])[0];
+                    if (applyToken === 'MAX' || applyToken ==='MIN' || applyToken ==='AVG' ||applyToken === 'COUNT' || applyToken ==='SUM' ) {
+                        var applyVar = a[applyKey[0]][applyToken].split("_")[1]
+                        if (applyToken == 'COUNT'){
+                            if( applyVar !== 'shortname' && applyVar !== 'name' && applyVar !== 'number' && applyVar !== 'seats' && applyVar !== 'furniture' && applyVar !== 'type'
+                            && applyVar !== 'fullname' && applyVar !==  'address' && applyVar !== 'lat' && applyVar !== 'lon' && applyVar !== 'dept' && applyVar !== 'id' && applyVar !== 'avg' && applyVar !== 'instructor'
+                            && applyVar !== 'title' && applyVar !== 'pass' && applyVar !== 'fail' && applyVar !== 'year' && applyVar !== 'uuid' && applyVar !== 'audit') {
+                                return 'invalid item in ApplyToken';
+                            }
+                        }else {
+                            if (applyVar !== 'avg' && applyVar !== 'fail' && applyVar !== 'pass' && applyVar !== 'audit'
+                                && applyVar !=='lat' && applyVar !== 'lon' && applyVar !== 'seats' && applyVar !== 'year') {
+                                return 'invalid item in ApplyToken';
+                            }
                         }
-                        return 'invalid item in ApplyToken'
+                    }else {
+                        return 'invalid APPLYTOKEN';
                     }
-                    return 'invalid APPLYTOKEN';
+                }else{
+                    return 'invalid APPLY definition'
                 }
+            } else {
+                return 'invalid APPLY Element'
             }
-            return 'invalid APPLY Element'
         }
         return 'valid'
     }

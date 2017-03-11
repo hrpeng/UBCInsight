@@ -48,10 +48,10 @@ describe("AddSpec", function () {
     //         expect(err.body['error']).to.equal('invalid zip file')
     //     });
     // })
-    // it("add Courses", function () {
+    // it("add courses", function () {
     //     this.timeout(10000)
-    //     return isf.addDataset('Courses',content).then(function(response : any){
-    //         assert.equal(response.body['jsc']['Courses'].length,64612,'there are 64612 sections in the dataset')
+    //     return isf.addDataset('courses',content).then(function(response : any){
+    //         assert.equal(response.body['jsc']['courses'].length,64612,'there are 64612 sections in the dataset')
     //     }).catch(function(err){
     //          expect.fail()
     //     })

@@ -65,7 +65,7 @@ export default class Server {
 
                 // provides the echo service
                 // curl -is  http://localhost:4321/echo/myMessage
-                that.rest.get('/echo/:msg', Server.echo);
+                that.rest.get('/echo/:msg', Server.echo);  //endpoint, calling server.echo
 
                 // Other endpoints will go here
                 // this is PUT
@@ -129,9 +129,9 @@ export default class Server {
     public static echo(req: restify.Request, res: restify.Response, next: restify.Next) {
         Log.trace('Server::echo(..) - params: ' + JSON.stringify(req.params));
         try {
-            let result = Server.performEcho(req.params.msg);
+            let result = Server.performEcho(req.params.msg); //core logic: can be facade.adddataset
             Log.info('Server::echo(..) - responding ' + result.code);
-            res.json(result.code, result.body);
+            res.json(result.code, result.body);//take response
         } catch (err) {
             Log.error('Server::echo(..) - responding 400');
             res.json(400, {error: err.message});
@@ -147,4 +147,5 @@ export default class Server {
             return {code: 400, body: {error: 'Message not provided'}};
         }
     }
+
 }

@@ -49,20 +49,33 @@ describe("AggregationSpec", function () {
         }
     }
 
-    var aggQueryB :any = {
-        "WHERE": {},
-        "OPTIONS": {
-            "COLUMNS": [
-                "courses_avg"
-            ],
-            "ORDER": "courses_avg",
-            "FORM": "TABLE"
-        },
-        "TRANSFORMATIONS": {
-            "GROUP": ["courses_avg"],
-            "APPLY": []
-        }
-    }
+//     var aggQueryB :any = {
+//         "WHERE": {},
+//         "OPTIONS": {
+//             "COLUMNS": [
+// <<<<<<< HEAD
+//                 "courses_avg"
+// =======
+//                 "courses_avg",
+//                 "countFail"
+// >>>>>>> 0a54e4fca591817688137e3903db211dd72f711a
+//             ],
+//             "ORDER": "courses_avg",
+//             "FORM": "TABLE"
+//         },
+//         "TRANSFORMATIONS": {
+//             "GROUP": ["courses_avg"],
+// <<<<<<< HEAD
+//             "APPLY": []
+// =======
+//             "APPLY": [{
+//                 "countFail": {
+//                     "MIN": "courses_dept"
+//                 }
+//             }]
+// >>>>>>> 0a54e4fca591817688137e3903db211dd72f711a
+//         }
+//     }
 
     beforeEach(function () {
         isf = new InsightFacade();
@@ -75,15 +88,22 @@ describe("AggregationSpec", function () {
 
     // it("XXX", function () {
     //     isf.performQuery(aggQueryA).then(function(res:any){
-    //         //console.log(res)
+    //         console.log(res)
+    //     }).catch(function(err:any){
+    //         console.log(err)
     //     })
     // })
 
-    it("YYY", function () {
-        isf.performQuery(aggQueryB).then(function(res:any){
-            console.log(res)
-        }).catch(function(err){
-            console.log(err);
-        })
-    })
+//     it("YYY", function () {
+//         isf.performQuery(aggQueryB).then(function(res:any){
+//             console.log(res)
+// <<<<<<< HEAD
+//         }).catch(function(err){
+//             console.log(err);
+// =======
+//         }).catch(function(err:any){
+//             console.log(err)
+// >>>>>>> 0a54e4fca591817688137e3903db211dd72f711a
+//         })
+//     })
 })
