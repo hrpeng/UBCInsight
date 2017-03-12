@@ -45,8 +45,8 @@ describe("AggregationSpec", function () {
         "WHERE": {},
         "OPTIONS": {
             "COLUMNS": [
-                "courses_dept",
-                "minAudit"
+                "courses_avg",
+                "avgFail"
             ],
             "ORDER": {
                 "dir": "UP",
@@ -57,8 +57,8 @@ describe("AggregationSpec", function () {
         "TRANSFORMATIONS": {
             "GROUP": ["courses_dept","courses_id"],
             "APPLY": [{
-                "countFail": {
-                    "COUNT": "courses_dept"
+                "avgFail": {
+                    "AVG": "courses_fail"
                 }
             },{
                 "minAudit": {

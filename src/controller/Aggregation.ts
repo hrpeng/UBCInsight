@@ -121,10 +121,10 @@ export default class Aggregation {
                         case "AVG":
                             var total = 0;
                             for(var item of groups[k]) {
-                                total += Number(item[applyKey[i]].toFixed(0));
+                                total += Number((item[applyKey[i]]*10).toFixed(0));
                             }
                             var avg = total / groups[k].length
-                            avg = avg / 10
+                            avg = Number((avg / 10).toFixed(2))
                             record[i].push(avg)
                             break;
                         case "SUM":
