@@ -262,7 +262,7 @@ export default class Helper {
             if (typeof a == 'object'){
                 var applyKey = Object.keys(a);
                 //console.log(applyKey);
-                if (typeof a[applyKey[0]] == 'object'){
+                if (!applyKey[0].includes("_") && typeof a[applyKey[0]] == 'object'){
                     var applyToken = Object.keys(a[applyKey[0]])[0];
                     if (applyToken === 'MAX' || applyToken ==='MIN' || applyToken ==='AVG' ||applyToken === 'COUNT' || applyToken ==='SUM' ) {
                         var applyVar = a[applyKey[0]][applyToken].split("_")[1]

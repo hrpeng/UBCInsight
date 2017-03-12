@@ -54,7 +54,7 @@ describe("AggregationSpec", function () {
         "OPTIONS": {
             "COLUMNS": [
                 "courses_avg",
-                "countFail"
+                "avgFail"
             ],
             "ORDER": "courses_avg",
             "FORM": "TABLE"
@@ -62,8 +62,8 @@ describe("AggregationSpec", function () {
         "TRANSFORMATIONS": {
             "GROUP": ["courses_avg"],
             "APPLY": [{
-                "countFail": {
-                    "COUNT": "courses_dept"
+                "avgFail": {
+                    "AVG": "courses_fail"
                 }
             }]
         }
