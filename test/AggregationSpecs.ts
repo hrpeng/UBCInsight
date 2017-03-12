@@ -16,7 +16,7 @@ import Aggregation from "../src/controller/Aggregation";
 describe("AggregationSpec", function () {
     var isf: InsightFacade = null;
 
-    var aggQueryA = {
+    var aggQueryA:any = {
         "WHERE": {
             "AND": [{
                 "IS": {
@@ -30,23 +30,14 @@ describe("AggregationSpec", function () {
         },
         "OPTIONS": {
             "COLUMNS": [
-                "rooms_shortname",
-                "maxSeats"
+                "rooms_shortname"
             ],
-            "ORDER": "maxSeats",
+            "ORDER": "rooms_shortname",
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
             "GROUP": ["rooms_shortname","rooms_furniture"],
-            "APPLY": [{
-                "maxSeats": {
-                    "MAX": "rooms_seats"
-                }
-            }, {
-                "minLat": {
-                    "MIN": "rooms_lat"
-                }
-            }]
+            "APPLY": []
         }
     }
 
@@ -54,24 +45,24 @@ describe("AggregationSpec", function () {
         "WHERE": {},
         "OPTIONS": {
             "COLUMNS": [
-                "courses_avg",
-                "countFail",
+                "courses_dept",
+                "minAudit"
             ],
             "ORDER": {
-                "dir": "DOWN",
-                "keys": ["courses_avg","countFail"]
+                "dir": "UP",
+                "keys": ["courses_dept"]
             },
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
-            "GROUP": ["courses_avg"],
+            "GROUP": ["courses_dept","courses_id"],
             "APPLY": [{
                 "countFail": {
                     "COUNT": "courses_dept"
                 }
             },{
                 "minAudit": {
-                    "COUNT": "courses_audit"
+                    "AVG": "courses_audit"
                 }
             }]
         }
