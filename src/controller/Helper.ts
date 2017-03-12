@@ -499,20 +499,18 @@ export default class Helper {
                     if(!(options['COLUMNS'].includes(options['ORDER']))){
                         return 'invalid ORDER key: not included in COLUMNS'
                     }
-                } else if(typeof options['ORDER'] === 'string' && !(options['ORDER'].includes('_'))) {
-                    var applies = query['TRANSFORMATIONS']['APPLY']
-                    var inApply = false
-                    for(var item of applies) {
-                        if(Object.keys(item)[0] == options['ORDER']){
-                            inApply = true
+                } else if (typeof options['ORDER'] == 'string'){  /// added this bit
+                    var k = options['ORDER'];
+                    var f: boolean = false
+                    for (let term of options['COLUMNS']){
+                        if (k === term){
+                            f = true;
                         }
                     }
-                    if (!inApply) {
-                        return 'invalid ORDER key!'
+                    // if k is not defined in columns then return error message
+                    if (f === false) {
+                        return 'invalid ORDER: Order key needs to be defined in Columns'
                     }
-
-                }else {
-                        return 'invalid ORDER key'
                 }
             } else if(key == 'FORM'){
                 if(options['FORM'] != 'TABLE'){
@@ -525,7 +523,7 @@ export default class Helper {
     }
 
     public static sort(input: any[], keyword: any){ //keyword: courses_avg, apple_uuid etc..
-        console.log(keyword);
+        //console.log(keyword);
         var spliced = input.splice(0)
         let that = this;
         //console.log(spliced);
@@ -550,7 +548,11 @@ export default class Helper {
     public static sortHelper(a: any, b:any, keyword: any, i : any) : number{
         var keyVar: any;
         if (typeof keyword == 'string') {
-            keyVar = keyword.split('_')[1]
+            if (keyword.includes('_')){
+                keyVar = keyword.split('_')[1]
+            }else{
+                keyVar = keyword;
+            }
         }else if (isArray(keyword)) {
             keyVar = keyword[i].split('_')[1]
         }
@@ -606,6 +608,7 @@ export default class Helper {
             case "id":
             case "uuid":
             case "number":
+            default:
                 var c: any;
                 var d: any;
                 if (isArray(keyword)){

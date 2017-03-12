@@ -73,23 +73,22 @@ describe("AggregationSpec", function () {
         "OPTIONS": {
             "COLUMNS": [
                 "courses_dept",
-                "countFail",
-                "countPass"],
+                "mhyu"],
             "ORDER": {
-                "dir": "DOWN",
-                "keys": ["courses_dept"]
+                "dir": "UP",
+                "keys": ["mhyu","courses_dept"]
             } ,
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
             "GROUP": ["courses_dept"],
             "APPLY": [{
-                "countFail": {
-                    "COUNT": "courses_fail"
+                "countYear": {
+                    "COUNT": "courses_year"
                 }
             },{
-                "countPass": {
-                    "COUNT": "courses_pass"
+                "mhyu": {
+                    "COUNT": "courses_instructor"
                 }
             }]
         }
