@@ -32,41 +32,69 @@ describe("AggregationSpec", function () {
             "COLUMNS": [
                 "rooms_shortname"
             ],
-            "ORDER": "rooms_shortname",
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["rooms_shortname"]
+            },
             "FORM": "TABLE"
-        },
-        "TRANSFORMATIONS": {
-            "GROUP": ["rooms_shortname","rooms_furniture"],
-            "APPLY": []
         }
     }
 
     var aggQueryB :any = {
-        "WHERE": {},
+        "WHERE":{
+            "OR":[
+                {
+                    "AND":[
+                        {
+                            "GT":{
+                                "courses_avg": 90
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "cpsc"
+                            }
+                        },
+                        {
+                            "LT": {
+                                "courses_avg": 95
+                            }
+                        }
+                    ]
+                }, {
+                    "NOT": {
+                        "EQ": {
+                            "courses_avg": 4
+                        }
+                    }
+                }
+            ]
+        },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_avg",
-                "avgFail"
-            ],
+                "courses_dept",
+                "countFail",
+                "countPass"],
             "ORDER": {
-                "dir": "UP",
+                "dir": "DOWN",
                 "keys": ["courses_dept"]
-            },
+            } ,
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
-            "GROUP": ["courses_dept","courses_id"],
+            "GROUP": ["courses_dept"],
             "APPLY": [{
-                "avgFail": {
-                    "AVG": "courses_fail"
+                "countFail": {
+                    "COUNT": "courses_fail"
                 }
             },{
-                "minAudit": {
-                    "AVG": "courses_audit"
+                "countPass": {
+                    "COUNT": "courses_pass"
                 }
             }]
         }
     }
+
 
     beforeEach(function () {
         isf = new InsightFacade();

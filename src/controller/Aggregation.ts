@@ -57,9 +57,6 @@ export default class Aggregation {
         var Token;
         var applyKey: any[] = [];  // [rooms_seats]
         var Key;
-
-        var numRow: any[] = [];
-        var count: any ={};
         for (var item of applying) {
             Var = Object.keys(item)[0];
             applyVar.push(Var);
@@ -69,26 +66,17 @@ export default class Aggregation {
             applyKey.push(Key);
         }
         var array = Helper.columnsPick(arr,grouping.concat(applyKey))
-        //console.log(array)
-        var groupKeys :any[] = []
         for(var o of array) {
             var groupValues = ""
             for (var key of grouping) {
                 groupValues = groupValues + "#" + (o[key]) //[-94]
             }
-            var applyValues = applyKey.map(function (key) {
-                return o[key]  // [100, 122] etc.
-            })
             var b = true
             if(groups.hasOwnProperty(groupValues)){
                 groups[groupValues].push(o)
-                //console.log(groups[j][groupValues])
-                //numRow[j] += 1;
-                count[groupValues] += 1
                 b = false
             }else{
                 groups[groupValues] = [o]
-                count[groupValues] = 1
             }
         }
 
@@ -131,11 +119,18 @@ export default class Aggregation {
                             var sum = 0;
                             for(var item of groups[k]) {
                                 sum += item[applyKey[i]];
-                                record[i].push(sum)
                             }
+                            record[i].push(sum)
                             break;
                         case "COUNT":
-                            record[i].push(count[k])
+                            var c:any[] = []
+                            for(var item of groups[k]){
+                                var ik = item[applyKey[i]]
+                                if(!c.includes(ik)){
+                                   c.push(ik)
+                                }
+                            }
+                            record[i].push(c.length)
                             break;
                     }
                 }

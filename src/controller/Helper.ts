@@ -262,10 +262,15 @@ export default class Helper {
     }
 
     public static validateApply(apply: any): any{
+        var appKeys :any = []
         for (let a of apply){
             if (typeof a == 'object'){
                 var applyKey = Object.keys(a);
                 //console.log(applyKey);
+                if(appKeys.includes(applyKey[0])){
+                    return 'invalid: no two apply keys should have the same name'
+                }
+                appKeys.push(applyKey[0])
                 if (!applyKey[0].includes("_") && typeof a[applyKey[0]] == 'object'){
                     var applyToken = Object.keys(a[applyKey[0]])[0];
                     if (applyToken === 'MAX' || applyToken ==='MIN' || applyToken ==='AVG' ||applyToken === 'COUNT' || applyToken ==='SUM' ) {
@@ -520,7 +525,7 @@ export default class Helper {
     }
 
     public static sort(input: any[], keyword: any){ //keyword: courses_avg, apple_uuid etc..
-        //console.log("hit sort");
+        console.log(keyword);
         var spliced = input.splice(0)
         let that = this;
         //console.log(spliced);
