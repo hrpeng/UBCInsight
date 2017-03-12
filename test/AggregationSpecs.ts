@@ -33,17 +33,18 @@ describe("AggregationSpec", function () {
                 "rooms_shortname",
                 "maxSeats"
             ],
-            "ORDER": {
-                "dir": "DOWN",
-                "keys": ["maxSeats"]
-            },
+            "ORDER": "maxSeats",
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
-            "GROUP": ["rooms_shortname"],
+            "GROUP": ["rooms_shortname","rooms_furniture"],
             "APPLY": [{
                 "maxSeats": {
                     "MAX": "rooms_seats"
+                }
+            }, {
+                "minLat": {
+                    "MIN": "rooms_lat"
                 }
             }]
         }
@@ -54,9 +55,12 @@ describe("AggregationSpec", function () {
         "OPTIONS": {
             "COLUMNS": [
                 "courses_avg",
-                "countFail"
+                "countFail",
             ],
-            "ORDER": "courses_avg",
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": ["courses_avg","countFail"]
+            },
             "FORM": "TABLE"
         },
         "TRANSFORMATIONS": {
@@ -64,6 +68,10 @@ describe("AggregationSpec", function () {
             "APPLY": [{
                 "countFail": {
                     "COUNT": "courses_dept"
+                }
+            },{
+                "minAudit": {
+                    "COUNT": "courses_audit"
                 }
             }]
         }

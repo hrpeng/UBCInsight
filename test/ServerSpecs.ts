@@ -61,38 +61,38 @@ describe("ServerSpec", function () {
         server.stop();
     })
 
-    it("PUT description", function () {
-        this.timeout(10000);
-        return chai.request('http://localhost:4321')
-            .put('/dataset/rooms')
-            .attach("body", fs.readFileSync("./rooms.zip"), "rooms")
-            .then(function (res: Response) {
-                Log.trace('then:');
-                // some assertions
-                expect(res.status).to.equal(201);
-            })
-            .catch(function (err: any) {
-                Log.trace('catch:');
-                // some assertions
-                expect(err.status).to.equal(400);
-                expect.fail();
-            });
-    });
-
-    it("POST description", function () {
-        this.timeout(10000);
-        return chai.request('http://localhost:4321')
-            .post('/query')
-            .send(d3Query)
-            .then(function (res: Response) {
-                Log.trace('then:');
-                expect(res.status).to.equal(200);
-            })
-            .catch(function (err: any) {
-                Log.trace('catch:');
-                // some assertions
-                expect(err.status).to.equal(400);
-                expect.fail();
-            });
-    });
+    // it("PUT description", function () {
+    //     this.timeout(10000);
+    //     return chai.request('http://localhost:4321')
+    //         .put('/dataset/rooms')
+    //         .attach("body", fs.readFileSync("./rooms.zip"), "rooms")
+    //         .then(function (res: Response) {
+    //             Log.trace('then:');
+    //             // some assertions
+    //             expect(res.status).to.equal(201);
+    //         })
+    //         .catch(function (err: any) {
+    //             Log.trace('catch:');
+    //             // some assertions
+    //             expect(err.status).to.equal(400);
+    //             expect.fail();
+    //         });
+    // });
+    //
+    // it("POST description", function () {
+    //     this.timeout(10000);
+    //     return chai.request('http://localhost:4321')
+    //         .post('/query')
+    //         .send(d3Query)
+    //         .then(function (res: Response) {
+    //             Log.trace('then:');
+    //             expect(res.status).to.equal(200);
+    //         })
+    //         .catch(function (err: any) {
+    //             Log.trace('catch:');
+    //             // some assertions
+    //             expect(err.status).to.equal(400);
+    //             expect.fail();
+    //         });
+    // });
 })

@@ -241,17 +241,21 @@ export default class Helper {
         // checking if ORDER->KEYS contains elements defined in APPLY because it is easier to do here
         if (typeof options['ORDER'] == 'object'){
             var keysFromOrder = options['ORDER']['keys'];
-            for (let k of keysFromOrder){
-                var f: boolean = false
-                for (let term of options['COLUMNS']){
-                    if (k === term){
-                        f = true;
+            if(keysFromOrder != undefined && keysFromOrder.length != 0) {
+                for (let k of keysFromOrder) {
+                    var f: boolean = false
+                    for (let term of options['COLUMNS']) {
+                        if (k === term) {
+                            f = true;
+                        }
+                    }
+                    // if k is not defined in apply then return error message
+                    if (f === false) {
+                        return 'invalid ORDER: Order key needs to be included in columns'
                     }
                 }
-                // if k is not defined in apply then return error message
-                if (f === false) {
-                    return 'invalid ORDER: Order key needs to be included in columns'
-                }
+            }else{
+                return 'invalid ORDER: keys cannot be empty'
             }
         }
         return 'valid';
@@ -490,8 +494,20 @@ export default class Helper {
                     if(!(options['COLUMNS'].includes(options['ORDER']))){
                         return 'invalid ORDER key: not included in COLUMNS'
                     }
-                } else {
-                    return 'invalid ORDER key'
+                } else if(typeof options['ORDER'] === 'string' && !(options['ORDER'].includes('_'))) {
+                    var applies = query['TRANSFORMATIONS']['APPLY']
+                    var inApply = false
+                    for(var item of applies) {
+                        if(Object.keys(item)[0] == options['ORDER']){
+                            inApply = true
+                        }
+                    }
+                    if (!inApply) {
+                        return 'invalid ORDER key!'
+                    }
+
+                }else {
+                        return 'invalid ORDER key'
                 }
             } else if(key == 'FORM'){
                 if(options['FORM'] != 'TABLE'){

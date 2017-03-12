@@ -102,7 +102,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
-                //console.log(final)
+                console.log(final)
                 //console.log(final.length)
                 var is: InsightResponse = {
                     code: 200,

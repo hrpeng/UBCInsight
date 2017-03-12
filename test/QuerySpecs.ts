@@ -595,236 +595,236 @@ describe("QuerySpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(d3Query).then(function(response : any){
-            Helper.consoleLog(response['body'])
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+//     it("XXX", function () {
+//         return isf.performQuery(d3Query).then(function(response : any){
+//             Helper.consoleLog(response['body'])
+//         }).catch(function(err){
+//             Helper.consoleLog(err)
+//         })
+//     })
+// //
+//     it("XXX", function () {
+//         return isf.performQuery(bQuery).then(function(response : any){
+//             //Helper.consoleLog(response)
+//         }).catch(function(err){
+//             Helper.consoleLog(err)
+//         })
+//     })
+// //
+//     it("YYY", function () {
+//         return isf.performQuery(NOTaQuery).then(function(response : any){
+//             //Helper.consoleLog(response)
+//         }).catch(function(err){
+//             Helper.consoleLog(err)
+//         })
+//     })
+// //
+//     it("III", function () {
+//         return isf.performQuery(aQuery).then(function(response : any){
+//             //Helper.consoleLog(response)
+//         }).catch(function(err){
+//             Helper.consoleLog(err)
+//         })
+//     })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.body['error'], 'invalid WHERE')
+//         });
+//     })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery1).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.body['error'], 'invalid object')
+//         });
+//     })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery2).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.code, 424, 'dataset not put')
+//         });
+//     })
 //
-    it("XXX", function () {
-        return isf.performQuery(bQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery4).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.code, 400)
+//         });
+//     })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery5).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'][0],'wtf')
+//         });
+//     })
+//     it("Coverage EQ", function () {
+//         return isf.performQuery(badQuery6).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     })
+//     it("Coverage OP", function () {
 //
-    it("YYY", function () {
-        return isf.performQuery(NOTaQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+//         return isf.performQuery(badQueryOP).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP1).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'][0],'apple')
+//         });
+//     });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP2).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP3).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+// });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP4).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//         });
+// });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP5).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.body['missing'][0],'apple')
+//         });
+// });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP6).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP7).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     });
+//     it("Coverage OP", function () {
+//         return isf.performQuery(badQueryOP8).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//             assert.equal(err.body['missing'].length,1)
+//         });
+//     })
 //
-    it("III", function () {
-        return isf.performQuery(aQuery).then(function(response : any){
-            //Helper.consoleLog(response)
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.body['error'], 'invalid WHERE')
-        });
-    })
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery1).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.body['error'], 'invalid object')
-        });
-    })
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery2).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.code, 424, 'dataset not put')
-        });
-    })
-
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery4).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.code, 400)
-        });
-    })
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery5).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'][0],'wtf')
-        });
-    })
-    it("Coverage EQ", function () {
-        return isf.performQuery(badQuery6).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    })
-    it("Coverage OP", function () {
-
-        return isf.performQuery(badQueryOP).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    });
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP1).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'][0],'apple')
-        });
-    });
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP2).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    });
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP3).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-});
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP4).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-        });
-});
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP5).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.body['missing'][0],'apple')
-        });
-});
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP6).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    });
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP7).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    });
-    it("Coverage OP", function () {
-        return isf.performQuery(badQueryOP8).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-            assert.equal(err.body['missing'].length,1)
-        });
-    })
-
-    it("Coverage IS", function () {
-        return isf.performQuery(badQueryIS).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 400)
-        });
-    });
-    it("Coverage IS", function () {
-        return isf.performQuery(badQueryIS1)
-            .then(function(response : any){
-                expect.fail()
-            }).catch(function(err){
-            assert.equal(err.body['missing'][0], 'poop')
-        });
-    });
-    it("Coverage IS", function () {
-        return isf.performQuery(badQueryIS2).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code, 424)
-        });
-});
-    it("Coverage IS", function () {
-        return isf.performQuery(badQueryIS3).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.body['missing'].length, 1)
-        });
-});
-    it("Coverage IS", function () {
-        return isf.performQuery(badQueryIS4).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.body['missing'][0], 'apple')
-        });
-    })
-        // isf.performQuery(badQueryIS5);
-        // isf.performQuery(badQueryIS6)
-        // isf.performQuery(badQueryIS7);
-
-    it("Coverage OR", function () {
-        return isf.performQuery(badQueryor).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-             assert.equal(err.code,400)
-        });
-    })
-    it("Coverage OR1", function () {
-        return isf.performQuery(badQueryor1).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.body['error'],'invalid LOGIC value')
-        });
-    })
-    it("Coverage OR2", function () {
-        return isf.performQuery(badQueryor3).then(function (response: any) {
-            expect.fail()
-        }).catch(function (err) {
-            assert.equal(err.body['error'],'invalid MCOMPARISON key')
-        });
-    })
-    it("Coverage OR3", function () {
-        return isf.performQuery(finalquery).then(function(response : any){
-            assert.equal(response.body['result'].length,49)
-        }).catch(function(err){
-            expect.fail()
-        });
-    })
-
-    it("validateQuery", function (){
-        console.log(Helper.validate(d3Query));
-    })
-    //
-    it("NON-SENSE Coverage", function () {
-        Log.info("asdf");
-        Log.warn("asdf");
-        Log.error("cool");
-        var server = new Server(300);
-        server.start();
-        //Server.echo();
-        server.stop();
-
-        //Helper.consoleLog("asdf");
-    })
+//     it("Coverage IS", function () {
+//         return isf.performQuery(badQueryIS).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 400)
+//         });
+//     });
+//     it("Coverage IS", function () {
+//         return isf.performQuery(badQueryIS1)
+//             .then(function(response : any){
+//                 expect.fail()
+//             }).catch(function(err){
+//             assert.equal(err.body['missing'][0], 'poop')
+//         });
+//     });
+//     it("Coverage IS", function () {
+//         return isf.performQuery(badQueryIS2).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.code, 424)
+//         });
+// });
+//     it("Coverage IS", function () {
+//         return isf.performQuery(badQueryIS3).then(function(response : any){
+//             expect.fail()
+//         }).catch(function(err){
+//             assert.equal(err.body['missing'].length, 1)
+//         });
+// });
+//     it("Coverage IS", function () {
+//         return isf.performQuery(badQueryIS4).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.body['missing'][0], 'apple')
+//         });
+//     })
+//         // isf.performQuery(badQueryIS5);
+//         // isf.performQuery(badQueryIS6)
+//         // isf.performQuery(badQueryIS7);
+//
+//     it("Coverage OR", function () {
+//         return isf.performQuery(badQueryor).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//              assert.equal(err.code,400)
+//         });
+//     })
+//     it("Coverage OR1", function () {
+//         return isf.performQuery(badQueryor1).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.body['error'],'invalid LOGIC value')
+//         });
+//     })
+//     it("Coverage OR2", function () {
+//         return isf.performQuery(badQueryor3).then(function (response: any) {
+//             expect.fail()
+//         }).catch(function (err) {
+//             assert.equal(err.body['error'],'invalid MCOMPARISON key')
+//         });
+//     })
+//     it("Coverage OR3", function () {
+//         return isf.performQuery(finalquery).then(function(response : any){
+//             assert.equal(response.body['result'].length,49)
+//         }).catch(function(err){
+//             expect.fail()
+//         });
+//     })
+//
+//     it("validateQuery", function (){
+//         console.log(Helper.validate(d3Query));
+//     })
+//     //
+//     it("NON-SENSE Coverage", function () {
+//         Log.info("asdf");
+//         Log.warn("asdf");
+//         Log.error("cool");
+//         var server = new Server(300);
+//         server.start();
+//         //Server.echo();
+//         server.stop();
+//
+//         //Helper.consoleLog("asdf");
+//     })
 })
