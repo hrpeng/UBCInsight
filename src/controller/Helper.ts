@@ -510,12 +510,10 @@ export default class Helper {
                             inApply = true
                         }
                     }
-                    if (!inApply) {
-                        return 'invalid ORDER key!'
+                    // if k is not defined in columns then return error message
+                    if (f === false) {
+                        return 'invalid ORDER: Order key needs to be defined in Columns'
                     }
-
-                }else {
-                        return 'invalid ORDER key'
                 }
             } else if(key == 'FORM'){
                 if(options['FORM'] != 'TABLE'){
@@ -553,7 +551,11 @@ export default class Helper {
     public static sortHelper(a: any, b:any, keyword: any, i : any) : number{
         var keyVar: any;
         if (typeof keyword == 'string') {
-            keyVar = keyword.split('_')[1]
+            if (keyword.includes('_')){
+                keyVar = keyword.split('_')[1]
+            }else{
+                keyVar = keyword;
+            }
         }else if (isArray(keyword)) {
             keyVar = keyword[i].split('_')[1]
         }
@@ -609,6 +611,7 @@ export default class Helper {
             case "id":
             case "uuid":
             case "number":
+            default:
                 var c: any;
                 var d: any;
                 if (isArray(keyword)){
