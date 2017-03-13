@@ -50,7 +50,6 @@ export default class InsightFacade implements IInsightFacade {
                     })
                 }
             }).catch(function(e:any){
-                console.log("hi")
                 var is : InsightResponse = {
                     code: 400,
                     body:{"error": e}
@@ -102,7 +101,7 @@ export default class InsightFacade implements IInsightFacade {
                 reject(is);
             }else {
                 var final = Query.primer(query, valid)
-                console.log(final)
+                //console.log(final)
                 //console.log(final.length)
                 var is: InsightResponse = {
                     code: 200,

@@ -500,6 +500,9 @@ export default class Helper {
                         return 'invalid ORDER key: not included in COLUMNS'
                     }
                 } else if(typeof options['ORDER'] === 'string' && !(options['ORDER'].includes('_'))) {
+                    if(!query['TRANSFORMATIONS']){
+                        return "invalid ORDER key"
+                    }
                     var applies = query['TRANSFORMATIONS']['APPLY']
                     var inApply = false
                     for(var item of applies) {
@@ -525,7 +528,7 @@ export default class Helper {
     }
 
     public static sort(input: any[], keyword: any){ //keyword: courses_avg, apple_uuid etc..
-        console.log(keyword);
+        //console.log(keyword);
         var spliced = input.splice(0)
         let that = this;
         //console.log(spliced);
