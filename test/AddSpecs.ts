@@ -41,105 +41,105 @@ describe("AddSpec", function () {
      // Log.test('Error: ' + err);
      // expect.fail();
      //     })*/
-    it("invalid zip file", function () {
-        return isf.addDataset('null', null).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            expect(err.body['error']).to.equal('invalid zip file')
-        });
-    })
-    it("add courses", function () {
-        this.timeout(10000)
-        return isf.addDataset('courses',content).then(function(response : any){
-            assert.equal(response.body['jsc']['courses'].length,64612,'there are 64612 sections in the dataset')
-        }).catch(function(err){
-            expect.fail()
-        })
-    })
-    it("file no data", function () {
-        return isf.addDataset('fileNoData',contentFND).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            expect(err.body['error']).to.equal('zip file with no real data')
-        })
-    })
-
-
-    it("empty zip", function () {
-        return isf.addDataset('noData',contentND).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.body['error'],'empty zip','adding an empty zip file')
-        })
-    })
-
-
-    it("add cour", function () {
-        return isf.addDataset('cour',content0).then(function(response : any){
-            assert.isArray(response.body['jsc']['cour'])
-        }).catch(function(err){
-            expect.fail()
-        })
-    })
-
-    it("remove", function () {
-        return isf.removeDataset('cour').then(function(response : any){
-            assert.equal(response.code,204)
-        }).catch(function(err){
-            expect.fail()
-        })
-    })
-
-    it("remove", function () {
-        return isf.removeDataset('shit').then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code,404)
-        })
-    })
-
-    it("add rooms", function () {
-        this.timeout(10000);
-        return isf.addDataset('rooms',room).then(function(response : any){
-            assert.isArray(response.body['jsc']['rooms'],'dataset has an array')
-        }).catch(function(err){
-            expect.fail()
-        })
-    })
-
-    it("empty rooms", function () {
-        this.timeout(10000);
-        return isf.addDataset('rooms',contentFND).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("empty rooms zip", function () {
-        this.timeout(10000);
-        return isf.addDataset('rooms',contentND).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("wrong id", function () {
-        this.timeout(10000);
-        return isf.addDataset('rooms',content).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code,400)
-        })
-    })
-    it("wrong id", function () {
-        this.timeout(10000);
-        return isf.addDataset('Courses',room).then(function(response : any){
-            expect.fail()
-        }).catch(function(err){
-            assert.equal(err.code,400)
-        })
-    })
+    // it("invalid zip file", function () {
+    //     return isf.addDataset('null', null).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         expect(err.body['error']).to.equal('invalid zip file')
+    //     });
+    // })
+    // it("add courses", function () {
+    //     this.timeout(10000)
+    //     return isf.addDataset('courses',content).then(function(response : any){
+    //         assert.equal(response.body['jsc']['courses'].length,64612,'there are 64612 sections in the dataset')
+    //     }).catch(function(err){
+    //         expect.fail()
+    //     })
+    // })
+    // it("file no data", function () {
+    //     return isf.addDataset('fileNoData',contentFND).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         expect(err.body['error']).to.equal('zip file with no real data')
+    //     })
+    // })
+    //
+    //
+    // it("empty zip", function () {
+    //     return isf.addDataset('noData',contentND).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.body['error'],'empty zip','adding an empty zip file')
+    //     })
+    // })
+    //
+    //
+    // it("add cour", function () {
+    //     return isf.addDataset('cour',content0).then(function(response : any){
+    //         assert.isArray(response.body['jsc']['cour'])
+    //     }).catch(function(err){
+    //         expect.fail()
+    //     })
+    // })
+    //
+    // it("remove", function () {
+    //     return isf.removeDataset('cour').then(function(response : any){
+    //         assert.equal(response.code,204)
+    //     }).catch(function(err){
+    //         expect.fail()
+    //     })
+    // })
+    //
+    // it("remove", function () {
+    //     return isf.removeDataset('shit').then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.code,404)
+    //     })
+    // })
+    //
+    // it("add rooms", function () {
+    //     this.timeout(10000);
+    //     return isf.addDataset('rooms',room).then(function(response : any){
+    //         assert.isArray(response.body['jsc']['rooms'],'dataset has an array')
+    //     }).catch(function(err){
+    //         expect.fail()
+    //     })
+    // })
+    //
+    // it("empty rooms", function () {
+    //     this.timeout(10000);
+    //     return isf.addDataset('rooms',contentFND).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("empty rooms zip", function () {
+    //     this.timeout(10000);
+    //     return isf.addDataset('rooms',contentND).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("wrong id", function () {
+    //     this.timeout(10000);
+    //     return isf.addDataset('rooms',content).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    // it("wrong id", function () {
+    //     this.timeout(10000);
+    //     return isf.addDataset('Courses',room).then(function(response : any){
+    //         expect.fail()
+    //     }).catch(function(err){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
 
 })

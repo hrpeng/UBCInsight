@@ -606,6 +606,7 @@ export default class Helper {
             case "id":
             case "uuid":
             case "number":
+            default:
                 var c: any;
                 var d: any;
                 if (isArray(keyword)){

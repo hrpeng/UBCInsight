@@ -757,261 +757,261 @@ describe("AggregationSpec", function () {
     })
 
 
-    it("XXX", function () {
-        return isf.performQuery(aggQueryA).then(function(res:any){
-            //console.log(res)
-        }).catch(function(err:any){
-            expect.fail()
-        })
-    })
-
+    // it("XXX", function () {
+    //     return isf.performQuery(aggQueryA).then(function(res:any){
+    //         //console.log(res)
+    //     }).catch(function(err:any){
+    //         expect.fail()
+    //     })
+    // })
+    //
     it("YYY", function () {
         return isf.performQuery(aggQueryB).then(function(res:any){
-            //console.log(res)
+            console.log(res.body)
         }).catch(function(err:any){
             expect.fail()
         })
     })
-
-    it("ZZZ", function () {
-        return isf.performQuery(aggQueryC).then(function(res:any){
-            //console.log(res)
-        }).catch(function(err:any){
-            expect.fail()
-        })
-    })
-
-    it("ZZZ", function () {
-        return isf.performQuery(aggQueryD).then(function(res:any){
-            //console.log(res)
-        }).catch(function(err:any){
-            expect.fail()
-        })
-    })
-
-    it("invalid option", function () {
-        return isf.performQuery(badQueryA).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.body['error'],'invalid id, dataset has not been PUT')
-        })
-    })
-
-    it("invalid transformation", function () {
-        return isf.performQuery(badQueryB).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.body['error'],'invalid APPLYTOKEN')
-        })
-    })
-
-    it("duplicate apply keys", function () {
-        return isf.performQuery(badQueryC).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryD).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryF).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryG).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryH).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryI).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryJ).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryK).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryI).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryJ).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryK).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryI).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryJ).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryK).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryL).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryM).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryN).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryO).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryP).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryQ).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid ORDER", function () {
-        return isf.performQuery(badQueryS).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid TRANSFORMATION", function () {
-        return isf.performQuery(badQueryR).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid ORDER", function () {
-        return isf.performQuery(badQueryT).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid ORDER", function () {
-        return isf.performQuery(badQueryU).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid ORDER", function () {
-        return isf.performQuery(badQueryV).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
-
-    it("invalid ORDER", function () {
-        return isf.performQuery(badQueryW).then(function(res:any){
-            expect.fail()
-        }).catch(function(err:any){
-            assert.equal(err.code,400)
-        })
-    })
+    //
+    // it("ZZZ", function () {
+    //     return isf.performQuery(aggQueryC).then(function(res:any){
+    //         //console.log(res)
+    //     }).catch(function(err:any){
+    //         expect.fail()
+    //     })
+    // })
+    //
+    // it("ZZZ", function () {
+    //     return isf.performQuery(aggQueryD).then(function(res:any){
+    //         //console.log(res)
+    //     }).catch(function(err:any){
+    //         expect.fail()
+    //     })
+    // })
+    //
+    // it("invalid option", function () {
+    //     return isf.performQuery(badQueryA).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.body['error'],'invalid id, dataset has not been PUT')
+    //     })
+    // })
+    //
+    // it("invalid transformation", function () {
+    //     return isf.performQuery(badQueryB).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.body['error'],'invalid APPLYTOKEN')
+    //     })
+    // })
+    //
+    // it("duplicate apply keys", function () {
+    //     return isf.performQuery(badQueryC).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryD).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryF).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryG).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryH).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryI).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryJ).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryK).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryI).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryJ).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryK).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryI).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryJ).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryK).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryL).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryM).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryN).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryO).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryP).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryQ).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid ORDER", function () {
+    //     return isf.performQuery(badQueryS).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid TRANSFORMATION", function () {
+    //     return isf.performQuery(badQueryR).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid ORDER", function () {
+    //     return isf.performQuery(badQueryT).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid ORDER", function () {
+    //     return isf.performQuery(badQueryU).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid ORDER", function () {
+    //     return isf.performQuery(badQueryV).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
+    //
+    // it("invalid ORDER", function () {
+    //     return isf.performQuery(badQueryW).then(function(res:any){
+    //         expect.fail()
+    //     }).catch(function(err:any){
+    //         assert.equal(err.code,400)
+    //     })
+    // })
 
     // it("invalid ORDER", function () {
     //     return isf.performQuery(badQueryX).then(function(res:any){
