@@ -48,6 +48,7 @@ export default class Server {
      */
     public start(): Promise<boolean> {
         let that = this;
+        const fs = require('fs')
 
         return new Promise(function (fulfill, reject) {
             try {
@@ -57,6 +58,30 @@ export default class Server {
                     name: 'insightUBC'
                 });
                 that.rest.use(restify.bodyParser({mapParams: true, mapFiles: true}));
+
+                // serve html to server
+                that.rest.get('/', restify.serveStatic({
+                    directory:  './src/rest/views/jquery-ui-1.12.1.custom',
+                    default: 'index.html'
+                }));
+
+                that.rest.get('/jquery-ui.css', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    //res.send(200);
+                    let body = fs.readFileSync('./src/rest/views/jquery-ui-1.12.1.custom/jquery-ui.css');
+                    res.write(body);
+                    res.end();
+                    return next();
+                });
+
+                that.rest.get('/jquery-ui.js', function (req: restify.Request, res: restify.Response, next: restify.Next) {
+                    //res.send(200);
+                    let body = fs.readFileSync('./src/rest/views/jquery-ui-1.12.1.custom/jquery-ui.js');
+                    res.write(body);
+                    res.end();
+                    return next();
+                });
+
+
 
                 that.rest.get('/', function (req: restify.Request, res: restify.Response, next: restify.Next) {
                     res.send(200);

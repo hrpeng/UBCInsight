@@ -483,13 +483,14 @@ describe("QuerySpec", function () {
     var finalquery: QueryRequest = {
         "WHERE":{
             "GT":{
-                "courses_avg":97
+                "courses_size":100
             }
         },
         "OPTIONS":{
             "COLUMNS":[
                 "courses_id",
-                "courses_uuid"
+                "courses_uuid",
+                "courses_size"
             ],
             "ORDER":"courses_id",
             "FORM":"TABLE"
@@ -497,12 +498,10 @@ describe("QuerySpec", function () {
     }
     var bQuery: QueryRequest = {
         "WHERE":{
-            "OR":[
-                {
                     "AND":[
                         {
-                            "GT":{
-                                "courses_avg": 90
+                            "LT":{
+                                "courses_size": 100
                             }
                         },
                         {
@@ -511,18 +510,11 @@ describe("QuerySpec", function () {
                             }
                         },
                         {
-                            "LT": {
-                                'courses_avg': 95
+                            "IS": {
+                                'courses_id': "110"
                             }
                         },
                     ]
-                },
-                {
-                    "EQ": {
-                        'courses_avg': 4
-                    }
-                }
-            ]
         },
         "OPTIONS":{
             "COLUMNS":[
@@ -596,22 +588,22 @@ describe("QuerySpec", function () {
         isf = null;
     });
 
-    it("XXX", function () {
-        return isf.performQuery(d3Query).then(function(response : any){
-            Helper.consoleLog(response['body'])
-        }).catch(function(err){
-            Helper.consoleLog(err)
-        })
-    })
+    // it("XXX", function () {
+    //     return isf.performQuery(d3Query).then(function(response : any){
+    //         Helper.consoleLog(response['body'])
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
 //
 //     it("XXX", function () {
 //         return isf.performQuery(bQuery).then(function(response : any){
-//             //Helper.consoleLog(response)
+//             Helper.consoleLog(response)
 //         }).catch(function(err){
 //             Helper.consoleLog(err)
 //         })
 //     })
-// //
+
 //     it("YYY", function () {
 //         return isf.performQuery(NOTaQuery).then(function(response : any){
 //             //Helper.consoleLog(response)
@@ -807,9 +799,11 @@ describe("QuerySpec", function () {
 //     })
 //     it("Coverage OR3", function () {
 //         return isf.performQuery(finalquery).then(function(response : any){
-//             assert.equal(response.body['result'].length,49)
+//             //console.log(response)
+//             //assert.equal(response.body['result'].length,49)
 //         }).catch(function(err){
-//             expect.fail()
+//             console.log(err)
+//             //expect.fail()
 //         });
 //     })
 //

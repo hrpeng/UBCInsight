@@ -26,8 +26,6 @@ export default class Helper {
             if (isArray(content.result)){
                 for (let i= 0; i < content.result.length; i++){
                     var section = content.result[i];
-                    //console.log(section);
-                    //has 112 so far
                     if (typeof section === 'object'){
                         var dept = id + "_dept"
                         var cid = id + "_id"
@@ -40,12 +38,13 @@ export default class Helper {
                         var audit = id + "_audit"
                         var year = id + "_year"
                         var uuid = id + "_uuid"
+                        var size = id + "_size"
                         if (section.Section === "overall"){
                             section.Year = 1900;
                         }
                         var jsonSection = {[dept]: section.Subject, [cid]: section.Course, [sec]: section.Section, [avg]:section.Avg,
                             [instructor]: section.Professor,[title]: section.Title, [pass]: section.Pass, [fail] : section.Fail,
-                            [audit]: section.Audit, [year]: Number(section.Year), [uuid]: section['id'].toString()};
+                            [audit]: section.Audit, [year]: Number(section.Year), [uuid]: section['id'].toString(), [size]: section.Pass + section.Fail};
 
                         array.push(jsonSection);
                     }
@@ -201,7 +200,7 @@ export default class Helper {
                     var keyVar = g.split("_")[1]
                     if (keyVar !== 'shortname' && keyVar !== 'name' && keyVar !== 'number' && keyVar !== 'seats' && keyVar !== 'furniture' && keyVar !== 'type'
                         && keyVar !== 'fullname' &&keyVar !==  'address' && keyVar !== 'lat' && keyVar !== 'lon' && keyVar !== 'dept' && keyVar !== 'id' && keyVar !== 'avg' && keyVar !== 'instructor'
-                        && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit'){
+                        && keyVar !== 'title' && keyVar !== 'pass' && keyVar !== 'fail' && keyVar !== 'year' && keyVar !== 'uuid' && keyVar !== 'audit' && keyVar !== 'size'){
                         return 'invalid GROUP elements'
                     }
                 } else {
@@ -330,7 +329,7 @@ export default class Helper {
                     }
                     var keyvar = key.split("_")[1]
                     if (keyvar != 'avg' && keyvar != 'fail' && keyvar != 'pass' && keyvar != 'audit' && keyvar != 'lat'
-                        && keyvar != 'lon' && keyvar != 'seats' && keyvar != 'year') {
+                        && keyvar != 'lon' && keyvar != 'seats' && keyvar != 'year'&& keyvar != 'size') {
                         return 'invalid MCOMPARISON key'
                     } else if (typeof value !== 'number') {
                         return 'invalid MCOMPARISON value'

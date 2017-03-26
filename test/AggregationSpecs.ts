@@ -47,7 +47,7 @@ describe("AggregationSpec", function () {
                     "AND":[
                         {
                             "GT":{
-                                "courses_avg": 90
+                                "courses_avg": 60
                             }
                         },
                         {
@@ -61,37 +61,31 @@ describe("AggregationSpec", function () {
                             }
                         }
                     ]
-                }, {
-                    "NOT": {
-                        "EQ": {
-                            "courses_avg": 4
-                        }
-                    }
                 }
             ]
         },
         "OPTIONS": {
             "COLUMNS": [
                 "courses_dept",
-                "mhyu"],
+                "courses_audit"],
             "ORDER": {
                 "dir": "UP",
-                "keys": ["mhyu","courses_dept"]
+                "keys": ["courses_audit","courses_dept"]
             } ,
             "FORM": "TABLE"
         },
-        "TRANSFORMATIONS": {
-            "GROUP": ["courses_dept"],
-            "APPLY": [{
-                "countYear": {
-                    "MIN": "courses_fail"
-                }
-            },{
-                "mhyu": {
-                    "COUNT": "courses_instructor"
-                }
-            }]
-        }
+        // "TRANSFORMATIONS": {
+        //     "GROUP": ["courses_dept"],
+        //     "APPLY": [{
+        //         "countYear": {
+        //             "MIN": "courses_fail"
+        //         }
+        //     },{
+        //         "mhyu": {
+        //             "COUNT": "courses_instructor"
+        //         }
+        //     }]
+        // }
     }
 
     var aggQueryC :any = {
@@ -767,8 +761,9 @@ describe("AggregationSpec", function () {
     //
     it("YYY", function () {
         return isf.performQuery(aggQueryB).then(function(res:any){
-            console.log(res.body)
+            //console.log(res.body)
         }).catch(function(err:any){
+            console.log(err)
             expect.fail()
         })
     })

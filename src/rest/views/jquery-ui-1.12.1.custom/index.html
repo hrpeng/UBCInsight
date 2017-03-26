@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>User Interface</title>
+
+    <!--<link rel="stylesheet" href="jquery-ui.min.css">-->
+    <!--<script src="external/jquery/jquery.js"></script>-->
+    <!--<script src="./src/rest/public/js/jquery-ui.js"></script>-->
+    <link href="jquery-ui.css" rel="stylesheet">
+    <!--<script src="script.js"></script>-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $("#course").click(function () {
+                var serializedSplit = $('#form1').serialize().split("&")
+                var aQuery = formQuery(serializedSplit)
+                console.log(serializedSplit)
+//                console.log(aQuery)
+                $.ajax({
+                    url: 'http://localhost:4321/query',
+                    type: 'post',
+                    data: JSON.stringify(aQuery),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                }).done(function(data){
+                    console.log("Response", data.result);
+                    generateTable(data.result)
+                }).fail(function(error){
+                    console.error("ERROR - Failed to submit")
+                })
+            });
+        })
+
+        $(document).ready(function() {
+            $("#room").click(function () {
+                var serializedSplit = $('#form2').serialize().split("&")
+                var aQuery = formQuery(serializedSplit)
+                console.log(serializedSplit)
+                console.log(aQuery)
+                $.ajax({
+                    url: 'http://localhost:4321/query',
+                    type: 'post',
+                    data: JSON.stringify(aQuery),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                }).done(function(data){
+                    console.log("Response", data.result);
+                    generateTable(data.result)
+                }).fail(function(error){
+                    console.error("ERROR - Failed to submit")
+                })
+            });
+        })
+
+        function formQuery(serializedSplit){
+            var whereValue = []
+            var where = {}
+            var aQuery = {}
+            var direction
+            var sortByKey = []
+
+            // WHERE
+            for(i=0 ; i<7; i++){
+                whereValue[i] = serializedSplit[i].split("=")[1]
+            }
+            var logic = whereValue[6]
+            where[logic] = formWhere(whereValue)
+            aQuery["WHERE"] = where
+            //
+            for(i=7 ; i < serializedSplit.length; i++){
+                if(serializedSplit[i].split("=")[1] == "UP"){
+                    direction = 'UP'
+                }else if(serializedSplit[i].split("=")[1] == "DOWN"){
+                    direction = 'DOWN'
+                }else{
+                    sortByKey.push(serializedSplit[i].split("=")[1])
+                }
+            }
+
+            // OPTIONS
+            var order
+            var options = {}
+            var allColumns = [
+                "courses_dept",
+                "courses_id",
+                "courses_sec",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_audit",
+                "courses_year",
+                "courses_uuid"
+            ]
+            if(sortByKey.length == 0){
+                options["COLUMNS"] = allColumns
+            }else {
+                if (direction == undefined) {
+                    if (sortByKey.length == 1) {
+                        order = sortByKey[0]
+                    }
+                } else {
+                    var keys = []
+                    for (i = 0; i < sortByKey.length; i++) {
+                        keys.push(sortByKey[i])
+                    }
+                    order = {
+                        "dir": direction,
+                        "keys": keys
+                    }
+                }
+                options["COLUMNS"] = ["courses_dept", "courses_id"].concat(order["keys"])
+                options["ORDER"] = order
+                // TRANSFORMATIONS
+                aQuery["TRANSFORMATIONS"] = formTransformations(sortByKey)
+            }
+            options["FORM"] = "TABLE"
+            aQuery["OPTIONS"] = options
+            console.log(aQuery)
+            return aQuery
+        }
+
+        function formWhere(inputs){
+            var and = []
+            var obj = {}
+            for(i=0; i<6; i++){
+                if(inputs[i] != "" && inputs[i] != undefined){
+                    switch (i){
+                        case 0:
+                            break;
+                        case 1:
+                            obj[inputs[i-1]] = {
+                                'courses_size': Number(inputs[i])
+                            }
+                            and.push(obj)
+                            break;
+                        case 2:
+                            obj = {
+                                "IS": {
+                                    'courses_dept': inputs[i]
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case 3:
+                            obj = {
+                                "IS": {
+                                    'courses_id': inputs[i]
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case 4:
+                            obj = {
+                                "IS": {
+                                    'courses_instructor': inputs[i]
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case 5:
+                            obj = {
+                                "IS": {
+                                    'courses_title': inputs[i]
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                    }
+                }
+            }
+            //console.log(and)
+            return and
+        }
+
+        function formOptions(direction,sortByKey){
+            var order
+            var options = {}
+
+            if(direction == undefined){
+                if(sortByKey.length == 1){
+                    order = sortByKey[0]
+                }
+            }else{
+                var keys = []
+                for(i=0; i<sortByKey.length; i++){
+                    keys.push(sortByKey[i])
+                }
+                order = {
+                    "dir": direction,
+                    "keys": keys
+                }
+            }
+            if(sortByKey.includes("sectionNumber")){
+                console.log("yes")
+            }
+            options["ORDER"] = order
+            options["COLUMNS"] = [
+                "courses_dept",
+                "courses_id",
+                "courses_sec",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_audit",
+                "courses_year",
+                "courses_uuid"
+            ]
+            options["FORM"] = "TABLE"
+            return options
+        }
+
+        function formTransformations(sortByKey){
+            var apply = []
+            var transformations = {}
+            var item
+            transformations["GROUP"] = ["courses_dept", "courses_id"]
+
+            for(i=0;i<sortByKey.length;i++){
+                switch (sortByKey[i]){
+                    case "maxAvg":
+                        item = {
+                            "maxAvg": {
+                                "MAX": "courses_avg"
+                            }
+                        }
+                        break;
+                    case "minAvg":
+                        item = {
+                            "minAvg": {
+                                "MIN": "courses_avg"
+                            }
+                        }
+                        break;
+                    case "maxPass":
+                        item = {
+                            "maxPass": {
+                                "MAX": "courses_pass"
+                            }
+                        }
+                        break;
+                    case "maxFail":
+                        item = {
+                            "maxFail": {
+                                "MAX": "courses_fail"
+                            }
+                        }
+                        break;
+                    case "maxSectionNumber":
+                        item = {
+                            "maxSectionNumber": {
+                                "COUNT": "courses_uuid"
+                            }
+                        }
+
+                }
+                apply.push(item)
+            }
+            transformations["APPLY"] = apply
+            return transformations
+        }
+
+        function generateTable(results){
+            var tbl_body = document.createElement("tbody");
+            var odd_even = true;
+            //console.log("DATA", results);
+
+            var head_row = tbl_body.insertRow();
+            head_row.className = odd_even ? "odd" : "even";
+            $.each(Object.keys(results[0]), function(k,v){
+                var th = document.createElement('th');
+                th.innerHTML = v.toString().split("_")[1];
+                head_row.appendChild(th)
+            })
+            odd_even = !odd_even
+
+            //------------------
+            $.each(results, function() {
+                var tbl_row = tbl_body.insertRow();
+                tbl_row.className = odd_even ? "odd" : "even";
+                $.each(this, function(k,v){
+                    var cell = tbl_row.insertCell();
+                    cell.appendChild(document.createTextNode(v.toString()))
+                })
+                odd_even = !odd_even
+            })
+            document.getElementById("tblResultsCourse").appendChild(tbl_body)
+            //$("#tblResults").appendChild(tbl_body)
+        }
+    </script>
+    <style>
+        body{
+            font-family: "Trebuchet MS", sans-serif;
+            margin: 50px;
+        }
+        th {
+            font-family: "Trebuchet MS", sans-serif;
+            background-color: #007fff;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2
+        }
+        .demoHeaders {
+            margin-top: 2em;
+        }
+        #dialog-link {
+            padding: .4em 1em .4em 20px;
+            text-decoration: none;
+            position: relative;
+        }
+        #dialog-link span.ui-icon {
+            margin: 0 5px 0 0;
+            position: absolute;
+            left: .2em;
+            top: 50%;
+            margin-top: -8px;
+        }
+        #icons {
+            margin: 0;
+            padding: 0;
+        }
+        #icons li {
+            margin: 2px;
+            position: relative;
+            padding: 4px 0;
+            cursor: pointer;
+            float: left;
+            list-style: none;
+        }
+        #icons span.ui-icon {
+            float: left;
+            margin: 0 4px;
+        }
+        .fakewindowcontain .ui-widget-overlay {
+            position: absolute;
+        }
+        select {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<!--<script src="js/bootstrap.min.js"></script>-->
+
+<!-- Tabs -->
+<h2 class="demoHeaders">UI</h2>
+<div id="tabs">
+    <ul>
+        <li><a href="#tabs-1">Course Explorer</a></li>
+        <li><a href="#tabs-2">Room Explorer</a></li>
+        <li><a href="#tabs-3">Room Schedule</a></li>
+    </ul>
+    <div id="tabs-1">
+        <form id="form1">
+            Filters:<br>
+            Section size: <label class = "radio"><input type="radio" name="SectionSizeCom" value="GT">Greater Than</label>
+                            <label class = "radio"><input type="radio" name="SectionSizeCom" value="LT">Less Than</label>
+                            <input type="text" name="SectionSize"><br>
+            Department: <input type="text" name="Department"><br>
+            Course number: <input type="text" name="CourseNumber"><br>
+            Instructor: <input type="text" name="Instructor"><br>
+            Title: <input type="text" name="Title"><br>
+            Logic: <label class = "radio"><input type="radio" name="Logic" value="AND">AND</label>
+                   <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
+            Course Exploration: <br>
+            Order: <label class = "radio"><input type="radio" name="Direction" value="UP">Up</label>
+                       <label class = "radio"><input type="radio" name="Direction" value="DOWN">Down</label><br>
+            Sort by:<br>
+                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxAvg">Highest Average</label><br>
+                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="minAvg">Lowest Average</label><br>
+                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxPass">Most Passes</label><br>
+                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxFail">Most Fails</label><br>
+                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxSectionNumber">Most Sections</label><br>
+        </form><br>
+        <button id="course">submit</button>
+        <table id="tblResultsCourse"></table>
+    </div>
+    <div id="tabs-2">
+        <form id="form2">
+            Building name: <input type="text" name="BuildingName"><br>
+            Room number: <input type="text" name="RoomNumber"><br>
+            Room size: <label class = "radio"><input type="radio" name="RoomSizeCom" value="GT">Greater Than</label>
+                       <label class = "radio"><input type="radio" name="RoomSizeCom" value="LT">Less Than</label>
+                       <input type="text" name="RoomSize"><br>
+            Room type: <input type="text" name="RoomType"><br>
+            Furniture type: <input type="text" name="FurnitureType"><br>
+            Location: <input type="text" name="Location"><br><br>
+        </form>
+        <button id="room">submit</button>
+        <table id="tblResultsRoom"></table>
+    </div>
+    <div id="tabs-3">under construction</div>
+</div>
+<!--<script src="external/jquery/jquery.js"></script>-->
+<script src="jquery-ui.js"></script>
+<script>
+    $( "#tabs" ).tabs();
+</script>
+
+</body>
+</html>
