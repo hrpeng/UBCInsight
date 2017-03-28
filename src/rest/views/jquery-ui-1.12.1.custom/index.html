@@ -18,9 +18,10 @@
         $(document).ready(function() {
             $("#course").click(function () {
                 var serializedSplit = $('#form1').serialize().split("&")
-                var aQuery = formQuery(serializedSplit)
                 console.log(serializedSplit)
-//                console.log(aQuery)
+                var aQuery = formQuery(serializedSplit)
+
+                //console.log(aQuery)
                 $.ajax({
                     url: 'http://localhost:4321/query',
                     type: 'post',
@@ -29,7 +30,7 @@
                     contentType: 'application/json'
                 }).done(function(data){
                     console.log("Response", data.result);
-                    generateTable(data.result)
+                    generateTable(data.result,"course")
                 }).fail(function(error){
                     console.error("ERROR - Failed to submit")
                 })
@@ -39,8 +40,8 @@
         $(document).ready(function() {
             $("#room").click(function () {
                 var serializedSplit = $('#form2').serialize().split("&")
-                var aQuery = formQuery(serializedSplit)
-                console.log(serializedSplit)
+                var aQuery = formRoomQuery(serializedSplit)
+                //console.log(serializedSplit)
                 console.log(aQuery)
                 $.ajax({
                     url: 'http://localhost:4321/query',
@@ -49,8 +50,8 @@
                     dataType: 'json',
                     contentType: 'application/json'
                 }).done(function(data){
-                    console.log("Response", data.result);
-                    generateTable(data.result)
+                    //console.log("Response", data.result);
+                    locationFilter(data.result,serializedSplit)
                 }).fail(function(error){
                     console.error("ERROR - Failed to submit")
                 })
@@ -58,26 +59,20 @@
         })
 
         function formQuery(serializedSplit){
-            var whereValue = []
             var where = {}
             var aQuery = {}
             var direction
             var sortByKey = []
 
             // WHERE
-            for(i=0 ; i<7; i++){
-                whereValue[i] = serializedSplit[i].split("=")[1]
-            }
-            var logic = whereValue[6]
-            where[logic] = formWhere(whereValue)
-            aQuery["WHERE"] = where
+            aQuery["WHERE"] = formWhere(serializedSplit)
             //
-            for(i=7 ; i < serializedSplit.length; i++){
+            for(i=0 ; i < serializedSplit.length; i++){
                 if(serializedSplit[i].split("=")[1] == "UP"){
                     direction = 'UP'
                 }else if(serializedSplit[i].split("=")[1] == "DOWN"){
                     direction = 'DOWN'
-                }else{
+                }else if(serializedSplit[i].split("=")[0] == "SortBy"){
                     sortByKey.push(serializedSplit[i].split("=")[1])
                 }
             }
@@ -98,6 +93,8 @@
                 "courses_year",
                 "courses_uuid"
             ]
+
+            console.log(sortByKey)
             if(sortByKey.length == 0){
                 options["COLUMNS"] = allColumns
             }else {
@@ -106,13 +103,10 @@
                         order = sortByKey[0]
                     }
                 } else {
-                    var keys = []
-                    for (i = 0; i < sortByKey.length; i++) {
-                        keys.push(sortByKey[i])
-                    }
+                    console.log("HIT")
                     order = {
                         "dir": direction,
-                        "keys": keys
+                        "keys": sortByKey
                     }
                 }
                 options["COLUMNS"] = ["courses_dept", "courses_id"].concat(order["keys"])
@@ -126,96 +120,65 @@
             return aQuery
         }
 
-        function formWhere(inputs){
+        function formWhere(serializedSplit){
+            var where = {}
             var and = []
-            var obj = {}
-            for(i=0; i<6; i++){
-                if(inputs[i] != "" && inputs[i] != undefined){
-                    switch (i){
-                        case 0:
-                            break;
-                        case 1:
-                            obj[inputs[i-1]] = {
-                                'courses_size': Number(inputs[i])
+            var whereKey
+            var whereValue
+            var logic
+            for(i=0; i<serializedSplit.length; i++){
+                whereKey = serializedSplit[i].split("=")[0]
+                whereValue = serializedSplit[i].split("=")[1]
+                var obj = {}
+                if(whereValue != "" && whereValue != undefined){
+                    switch (whereKey){
+                        case "SectionSize":
+                            obj[serializedSplit[i-1].split("=")[1]] = {
+                                'courses_size': Number(whereValue)
                             }
                             and.push(obj)
                             break;
-                        case 2:
+                        case "Department":
                             obj = {
                                 "IS": {
-                                    'courses_dept': inputs[i]
+                                    'courses_dept': whereValue
                                 }
                             }
                             and.push(obj)
                             break;
-                        case 3:
+                        case "CourseNumber":
                             obj = {
                                 "IS": {
-                                    'courses_id': inputs[i]
+                                    'courses_id': whereValue
                                 }
                             }
                             and.push(obj)
                             break;
-                        case 4:
+                        case "Instructor":
                             obj = {
                                 "IS": {
-                                    'courses_instructor': inputs[i]
+                                    'courses_instructor': whereValue
                                 }
                             }
                             and.push(obj)
                             break;
-                        case 5:
+                        case "Tilte":
                             obj = {
                                 "IS": {
-                                    'courses_title': inputs[i]
+                                    'courses_title': whereValue
                                 }
                             }
                             and.push(obj)
+                            break;
+                        case "Logic":
+                            logic = whereValue
                             break;
                     }
                 }
             }
+            where[logic] = and
             //console.log(and)
-            return and
-        }
-
-        function formOptions(direction,sortByKey){
-            var order
-            var options = {}
-
-            if(direction == undefined){
-                if(sortByKey.length == 1){
-                    order = sortByKey[0]
-                }
-            }else{
-                var keys = []
-                for(i=0; i<sortByKey.length; i++){
-                    keys.push(sortByKey[i])
-                }
-                order = {
-                    "dir": direction,
-                    "keys": keys
-                }
-            }
-            if(sortByKey.includes("sectionNumber")){
-                console.log("yes")
-            }
-            options["ORDER"] = order
-            options["COLUMNS"] = [
-                "courses_dept",
-                "courses_id",
-                "courses_sec",
-                "courses_avg",
-                "courses_instructor",
-                "courses_title",
-                "courses_pass",
-                "courses_fail",
-                "courses_audit",
-                "courses_year",
-                "courses_uuid"
-            ]
-            options["FORM"] = "TABLE"
-            return options
+            return where
         }
 
         function formTransformations(sortByKey){
@@ -268,7 +231,165 @@
             return transformations
         }
 
-        function generateTable(results){
+        function formRoomQuery(serializedSplit){
+            var whereValue
+            var whereKey
+            var where = {}
+            var aQuery = {}
+
+            // WHERE
+            var logic = serializedSplit[serializedSplit.length-1].split("=")[1]
+            var and = []
+            for(i=0; i<8; i++){
+                whereKey = serializedSplit[i].split("=")[0]
+                whereValue = serializedSplit[i].split("=")[1]
+                var obj = {}
+                if(whereValue != "" && whereValue != undefined){
+                    switch (whereKey){
+                        case "BuildingName":
+                            obj = {
+                                "IS": {
+                                    'rooms_fullname': decodeURI(whereValue)
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case "RoomNumber":
+                            obj = {
+                                "IS": {
+                                    'rooms_number': whereValue
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case "RoomSize":
+                            obj[serializedSplit[i-1].split("=")[1]] = {
+                                    'rooms_seats': Number(whereValue)
+                            }
+                            and.push(obj)
+                            break;
+                        case "RoomType":
+                            obj = {
+                                "IS": {
+                                    'rooms_type': decodeURI(whereValue)
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case "FurnitureType":
+                            obj = {
+                                "IS": {
+                                    'rooms_furniture': decodeURI(whereValue)
+                                }
+                            }
+                            and.push(obj)
+                            break;
+                        case 6:
+
+                            break;
+                        case 7:
+
+                            break;
+                    }
+                }
+            }
+            where[logic] = and
+            aQuery["WHERE"] = where
+
+            // OPTIONS
+            var options = {}
+            options["COLUMNS"] = [
+                "rooms_name",
+                "rooms_number",
+                "rooms_seats",
+                "rooms_furniture",
+                "rooms_type",
+                "rooms_href",
+                "rooms_shortname",
+                "rooms_fullname",
+                "rooms_address",
+                "rooms_lat",
+                "rooms_lon"
+            ]
+            options["FORM"] = "TABLE"
+            aQuery["OPTIONS"] = options
+            //console.log(aQuery)
+            return aQuery
+        }
+
+        function locationFilter(input,serializedSplit){
+            var building
+            var distance
+            var array = []
+            for(i=0; i<serializedSplit.length; i++) {
+                if (serializedSplit[i].split("=")[0] == "Building"){
+                    building = serializedSplit[i].split("=")[1]
+                }
+                if (serializedSplit[i].split("=")[0] == "Distance"){
+                    distance = serializedSplit[i].split("=")[1]
+                }
+            }
+            if(building != "") {
+                var queryForGeo ={
+                    "WHERE": {
+                        "IS": {
+                            "rooms_shortname": building
+                        }
+                    },
+                "OPTIONS": {
+                    "COLUMNS": [
+                        "rooms_lat",
+                        "rooms_lon"
+                    ],
+                        "FORM": "TABLE"
+                },
+                "TRANSFORMATIONS": {
+                    "GROUP": ["rooms_lat","rooms_lon"],
+                        "APPLY": []
+                }
+            }
+                var lat2
+                var lon2
+                var R = 6371; // Radius of the earth in km
+                return $.ajax({
+                    url: 'http://localhost:4321/query',
+                    type: 'post',
+                    data: JSON.stringify(queryForGeo),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                }).done(function(data){
+                    var lat1 = data.result[0]["rooms_lat"]
+                    var lon1 = data.result[0]["rooms_lon"]
+                    for (i = 0; i < input.length; i++) {
+                        lat2 = input[i]["rooms_lat"]
+                        lon2 = input[i]["rooms_lon"]
+                        var dLat = deg2rad(lat2-lat1);  // deg2rad below
+                        var dLon = deg2rad(lon2-lon1);
+                        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                            Math.sin(dLon/2) * Math.sin(dLon/2);
+                        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                        var d = R * c * 1000; // Distance in km
+                        if(d <= distance){
+                            array.push(input[i])
+                        }
+                    }
+                    generateTable(array,"room")
+                    console.log("Response",array)
+                }).fail(function(error){
+                    console.error("ERROR - Failed to submit")
+                })
+            }else{
+                generateTable(input,"room")
+                console.log("Response",input)
+            }
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180)
+        }
+
+        function generateTable(results,dataset){
             var tbl_body = document.createElement("tbody");
             var odd_even = true;
             //console.log("DATA", results);
@@ -278,6 +399,9 @@
             $.each(Object.keys(results[0]), function(k,v){
                 var th = document.createElement('th');
                 th.innerHTML = v.toString().split("_")[1];
+                if(th.innerHTML == "undefined"){
+                    th.innerHTML = v.toString()
+                }
                 head_row.appendChild(th)
             })
             odd_even = !odd_even
@@ -292,7 +416,12 @@
                 })
                 odd_even = !odd_even
             })
-            document.getElementById("tblResultsCourse").appendChild(tbl_body)
+            if(dataset == "course"){
+                document.getElementById("tblResultsCourse").appendChild(tbl_body)
+            }
+            if(dataset == "room"){
+                document.getElementById("tblResultsRoom").appendChild(tbl_body)
+            }
             //$("#tblResults").appendChild(tbl_body)
         }
     </script>
@@ -384,7 +513,7 @@
                      <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxFail">Most Fails</label><br>
                      <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxSectionNumber">Most Sections</label><br>
         </form><br>
-        <button id="course">submit</button>
+        <button id="course">submit</button><br>
         <table id="tblResultsCourse"></table>
     </div>
     <div id="tabs-2">
@@ -396,12 +525,25 @@
                        <input type="text" name="RoomSize"><br>
             Room type: <input type="text" name="RoomType"><br>
             Furniture type: <input type="text" name="FurnitureType"><br>
-            Location: <input type="text" name="Location"><br><br>
+            Location: <input type="text" name="Distance">meters from<input type="text" name="Building"><br><br>
+            Logic:<label class = "radio"><input type="radio" name="Logic" value="AND">AND</label>
+                  <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
         </form>
-        <button id="room">submit</button>
+        <button id="room">submit</button><br>
         <table id="tblResultsRoom"></table>
     </div>
-    <div id="tabs-3">under construction</div>
+    <div id="tabs-3">
+        <form id="form3">
+            Course Input:<br>
+            <textarea class="form-control" rows="10" cols = "70" id="roomInput"></textarea>
+        </form>
+        <form id="form4">
+            Room Input:<br>
+            <textarea class="form-control" rows="10" cols = "70" id="courseInput"></textarea>
+        </form>
+        <button id="scheduleInput">submit</button><br>
+        <table id="tblResultsSchedule"></table>
+    </div>
 </div>
 <!--<script src="external/jquery/jquery.js"></script>-->
 <script src="jquery-ui.js"></script>
