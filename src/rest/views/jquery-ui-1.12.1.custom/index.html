@@ -30,6 +30,9 @@
                     contentType: 'application/json'
                 }).done(function(data){
                     console.log("Response", data.result);
+                    if(data.result.length == 0){
+                        alert("No result found")
+                    }
                     generateTable(data.result,"course")
                 }).fail(function(error){
                     console.error("ERROR - Failed to submit")
@@ -58,8 +61,37 @@
             });
         })
 
+        $(document).ready(function() {
+            $("#scheduleInput").click(function () {
+                $('#tblResultsSchedule').empty()
+                var courseInput = $('#courseInput').val().replace(/\s+/g, '').split(",")
+                var roomInput = $('#roomInput').val().replace(/\s+/g, '').split(",")
+                if(roomInput == ""){
+                    roomInput = $('#Distance').val() + "_" + $('#Building').val()
+                }
+                var input = {'courses': courseInput,"buildings": roomInput}
+                console.log(input)
+                $.ajax({
+                    url: 'http://localhost:4321/schedule',
+                    type: 'post',
+                    data: JSON.stringify(input),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                }).done(function(data){
+                    console.log("Response", data.result);
+                    var quality = document.createElement('div')
+                    quality.innerHTML = "Schedule quality: " + data['Quality'];
+                    document.getElementById("tblResultsSchedule").appendChild(quality)
+                    generateTable(data.result,"schedule")
+                }).fail(function(error){
+                    console.error("ERROR - Failed to submit")
+                })
+            });
+        })
+
+
+
         function formQuery(serializedSplit){
-            var where = {}
             var aQuery = {}
             var direction
             var sortByKey = []
@@ -94,16 +126,12 @@
                 "courses_uuid"
             ]
 
-            console.log(sortByKey)
             if(sortByKey.length == 0){
                 options["COLUMNS"] = allColumns
             }else {
                 if (direction == undefined) {
-                    if (sortByKey.length == 1) {
-                        order = sortByKey[0]
-                    }
+                    alert("Please choose a direction")
                 } else {
-                    console.log("HIT")
                     order = {
                         "dir": direction,
                         "keys": sortByKey
@@ -133,6 +161,14 @@
                 if(whereValue != "" && whereValue != undefined){
                     switch (whereKey){
                         case "SectionSize":
+                            if(i-1 < 0){
+                                alert("Please choose a comparator")
+                                return
+                            }
+                            if(isNaN(Number(whereValue))){
+                                alert("Please enter a number in Section size field")
+                                return
+                            }
                             obj[serializedSplit[i-1].split("=")[1]] = {
                                 'courses_size': Number(whereValue)
                             }
@@ -147,6 +183,10 @@
                             and.push(obj)
                             break;
                         case "CourseNumber":
+                            if(isNaN(Number(whereValue))){
+                                alert("Please enter a number in Course number field")
+                                return
+                            }
                             obj = {
                                 "IS": {
                                     'courses_id': whereValue
@@ -175,6 +215,9 @@
                             break;
                     }
                 }
+            }
+            if(logic == undefined){
+                alert("Please choose a logic")
             }
             where[logic] = and
             //console.log(and)
@@ -239,6 +282,10 @@
 
             // WHERE
             var logic = serializedSplit[serializedSplit.length-1].split("=")[1]
+            if(logic != "AND" && logic != "OR"){
+                alert("Please choose a logic")
+                return
+            }
             var and = []
             for(i=0; i<8; i++){
                 whereKey = serializedSplit[i].split("=")[0]
@@ -255,6 +302,10 @@
                             and.push(obj)
                             break;
                         case "RoomNumber":
+                            if(isNaN(Number(whereValue))){
+                                alert("Please enter a number in Room number field")
+                                return
+                            }
                             obj = {
                                 "IS": {
                                     'rooms_number': whereValue
@@ -263,7 +314,16 @@
                             and.push(obj)
                             break;
                         case "RoomSize":
-                            obj[serializedSplit[i-1].split("=")[1]] = {
+                            var comp = serializedSplit[i-1].split("=")[1]
+                            if(comp != "LG" && comp != "LT"){
+                                alert("Please choose a comparator")
+                                return
+                            }
+                            if(isNaN(Number(whereValue))){
+                                alert("Please enter a number in Room size field")
+                                return
+                            }
+                            obj[comp] = {
                                     'rooms_seats': Number(whereValue)
                             }
                             and.push(obj)
@@ -283,12 +343,6 @@
                                 }
                             }
                             and.push(obj)
-                            break;
-                        case 6:
-
-                            break;
-                        case 7:
-
                             break;
                     }
                 }
@@ -422,6 +476,9 @@
             if(dataset == "room"){
                 document.getElementById("tblResultsRoom").appendChild(tbl_body)
             }
+            if(dataset == "schedule"){
+                document.getElementById("tblResultsSchedule").appendChild(tbl_body)
+            }
             //$("#tblResults").appendChild(tbl_body)
         }
     </script>
@@ -534,12 +591,13 @@
     </div>
     <div id="tabs-3">
         <form id="form3">
-            Course Input:<br>
-            <textarea class="form-control" rows="10" cols = "70" id="roomInput"></textarea>
+            Course Input: enter a list of department_id (eg. cpsc_110) or department (eg. cpsc), separated by ","<br>
+            <textarea class="form-control" rows="8" cols = "70" id="courseInput"></textarea>
         </form>
         <form id="form4">
-            Room Input:<br>
-            <textarea class="form-control" rows="10" cols = "70" id="courseInput"></textarea>
+            Room Input: enter a list of building short name (eg. LSK), seperated by ",", or enter a location<br>
+            <textarea class="form-control" rows="8" cols = "70" id="roomInput"></textarea>
+            Location: <input type="text" id="Distance">meters from<input type="text" id="Building"><br><br>
         </form>
         <button id="scheduleInput">submit</button><br>
         <table id="tblResultsSchedule"></table>

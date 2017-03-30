@@ -758,7 +758,7 @@ describe("AggregationSpec", function () {
     //         expect.fail()
     //     })
     // })
-    //
+
     it("YYY", function () {
         return isf.performQuery(aggQueryB).then(function(res:any){
             //console.log(res.body)
@@ -767,7 +767,7 @@ describe("AggregationSpec", function () {
             expect.fail()
         })
     })
-    //
+
     // it("ZZZ", function () {
     //     return isf.performQuery(aggQueryC).then(function(res:any){
     //         //console.log(res)

@@ -8,6 +8,7 @@ import restify = require('restify');
 import Log from "../Util";
 import {InsightResponse} from "../controller/IInsightFacade";
 import InsightFacade from "../controller/InsightFacade";
+import Scheduler from "../controller/Scheduler";
 
 /**
  * This configures the REST endpoints for the server.
@@ -108,7 +109,6 @@ export default class Server {
                 // THIS IS DELETE
                 that.rest.del('/dataset/:id', function(req: restify.Request, res: restify.Response, next: restify.Next){
                     //Log.trace('Server removing Data Set - params: ' + JSON.stringify(req.params));
-
                     that.isf.removeDataset(req.params.id).then(function(result){
                         res.json(result.code, result.body);
                     }).catch(function(err){
@@ -120,13 +120,22 @@ export default class Server {
                 // THIS IS POST
                 that.rest.post('/query', function(req: restify.Request, res: restify.Response, next: restify.Next){
                     //Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
-
                     that.isf.performQuery(req.body).then(function(result){
                         res.json(result.code, result.body);
                     }).catch(function(err){
                         res.json(err.code,err.body);
                     })
                     return next();
+                });
+
+                that.rest.post('/schedule', function(req: restify.Request, res: restify.Response, next: restify.Next){
+                    //Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
+                        Scheduler.scheduler(req.body).then(function(result:any){
+                            res.json(result.code, result.body);
+                        }).catch(function(err){
+                            res.json(err.code,err.body);
+                        })
+                        return next();
                 });
 
                 that.rest.listen(that.port, function () {

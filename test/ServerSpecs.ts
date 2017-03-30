@@ -7,6 +7,7 @@ import {InsightResponse, QueryRequest} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Helper from "../src/controller/Helper";
 import {isArray} from "util";
+import Scheduler from "../src/controller/Scheduler";
 let server = new Server(4321);
 var chai = require('chai')
     , chaiHttp = require('chai-http');
@@ -85,6 +86,24 @@ describe("ServerSpec", function () {
     //         .post('/query')
     //         .send(d3Query)
     //         .then(function (res: Response) {
+    //             Log.trace('then:');
+    //             expect(res.status).to.equal(200);
+    //         })
+    //         .catch(function (err: any) {
+    //             Log.trace('catch:');
+    //             // some assertions
+    //             expect(err.status).to.equal(400);
+    //             expect.fail();
+    //         });
+    // });
+
+    // it("POST description", function () {
+    //     this.timeout(10000);
+    //     return chai.request('http://localhost:4321')
+    //         .post('/schedule')
+    //         .send({"courses": ["cpsc", "aanb_504", "adhe_327", "scie_113"], "buildings": "0_WOOD"})
+    //         .then(function (res: Response) {
+    //             //console.log(res)
     //             Log.trace('then:');
     //             expect(res.status).to.equal(200);
     //         })

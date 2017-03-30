@@ -604,14 +604,14 @@ describe("QuerySpec", function () {
 //         })
 //     })
 
-//     it("YYY", function () {
-//         return isf.performQuery(NOTaQuery).then(function(response : any){
-//             //Helper.consoleLog(response)
-//         }).catch(function(err){
-//             Helper.consoleLog(err)
-//         })
-//     })
-// //
+    // it("YYY", function () {
+    //     return isf.performQuery(NOTaQuery).then(function(response : any){
+    //         console.log(response)
+    //     }).catch(function(err){
+    //         Helper.consoleLog(err)
+    //     })
+    // })
+//
 //     it("III", function () {
 //         return isf.performQuery(aQuery).then(function(response : any){
 //             //Helper.consoleLog(response)
