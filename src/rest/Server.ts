@@ -130,12 +130,12 @@ export default class Server {
 
                 that.rest.post('/schedule', function(req: restify.Request, res: restify.Response, next: restify.Next){
                     //Log.trace('Server performing the Query - params: ' + JSON.stringify(req.params));
-                        Scheduler.scheduler(req.body).then(function(result:any){
-                            res.json(result.code, result.body);
-                        }).catch(function(err){
-                            res.json(err.code,err.body);
-                        })
-                        return next();
+                    Scheduler.scheduler(req.body).then(function(result:any){
+                        res.json(result.code, result.body);
+                    }).catch(function(err){
+                        res.json(err.code,err.body);
+                    })
+                    return next();
                 });
 
                 that.rest.listen(that.port, function () {

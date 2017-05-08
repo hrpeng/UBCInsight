@@ -12,15 +12,19 @@
     <!--<script src="./src/rest/public/js/jquery-ui.js"></script>-->
     <link href="jquery-ui.css" rel="stylesheet">
     <!--<script src="script.js"></script>-->
+    <!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">-->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>-->
+    <!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>
 
     <script>
         $(document).ready(function() {
             $("#course").click(function () {
+                $('#tblResultsSchedule').empty()
                 var serializedSplit = $('#form1').serialize().split("&")
                 console.log(serializedSplit)
                 var aQuery = formQuery(serializedSplit)
-
                 //console.log(aQuery)
                 $.ajax({
                     url: 'http://localhost:4321/query',
@@ -39,9 +43,9 @@
                 })
             });
         })
-
         $(document).ready(function() {
             $("#room").click(function () {
+                $('#tblResultsSchedule').empty()
                 var serializedSplit = $('#form2').serialize().split("&")
                 var aQuery = formRoomQuery(serializedSplit)
                 //console.log(serializedSplit)
@@ -60,7 +64,6 @@
                 })
             });
         })
-
         $(document).ready(function() {
             $("#scheduleInput").click(function () {
                 $('#tblResultsSchedule').empty()
@@ -88,14 +91,97 @@
                 })
             });
         })
-
-
-
+        $(document).ready(function() {
+            $("#visualizing").click(function () {
+                //$('#myChart').remove()
+                var courseInput = $('#courseInputVisual').val().replace(/\s+/g, '').split(",")
+                var startYear = $('#startYear').val()
+                var endYear = $('#endYear').val()
+                var dept
+                var id
+                var or = []
+                var and = {
+                    "AND": [{
+                        "IS": {
+                            "courses_dept": dept
+                        }
+                    }, {
+                        "IS": {
+                            "courses_id": id
+                        }
+                    }]
+                }
+                for(var i = 0 ; i<courseInput.length;i++){
+                    dept = courseInput[i].split("_")[0]
+                    id = courseInput[i].split("_")[1]
+                    and ={
+                        "AND": [{
+                            "IS": {
+                                "courses_dept": dept
+                            }
+                        }, {
+                            "IS": {
+                                "courses_id": id
+                            }
+                        }]
+                    }
+                    or.push(and)
+                }
+                var query = {
+                    "WHERE": {
+                        "OR": or
+                    },
+                    "OPTIONS": {
+                        "COLUMNS": [
+                            "courses_dept",
+                            "courses_id",
+                            "avgAVG"
+                        ],
+                        "ORDER": {
+                            "dir": "UP",
+                            "keys": ["courses_dept","courses_id"]
+                        },
+                        "FORM": "TABLE"
+                    },
+                    "TRANSFORMATIONS": {
+                        "GROUP": ["courses_dept","courses_id"],
+                        "APPLY": [{
+                            "avgAVG": {
+                                "AVG": "courses_avg"
+                            }
+                        }]
+                    }
+                }
+                console.log(query)
+                $.ajax({
+                    url: 'http://localhost:4321/query',
+                    type: 'post',
+                    data: JSON.stringify(query),
+                    dataType: 'json',
+                    contentType: 'application/json'
+                }).done(function(data){
+                    console.log("Response", data.result);
+                    if(data.result.length == 0){
+                        alert("No result found")
+                    }
+                    var chartData = []
+                    var chartLabel = []
+                    var item
+                    for(i=0;i<data.result.length;i++){
+                        item = data.result[i]
+                        chartData.push(item["avgAVG"])
+                        chartLabel.push(item["courses_dept"]+item["courses_id"])
+                    }
+                    generateChart(chartData,chartLabel)
+                }).fail(function(error){
+                    console.error("ERROR - Failed to submit")
+                })
+            });
+        })
         function formQuery(serializedSplit){
             var aQuery = {}
             var direction
             var sortByKey = []
-
             // WHERE
             aQuery["WHERE"] = formWhere(serializedSplit)
             //
@@ -108,7 +194,6 @@
                     sortByKey.push(serializedSplit[i].split("=")[1])
                 }
             }
-
             // OPTIONS
             var order
             var options = {}
@@ -125,7 +210,6 @@
                 "courses_year",
                 "courses_uuid"
             ]
-
             if(sortByKey.length == 0){
                 options["COLUMNS"] = allColumns
             }else {
@@ -147,7 +231,6 @@
             console.log(aQuery)
             return aQuery
         }
-
         function formWhere(serializedSplit){
             var where = {}
             var and = []
@@ -223,13 +306,11 @@
             //console.log(and)
             return where
         }
-
         function formTransformations(sortByKey){
             var apply = []
             var transformations = {}
             var item
             transformations["GROUP"] = ["courses_dept", "courses_id"]
-
             for(i=0;i<sortByKey.length;i++){
                 switch (sortByKey[i]){
                     case "maxAvg":
@@ -266,20 +347,17 @@
                                 "COUNT": "courses_uuid"
                             }
                         }
-
                 }
                 apply.push(item)
             }
             transformations["APPLY"] = apply
             return transformations
         }
-
         function formRoomQuery(serializedSplit){
             var whereValue
             var whereKey
             var where = {}
             var aQuery = {}
-
             // WHERE
             var logic = serializedSplit[serializedSplit.length-1].split("=")[1]
             if(logic != "AND" && logic != "OR"){
@@ -324,7 +402,7 @@
                                 return
                             }
                             obj[comp] = {
-                                    'rooms_seats': Number(whereValue)
+                                'rooms_seats': Number(whereValue)
                             }
                             and.push(obj)
                             break;
@@ -349,7 +427,6 @@
             }
             where[logic] = and
             aQuery["WHERE"] = where
-
             // OPTIONS
             var options = {}
             options["COLUMNS"] = [
@@ -370,7 +447,6 @@
             //console.log(aQuery)
             return aQuery
         }
-
         function locationFilter(input,serializedSplit){
             var building
             var distance
@@ -390,18 +466,18 @@
                             "rooms_shortname": building
                         }
                     },
-                "OPTIONS": {
-                    "COLUMNS": [
-                        "rooms_lat",
-                        "rooms_lon"
-                    ],
+                    "OPTIONS": {
+                        "COLUMNS": [
+                            "rooms_lat",
+                            "rooms_lon"
+                        ],
                         "FORM": "TABLE"
-                },
-                "TRANSFORMATIONS": {
-                    "GROUP": ["rooms_lat","rooms_lon"],
+                    },
+                    "TRANSFORMATIONS": {
+                        "GROUP": ["rooms_lat","rooms_lon"],
                         "APPLY": []
+                    }
                 }
-            }
                 var lat2
                 var lon2
                 var R = 6371; // Radius of the earth in km
@@ -438,16 +514,13 @@
                 console.log("Response",input)
             }
         }
-
         function deg2rad(deg) {
             return deg * (Math.PI/180)
         }
-
         function generateTable(results,dataset){
             var tbl_body = document.createElement("tbody");
             var odd_even = true;
             //console.log("DATA", results);
-
             var head_row = tbl_body.insertRow();
             head_row.className = odd_even ? "odd" : "even";
             $.each(Object.keys(results[0]), function(k,v){
@@ -459,7 +532,6 @@
                 head_row.appendChild(th)
             })
             odd_even = !odd_even
-
             //------------------
             $.each(results, function() {
                 var tbl_row = tbl_body.insertRow();
@@ -480,6 +552,20 @@
                 document.getElementById("tblResultsSchedule").appendChild(tbl_body)
             }
             //$("#tblResults").appendChild(tbl_body)
+        }
+        function generateChart(data,label){
+            var ctx = document.getElementById("myChart");
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: label,
+                    datasets: [{
+                        label: 'Course average',
+                        data: data,
+                        borderWidth: 1
+                    }]
+                }
+            });
         }
     </script>
     <style>
@@ -532,6 +618,35 @@
         select {
             width: 200px;
         }
+        .dropdown-submenu:hover>.dropdown-menu {
+            display: block;
+        }
+        .dropdown-submenu>a:after {
+            display: block;
+            content: " ";
+            float: right;
+            width: 0;
+            height: 0;
+            border-color: transparent;
+            border-style: solid;
+            border-width: 5px 0 5px 5px;
+            border-left-color: #ccc;
+            margin-top: 5px;
+            margin-right: -10px;
+        }
+        .dropdown-submenu:hover>a:after {
+            border-left-color: #fff;
+        }
+        .dropdown-submenu.pull-left {
+            float: none;
+        }
+        .dropdown-submenu.pull-left>.dropdown-menu {
+            left: -100%;
+            margin-left: 10px;
+            -webkit-border-radius: 6px 0 6px 6px;
+            -moz-border-radius: 6px 0 6px 6px;
+            border-radius: 6px 0 6px 6px;
+        }
     </style>
 </head>
 <body>
@@ -546,29 +661,30 @@
     <ul>
         <li><a href="#tabs-1">Course Explorer</a></li>
         <li><a href="#tabs-2">Room Explorer</a></li>
-        <li><a href="#tabs-3">Room Schedule</a></li>
+        <li><a href="#tabs-3">Room Scheduler</a></li>
+        <li><a href="#tabs-4">Visualizer</a></li>
     </ul>
     <div id="tabs-1">
         <form id="form1">
             Filters:<br>
             Section size: <label class = "radio"><input type="radio" name="SectionSizeCom" value="GT">Greater Than</label>
-                            <label class = "radio"><input type="radio" name="SectionSizeCom" value="LT">Less Than</label>
-                            <input type="text" name="SectionSize"><br>
+            <label class = "radio"><input type="radio" name="SectionSizeCom" value="LT">Less Than</label>
+            <input type="text" name="SectionSize"><br>
             Department: <input type="text" name="Department"><br>
             Course number: <input type="text" name="CourseNumber"><br>
             Instructor: <input type="text" name="Instructor"><br>
             Title: <input type="text" name="Title"><br>
             Logic: <label class = "radio"><input type="radio" name="Logic" value="AND">AND</label>
-                   <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
+            <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
             Course Exploration: <br>
             Order: <label class = "radio"><input type="radio" name="Direction" value="UP">Up</label>
-                       <label class = "radio"><input type="radio" name="Direction" value="DOWN">Down</label><br>
+            <label class = "radio"><input type="radio" name="Direction" value="DOWN">Down</label><br>
             Sort by:<br>
-                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxAvg">Highest Average</label><br>
-                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="minAvg">Lowest Average</label><br>
-                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxPass">Most Passes</label><br>
-                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxFail">Most Fails</label><br>
-                     <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxSectionNumber">Most Sections</label><br>
+            <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxAvg">Highest Average</label><br>
+            <label class = "checkbox"><input type="checkbox" name="SortBy" value="minAvg">Lowest Average</label><br>
+            <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxPass">Most Passes</label><br>
+            <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxFail">Most Fails</label><br>
+            <label class = "checkbox"><input type="checkbox" name="SortBy" value="maxSectionNumber">Most Sections</label><br>
         </form><br>
         <button id="course">submit</button><br>
         <table id="tblResultsCourse"></table>
@@ -578,13 +694,13 @@
             Building name: <input type="text" name="BuildingName"><br>
             Room number: <input type="text" name="RoomNumber"><br>
             Room size: <label class = "radio"><input type="radio" name="RoomSizeCom" value="GT">Greater Than</label>
-                       <label class = "radio"><input type="radio" name="RoomSizeCom" value="LT">Less Than</label>
-                       <input type="text" name="RoomSize"><br>
+            <label class = "radio"><input type="radio" name="RoomSizeCom" value="LT">Less Than</label>
+            <input type="text" name="RoomSize"><br>
             Room type: <input type="text" name="RoomType"><br>
             Furniture type: <input type="text" name="FurnitureType"><br>
             Location: <input type="text" name="Distance">meters from<input type="text" name="Building"><br><br>
             Logic:<label class = "radio"><input type="radio" name="Logic" value="AND">AND</label>
-                  <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
+            <label class = "radio"><input type="radio" name="Logic" value="OR">OR</label><br><br>
         </form>
         <button id="room">submit</button><br>
         <table id="tblResultsRoom"></table>
@@ -592,21 +708,51 @@
     <div id="tabs-3">
         <form id="form3">
             Course Input: enter a list of department_id (eg. cpsc_110) or department (eg. cpsc), separated by ","<br>
-            <textarea class="form-control" rows="8" cols = "70" id="courseInput"></textarea>
+            <textarea class="form-control" rows="6" cols = "90" id="courseInput"></textarea>
+
+            <!--<ul style="width:100px;" id="menu">-->
+            <!--<li><div>Item 1</div></li>-->
+            <!--<li><div>Item 2</div></li>-->
+            <!--<li><div>Item 3</div>-->
+            <!--<ul>-->
+            <!--<li><div>Item 3-1</div></li>-->
+            <!--<li><div>Item 3-2</div></li>-->
+            <!--<li><div>Item 3-3</div></li>-->
+            <!--<li><div>Item 3-4</div></li>-->
+            <!--<li><div>Item 3-5</div></li>-->
+            <!--</ul>-->
+            <!--</li>-->
+            <!--<li><div>Item 4</div></li>-->
+            <!--<li><div>Item 5</div></li>-->
+            <!--</ul>-->
+
+
         </form>
         <form id="form4">
             Room Input: enter a list of building short name (eg. LSK), seperated by ",", or enter a location<br>
-            <textarea class="form-control" rows="8" cols = "70" id="roomInput"></textarea>
+            <textarea class="form-control" rows="6" cols = "90" id="roomInput"></textarea><br>
             Location: <input type="text" id="Distance">meters from<input type="text" id="Building"><br><br>
         </form>
         <button id="scheduleInput">submit</button><br>
         <table id="tblResultsSchedule"></table>
+    </div>
+    <div id="tabs-4">
+        <form id="form5">
+            Courses: enter a list of department_id (eg. cpsc_110)<br>
+            <textarea class="form-control" rows="6" cols = "62" id="courseInputVisual"></textarea><br>
+            Year Range: <input type="text" id="startYear">to<input type="text" id="endYear"><br><br>
+        </form>
+        <button id="visualizing">submit</button><br>
+        <!--<div id="container" style="width:100%; height:400px;"></div>-->
+        <canvas id="myChart" width="50" height="50"></canvas>
     </div>
 </div>
 <!--<script src="external/jquery/jquery.js"></script>-->
 <script src="jquery-ui.js"></script>
 <script>
     $( "#tabs" ).tabs();
+    $( "#selectmenu" ).selectmenu();
+    $( "#menu" ).menu();
 </script>
 
 </body>
